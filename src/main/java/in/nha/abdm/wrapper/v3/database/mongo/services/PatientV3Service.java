@@ -312,67 +312,44 @@ public class PatientV3Service {
    * @return status of adding or modifying patients in database.
    */
   public FacadeV3Response upsertPatients(List<Patient> patients) {
-    MongoCollection<Document> collection =
-        mongoTemplate.getCollection(FieldIdentifiers.TABLE_PATIENT);
-    List<WriteModel<Document>> updates = new ArrayList<>();
+    int updatedCount = 0;
+    try {
+      log.info("Attempting to upsert {} patients", patients.size());
+      for (Patient patient : patients) {
+        if (patient.getAbhaAddress() == null || patient.getPatientReference() == null) {
+          log.warn("Skipping patient due to missing AbhaAddress or PatientReference: {}", patient);
+          continue;
+        }
+        // Using save() which handles upsert if _id is present, but since we rely on unique indexes,
+        // we'll handle existing records by finding them first or using a simpler approach.
+        Query query = new Query(Criteria.where(FieldIdentifiers.ABHA_ADDRESS).is(patient.getAbhaAddress())
+                .and(FieldIdentifiers.HIP_ID).is(patient.getHipId()));
+        
+        Update update = new Update();
+        if (patient.getName() != null) update.set(FieldIdentifiers.NAME, patient.getName());
+        if (patient.getGender() != null) update.set(FieldIdentifiers.GENDER, patient.getGender());
+        if (patient.getDateOfBirth() != null) update.set(FieldIdentifiers.DATE_OF_BIRTH, patient.getDateOfBirth());
+        if (patient.getPatientReference() != null) update.set(FieldIdentifiers.PATIENT_REFERENCE, patient.getPatientReference());
+        if (patient.getPatientDisplay() != null) update.set(FieldIdentifiers.PATIENT_DISPLAY, patient.getPatientDisplay());
+        if (patient.getPatientMobile() != null) update.set(FieldIdentifiers.PATIENT_MOBILE, patient.getPatientMobile());
+        
+        if (patient.getCareContexts() != null && !patient.getCareContexts().isEmpty()) {
+          update.addToSet(FieldIdentifiers.CARE_CONTEXTS).each(patient.getCareContexts());
+        }
 
-    for (Patient patient : patients) {
-      Document filter =
-          new Document()
-              .append(FieldIdentifiers.ABHA_ADDRESS, patient.getAbhaAddress())
-              .append(FieldIdentifiers.HIP_ID, patient.getHipId());
-
-      Document document = new Document();
-      if (patient.getName() != null) {
-        document.append(FieldIdentifiers.NAME, patient.getName());
+        mongoTemplate.upsert(query, update, Patient.class);
+        updatedCount++;
       }
-      if (patient.getGender() != null) {
-        document.append(FieldIdentifiers.GENDER, patient.getGender());
-      }
-      if (patient.getDateOfBirth() != null) {
-        document.append(FieldIdentifiers.DATE_OF_BIRTH, patient.getDateOfBirth());
-      }
-      if (patient.getPatientReference() != null) {
-        document.append(FieldIdentifiers.PATIENT_REFERENCE, patient.getPatientReference());
-      }
-      if (patient.getPatientDisplay() != null) {
-        document.append(FieldIdentifiers.PATIENT_DISPLAY, patient.getPatientDisplay());
-      }
-      if (patient.getPatientMobile() != null) {
-        document.append(FieldIdentifiers.PATIENT_MOBILE, patient.getPatientMobile());
-      }
-
-      document.append(FieldIdentifiers.ABHA_ADDRESS, patient.getAbhaAddress());
-      document.append(FieldIdentifiers.HIP_ID, patient.getHipId());
-
-      Document update = new Document();
-      if (!document.isEmpty()) {
-        update.append("$set", document);
-      }
-
-      if (patient.getCareContexts() != null && !patient.getCareContexts().isEmpty()) {
-        update.append(
-            "$addToSet",
-            new Document(
-                FieldIdentifiers.CARE_CONTEXTS, new Document("$each", patient.getCareContexts())));
-      }
-      if (!update.isEmpty()) {
-        updates.add(new UpdateOneModel<>(filter, update, new UpdateOptions().upsert(true)));
-      }
-    }
-
-    if (!updates.isEmpty()) {
-      BulkWriteResult bulkWriteResult = collection.bulkWrite(updates);
-      int updatedPatientCount =
-          bulkWriteResult.getUpserts().size() > 0
-              ? bulkWriteResult.getUpserts().size()
-              : bulkWriteResult.getModifiedCount();
-
+      log.info("Successfully upserted {} patients", updatedCount);
       return FacadeV3Response.builder()
-          .message(String.format("Successfully upserted %d patients", updatedPatientCount))
+          .message(String.format("Successfully upserted %d patients", updatedCount))
+          .build();
+    } catch (Exception e) {
+      log.error("Error during upsertPatients: ", e);
+      return FacadeV3Response.builder()
+          .message("Error saving patients: " + e.getMessage())
           .build();
     }
-    return FacadeV3Response.builder().message("No updates were performed").build();
   }
 
   /**
