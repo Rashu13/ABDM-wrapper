@@ -35,14 +35,13 @@ import org.springframework.util.CollectionUtils;
 
 @Service
 public class PatientV3Service {
-  public PatientV3Service(PatientRepo patientRepo, PatientRepo patientRepo1) {
-    this.patientRepo = patientRepo1;
-  }
 
   private static final Logger log = LogManager.getLogger(PatientV3Service.class);
-  @Autowired private final PatientRepo patientRepo;
+  @Autowired PatientRepo patientRepo;
   @Autowired MongoTemplate mongoTemplate;
   @Autowired HIPV3Client hipv3Client;
+
+  public PatientV3Service() {}
 
   /**
    * Fetch of patientReference using abhaAddress
@@ -312,7 +311,6 @@ public class PatientV3Service {
    * @param patients List of patients with reference and demographic details.
    * @return status of adding or modifying patients in database.
    */
-  @Transactional
   public FacadeV3Response upsertPatients(List<Patient> patients) {
     MongoCollection<Document> collection =
         mongoTemplate.getCollection(FieldIdentifiers.TABLE_PATIENT);
