@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(path = FacadeURL.PATIENT_V3_PATH)
 @Validated
 public class PatientV3Controller {
+  private final PatientV3Service patientService;
   private final in.nha.abdm.wrapper.v3.common.logger.ActivityLogService activityService;
 
   public PatientV3Controller(PatientV3Service patientService, in.nha.abdm.wrapper.v3.common.logger.ActivityLogService activityService) {
