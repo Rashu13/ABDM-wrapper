@@ -236,6 +236,7 @@ public class GatewayCallbackV3Controller {
       @RequestBody LinkOnAddCareContextsV3Response linkOnAddCareContextsV3Response,
       @RequestHeader HttpHeaders headers)
       throws IllegalDataStateException {
+    log.info("Callback hit: " + GatewayURL.ON_ADD_CARE_CONTEXT_PATH + " : Headers: " + headers);
     if (linkOnAddCareContextsV3Response != null
         && linkOnAddCareContextsV3Response.getError() != null) {
       updateRequestError(
@@ -271,6 +272,7 @@ public class GatewayCallbackV3Controller {
       @RequestBody OnGenerateTokenResponse onGenerateTokenResponse,
       @RequestHeader HttpHeaders headers)
       throws IllegalDataStateException {
+    log.info("Callback hit: " + GatewayURL.ON_GENERATE_LINK_TOKEN_PATH + " : Headers: " + headers);
     if (onGenerateTokenResponse != null && onGenerateTokenResponse.getError() != null) {
       log.info("Updating error");
       updateLinkTokenRequestError(

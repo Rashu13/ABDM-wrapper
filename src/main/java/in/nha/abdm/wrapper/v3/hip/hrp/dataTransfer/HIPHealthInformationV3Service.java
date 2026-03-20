@@ -322,7 +322,9 @@ public class HIPHealthInformationV3Service implements HIPHealthInformationV3Inte
                     HealthInformationEntry.builder()
                         .content(bundle.getBundleContent())
                         .media("application/fhir+json")
-                        .checksum("string") // Consider calculating the actual checksum if required
+                        .checksum(
+                            org.apache.commons.codec.digest.DigestUtils.md5Hex(
+                                bundle.getBundleContent()))
                         .careContextReference(bundle.getCareContextReference())
                         .build())
             .collect(Collectors.toList());

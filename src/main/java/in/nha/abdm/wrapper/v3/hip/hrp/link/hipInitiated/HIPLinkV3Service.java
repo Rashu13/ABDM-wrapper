@@ -90,6 +90,13 @@ public class HIPLinkV3Service implements HIPLinkV3Interface {
         linkTokenService.getLinkToken(
             patient.getAbhaAddress(), linkRecordsV3Request.getRequesterId());
     if (linkToken == null) {
+      if (linkTokenService.isRequestPending(
+          patient.getAbhaAddress(), linkRecordsV3Request.getRequesterId())) {
+        return buildSuccessResponse(
+            linkRecordsV3Request,
+            HttpStatus.ACCEPTED,
+            RequestStatus.LINK_TOKEN_REQUEST_ACCEPTED.getValue());
+      }
       return generateLinkToken(patient, linkRecordsV3Request);
     }
 
@@ -249,6 +256,7 @@ public class HIPLinkV3Service implements HIPLinkV3Interface {
     GenerateTokenRequest generateTokenRequest =
         GenerateTokenRequest.builder()
             .abhaAddress(patient.getAbhaAddress())
+            .abhaNumber(patient.getAbhaNumber())
             .gender(patient.getGender())
             .name(patient.getName())
             .yearOfBirth(Integer.parseInt(patient.getDateOfBirth().substring(0, 4)))
@@ -380,7 +388,7 @@ public class HIPLinkV3Service implements HIPLinkV3Interface {
               + ex.getMessage()
               + " unwrapped exception: "
               + Exceptions.unwrap(ex);
-      log.debug(error);
+      log.error(error);
     }
   }
 

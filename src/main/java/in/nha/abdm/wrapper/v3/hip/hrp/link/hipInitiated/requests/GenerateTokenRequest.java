@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class GenerateTokenRequest {
   public String abhaAddress;
+  public String abhaNumber;
   public String name;
   public String gender;
   public int yearOfBirth;

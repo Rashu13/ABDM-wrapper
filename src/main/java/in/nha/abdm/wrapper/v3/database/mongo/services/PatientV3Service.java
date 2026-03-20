@@ -326,6 +326,7 @@ public class PatientV3Service {
                 .and(FieldIdentifiers.HIP_ID).is(patient.getHipId()));
         
         Update update = new Update();
+        if (patient.getAbhaNumber() != null) update.set(FieldIdentifiers.ABHA_NUMBER, patient.getAbhaNumber());
         if (patient.getName() != null) update.set(FieldIdentifiers.NAME, patient.getName());
         if (patient.getGender() != null) update.set(FieldIdentifiers.GENDER, patient.getGender());
         if (patient.getDateOfBirth() != null) update.set(FieldIdentifiers.DATE_OF_BIRTH, patient.getDateOfBirth());

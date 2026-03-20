@@ -10,19 +10,26 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 @Data
 @Document(collection = "patients")
+@CompoundIndexes({
+  @CompoundIndex(name = "abha_hip", def = "{'abhaAddress': 1, 'hipId': 1}", unique = true),
+  @CompoundIndex(name = "ref_hip", def = "{'patientReference': 1, 'hipId': 1}", unique = true)
+})
 @Builder
 @AllArgsConstructor
 public class Patient {
 
   @Field(FieldIdentifiers.ABHA_ADDRESS)
-  @Indexed(unique = true)
   @NotNull(message = "AbhaAddress is mandatory") public String abhaAddress;
+
+  @Field(FieldIdentifiers.ABHA_NUMBER)
+  public String abhaNumber;
 
   @Field(FieldIdentifiers.NAME)
   @NotNull(message = "Name of the patient is mandatory") public String name;
@@ -38,7 +45,6 @@ public class Patient {
   public String dateOfBirth;
 
   @Field(FieldIdentifiers.PATIENT_REFERENCE)
-  @Indexed(unique = true)
   @NotNull(message = "patientReference is mandatory") public String patientReference;
 
   @Field(FieldIdentifiers.PATIENT_DISPLAY)

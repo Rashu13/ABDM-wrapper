@@ -24,6 +24,7 @@ public class FieldIdentifiers {
   public static final String ENTITY_TYPE = "entityType";
   public static final String LAST_UPDATED = "lastUpdated";
   public static final String LINK_TOKEN_REQUEST_ID = "linkTokenRequestId";
+  public static final String ABHA_NUMBER = "abhaNumber";
 
   // Patient table.
   public static final String NAME = "name";
