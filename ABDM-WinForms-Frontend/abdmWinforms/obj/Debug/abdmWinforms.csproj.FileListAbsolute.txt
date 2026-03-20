@@ -1,0 +1,13 @@
+D:\ABDMWRAPPER\ABDM-WinForms-Frontend\abdmWinforms\obj\Debug\abdmWinforms.csproj.AssemblyReference.cache
+D:\ABDMWRAPPER\ABDM-WinForms-Frontend\abdmWinforms\obj\Debug\abdmWinforms.Properties.Resources.resources
+D:\ABDMWRAPPER\ABDM-WinForms-Frontend\abdmWinforms\obj\Debug\abdmWinforms.csproj.GenerateResource.cache
+D:\ABDMWRAPPER\ABDM-WinForms-Frontend\abdmWinforms\obj\Debug\abdmWinforms.csproj.CoreCompileInputs.cache
+D:\ABDMWRAPPER\ABDM-WinForms-Frontend\abdmWinforms\bin\Debug\abdmWinforms.exe.config
+D:\ABDMWRAPPER\ABDM-WinForms-Frontend\abdmWinforms\bin\Debug\abdmWinforms.exe
+D:\ABDMWRAPPER\ABDM-WinForms-Frontend\abdmWinforms\bin\Debug\abdmWinforms.pdb
+D:\ABDMWRAPPER\ABDM-WinForms-Frontend\abdmWinforms\bin\Debug\Newtonsoft.Json.dll
+D:\ABDMWRAPPER\ABDM-WinForms-Frontend\abdmWinforms\bin\Debug\Newtonsoft.Json.xml
+D:\ABDMWRAPPER\ABDM-WinForms-Frontend\abdmWinforms\obj\Debug\abdmWinf.92586A46.Up2Date
+D:\ABDMWRAPPER\ABDM-WinForms-Frontend\abdmWinforms\obj\Debug\abdmWinforms.exe
+D:\ABDMWRAPPER\ABDM-WinForms-Frontend\abdmWinforms\obj\Debug\abdmWinforms.pdb
+D:\ABDMWRAPPER\ABDM-WinForms-Frontend\abdmWinforms\obj\Debug\abdmWinforms.PatientRegistrationForm.resources
