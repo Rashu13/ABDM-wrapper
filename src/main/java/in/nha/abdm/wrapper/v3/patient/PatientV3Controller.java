@@ -21,10 +21,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(path = FacadeURL.PATIENT_V3_PATH)
 @Validated
 public class PatientV3Controller {
-  private final PatientV3Service patientService;
+  private final in.nha.abdm.wrapper.v3.common.logger.ActivityLogService activityService;
 
-  public PatientV3Controller(PatientV3Service patientService) {
+  public PatientV3Controller(PatientV3Service patientService, in.nha.abdm.wrapper.v3.common.logger.ActivityLogService activityService) {
     this.patientService = patientService;
+    this.activityService = activityService;
   }
 
   /**
@@ -39,6 +40,7 @@ public class PatientV3Controller {
   public ResponseEntity<Object> getPatientDetails(
       @PathVariable("patientId") String patientId,
       @RequestParam(WrapperConstants.HIP_ID) @NotNull(message = "hipId is mandatory") String hipId) {
+    activityService.logActivity("GATEWAY-HIT: Searching patient: " + patientId);
     Patient patient = patientService.getPatientDetails(patientId, hipId);
     if (Objects.isNull(patient)) {
       FacadeV3Response facadeV3Response =
@@ -60,5 +62,12 @@ public class PatientV3Controller {
       return new ResponseEntity<>(facadeV3Response, HttpStatus.BAD_REQUEST);
     }
     return new ResponseEntity<>(patient, HttpStatus.OK);
+  }
+
+  @GetMapping("/v3/patients")
+  public ResponseEntity<java.util.List<in.nha.abdm.wrapper.v1.hip.hrp.database.mongo.tables.Patient>> getAllPatients(
+      @RequestParam(WrapperConstants.HIP_ID) @NotNull(message = "hipId is mandatory") String hipId) {
+    java.util.List<in.nha.abdm.wrapper.v1.hip.hrp.database.mongo.tables.Patient> patients = patientService.getAllPatients(hipId);
+    return new ResponseEntity<>(patients, HttpStatus.OK);
   }
 }

@@ -22,6 +22,7 @@ import in.nha.abdm.wrapper.v1.hiu.hrp.consent.requests.InitConsentRequest;
 import in.nha.abdm.wrapper.v3.common.models.RequestStatusV3Response;
 import in.nha.abdm.wrapper.v3.config.ErrorHandler;
 import in.nha.abdm.wrapper.v3.database.mongo.repositories.LinkTokenRepo;
+import in.nha.abdm.wrapper.v3.database.mongo.tables.LinkToken;
 import in.nha.abdm.wrapper.v3.hip.hrp.discover.requests.OnDiscoverV3Request;
 import in.nha.abdm.wrapper.v3.hip.hrp.link.hipInitiated.requests.LinkRecordsV3Request;
 import in.nha.abdm.wrapper.v3.hip.hrp.link.hipInitiated.requests.helpers.PatientCareContextHIType;
@@ -637,9 +638,11 @@ public class RequestLogV3Service {
   }
 
   public RequestLog getLogsByAbhaAddress(String abhaAddress, String hipId) {
-    String linkTokenRequestId =
-        linkTokenRepo.findByAbhaAddress(abhaAddress, hipId).getLinkTokenRequestId();
-    return logsRepo.findByLinkTokenRequestId(linkTokenRequestId);
+    LinkToken linkToken = linkTokenRepo.findByAbhaAddress(abhaAddress, hipId);
+    if (Objects.isNull(linkToken)) {
+      return null;
+    }
+    return logsRepo.findByLinkTokenRequestId(linkToken.getLinkTokenRequestId());
   }
 
   /**

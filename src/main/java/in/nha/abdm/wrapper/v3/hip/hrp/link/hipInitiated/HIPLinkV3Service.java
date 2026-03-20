@@ -359,7 +359,7 @@ public class HIPLinkV3Service implements HIPLinkV3Interface {
       RequestLog requestLog =
           requestLogV3Service.getLogsByAbhaAddress(
               onGenerateTokenResponse.getAbhaAddress(),
-              Objects.requireNonNull(headers.get(GatewayConstants.X_HIP_ID)).toString());
+              Objects.requireNonNull(headers.getFirst(GatewayConstants.X_HIP_ID)));
       if (Objects.isNull(requestLog)) {
         log.error("Request log not found for on-linkToken generation to initiate linking");
         return;

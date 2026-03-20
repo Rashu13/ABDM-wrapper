@@ -23,4 +23,7 @@ public interface PatientRepo extends MongoRepository<Patient, String> {
 
   @Query("{ 'patientMobile': ?0, 'hipId': ?1 }")
   List<Patient> findByPatientMobile(String patientMobile, String hipId);
+
+  @Query("{ 'hipId': ?0 }")
+  List<Patient> findAllByHipId(String hipId);
 }

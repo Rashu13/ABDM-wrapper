@@ -542,4 +542,8 @@ public class PatientV3Service {
     }
     return null;
   }
+
+  public List<Patient> getAllPatients(String hipId) {
+    return patientRepo.findAllByHipId(hipId);
+  }
 }

@@ -44,20 +44,31 @@ import org.springframework.stereotype.Component;
 @Component
 public class WorkflowV3Manager {
   private static final Logger log = LogManager.getLogger(WorkflowManager.class);
-  @Autowired DiscoveryV3Interface discoveryV3Interface;
-  @Autowired PatientV3Service patientService;
-  @Autowired LinkV3Interface linkV3Interface;
-  @Autowired HIPLinkV3Interface hipV3LinkV3Interface;
-  @Autowired ConsentV3Interface consentV3Interface;
-  @Autowired HIPHealthInformationV3Interface hipHealthInformationV3Interface;
-  @Autowired RequestLogV3Service requestLogV3Service;
-  @Autowired ProfileShareV3Interface profileShareV3Interface;
-  @Autowired DeepLinkingV3Interface deepLinkingV3Interface;
+  @Autowired
+  DiscoveryV3Interface discoveryV3Interface;
+  @Autowired
+  PatientV3Service patientService;
+  @Autowired
+  LinkV3Interface linkV3Interface;
+  @Autowired
+  HIPLinkV3Interface hipV3LinkV3Interface;
+  @Autowired
+  ConsentV3Interface consentV3Interface;
+  @Autowired
+  HIPHealthInformationV3Interface hipHealthInformationV3Interface;
+  @Autowired
+  RequestLogV3Service requestLogV3Service;
+  @Autowired
+  ProfileShareV3Interface profileShareV3Interface;
+  @Autowired
+  DeepLinkingV3Interface deepLinkingV3Interface;
 
   /**
    * userInitiated linking
    *
-   * <p>Routing the Discover request to discovery interface for Making POST on-discover
+   * <p>
+   * Routing the Discover request to discovery interface for Making POST
+   * on-discover
    *
    * @param discoverRequest Response from ABDM gateway for patient discovery
    */
@@ -69,9 +80,11 @@ public class WorkflowV3Manager {
   /**
    * userInitiated linking
    *
-   * <p>Routing the initResponse to linkInterface for making POST on-init request.
+   * <p>
+   * Routing the initResponse to linkInterface for making POST on-init request.
    *
-   * @param initResponse Response from ABDM gateway after successful on-Discover request.
+   * @param initResponse Response from ABDM gateway after successful on-Discover
+   *                     request.
    */
   public void initiateOnInit(InitV3Response initResponse, HttpHeaders headers) {
     if (initResponse != null) {
@@ -84,9 +97,11 @@ public class WorkflowV3Manager {
   /**
    * userInitiated linking
    *
-   * <p>Routing confirmResponse to linkInterface for making on on-confirm request.
+   * <p>
+   * Routing confirmResponse to linkInterface for making on on-confirm request.
    *
-   * @param confirmResponse Response form ABDM gateway after successful on-init request.
+   * @param confirmResponse Response form ABDM gateway after successful on-init
+   *                        request.
    */
   public void initiateOnConfirmCall(ConfirmResponse confirmResponse, HttpHeaders headers) {
     if (confirmResponse != null) {
@@ -104,7 +119,8 @@ public class WorkflowV3Manager {
   /**
    * hipInitiatedLinking
    *
-   * <p>Fetching the status from requestLogs using clientId.
+   * <p>
+   * Fetching the status from requestLogs using clientId.
    *
    * @param requestId clientRequestId for tracking the linking status.
    * @return "Success", "Initiated", "appropriate error message".
@@ -133,11 +149,11 @@ public class WorkflowV3Manager {
   public void healthInformation(
       HIPHealthInformationRequest hipHealthInformationRequest, HttpHeaders headers)
       throws IllegalDataStateException,
-          InvalidAlgorithmParameterException,
-          NoSuchAlgorithmException,
-          InvalidKeySpecException,
-          NoSuchProviderException,
-          InvalidKeyException {
+      InvalidAlgorithmParameterException,
+      NoSuchAlgorithmException,
+      InvalidKeySpecException,
+      NoSuchProviderException,
+      InvalidKeyException {
     log.debug(hipHealthInformationRequest.toString());
     hipHealthInformationV3Interface.healthInformation(hipHealthInformationRequest, headers);
   }
@@ -145,7 +161,9 @@ public class WorkflowV3Manager {
   /**
    * profileShare
    *
-   * <p>Routing the profileShare request to shareInterface for generating the token number and
+   * <p>
+   * Routing the profileShare request to shareInterface for generating the token
+   * number and
    * sharing with ABDM
    *
    * @param profileShare request body which has demographic details.
@@ -158,16 +176,20 @@ public class WorkflowV3Manager {
   /**
    * DeepLinking
    *
-   * <p>Sending the sms to patient via ABDM saying that there are some records present at facility.
+   * <p>
+   * Sending the sms to patient via ABDM saying that there are some records
+   * present at facility.
    *
-   * @param deepLinkingRequest request body which has hipId and patient mobile number.
+   * @param deepLinkingRequest request body which has hipId and patient mobile
+   *                           number.
    */
   public FacadeV3Response sendDeepLinkingSms(DeepLinkingRequest deepLinkingRequest) {
     return deepLinkingV3Interface.sendDeepLinkingSms(deepLinkingRequest);
   }
 
   /**
-   * When the linkToken is received this will be handled to send the careContext to ABDM
+   * When the linkToken is received this will be handled to send the careContext
+   * to ABDM
    *
    * @param onGenerateTokenResponse
    * @param headers

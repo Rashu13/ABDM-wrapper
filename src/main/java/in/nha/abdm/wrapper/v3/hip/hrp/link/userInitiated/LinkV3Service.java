@@ -282,7 +282,7 @@ public class LinkV3Service implements LinkV3Interface {
                         .build())
                 .response(
                     RespRequest.builder()
-                        .requestId(String.valueOf(headers.get(GatewayConstants.REQUEST_ID)))
+                        .requestId(headers.getFirst(GatewayConstants.REQUEST_ID))
                         .build())
                 .build();
       }

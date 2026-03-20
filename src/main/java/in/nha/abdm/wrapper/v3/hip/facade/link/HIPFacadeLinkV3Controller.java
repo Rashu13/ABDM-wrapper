@@ -27,19 +27,21 @@ import org.springframework.web.bind.annotation.*;
 public class HIPFacadeLinkV3Controller {
 
   private static final Logger log = LogManager.getLogger(HIPFacadeLinkV3Controller.class);
-  @Autowired WorkflowV3Manager workflowV3Manager;
+  @Autowired
+  WorkflowV3Manager workflowV3Manager;
 
   /**
-   * <B>Facade</B> POST method to facade for linking careContexts i.e. hipInitiatedLinking.
+   * <B>Facade</B> POST method to facade for linking careContexts i.e.
+   * hipInitiatedLinking.
    *
-   * @param linkRecordsV3Request request which has authMode, patient details and careContexts.
+   * @param linkRecordsV3Request request which has authMode, patient details and
+   *                             careContexts.
    * @return acknowledgement of status.
    */
   @PostMapping(FacadeURL.HIP_LINK_CARE_CONTEXT_PATH)
   public ResponseEntity<FacadeV3Response> linkRecords(
       @Valid @RequestBody LinkRecordsV3Request linkRecordsV3Request) {
-    FacadeV3Response facadeV3Response =
-        workflowV3Manager.initiateCareContextLinking(linkRecordsV3Request);
+    FacadeV3Response facadeV3Response = workflowV3Manager.initiateCareContextLinking(linkRecordsV3Request);
     if (Objects.isNull(facadeV3Response.getErrors())) {
       return new ResponseEntity<>(facadeV3Response, HttpStatus.ACCEPTED);
     } else {
@@ -48,7 +50,8 @@ public class HIPFacadeLinkV3Controller {
   }
 
   /**
-   * <B>Facade</B> GET method to facade for checking status of hipInitiatedLinking.
+   * <B>Facade</B> GET method to facade for checking status of
+   * hipInitiatedLinking.
    *
    * @param requestId clientRequestId which is used in linkRecordsRequest
    * @return acknowledgement of status.
@@ -56,8 +59,7 @@ public class HIPFacadeLinkV3Controller {
   @GetMapping(FacadeURL.HIP_LINK_STATUS_PATH)
   public ResponseEntity<RequestStatusV3Response> fetchCareContextStatus(
       @PathVariable("requestId") String requestId) throws IllegalDataStateException {
-    RequestStatusV3Response requestStatusV3Response =
-        workflowV3Manager.getCareContextRequestStatus(requestId);
+    RequestStatusV3Response requestStatusV3Response = workflowV3Manager.getCareContextRequestStatus(requestId);
     if (Objects.isNull(requestStatusV3Response.getErrors())) {
       return new ResponseEntity<>(requestStatusV3Response, HttpStatus.ACCEPTED);
     } else {
@@ -83,10 +85,13 @@ public class HIPFacadeLinkV3Controller {
   }
 
   /**
-   * This API is used for sending a request for ABDM to send a sms to the patient Telling the
-   * patient that there are records present at facility link them with user-initiatedLinking.
+   * This API is used for sending a request for ABDM to send a sms to the patient
+   * Telling the
+   * patient that there are records present at facility link them with
+   * user-initiatedLinking.
    *
-   * @param deepLinkingRequest has the hipId and patient mobile number for sending sms.
+   * @param deepLinkingRequest has the hipId and patient mobile number for sending
+   *                           sms.
    * @return the success or failure of the request to ABDM gateway.
    */
   @PostMapping(FacadeURL.SMS_NOTIFY_PATH)
