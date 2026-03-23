@@ -51,9 +51,11 @@ namespace abdmWinforms
                 // Status mapping based on Wrapper logs
                 // Expecting structure like: {"requestId":"...","status":"AUTH_CONFIRM_ACCEPTED", "error":null}
                 var response = JsonConvert.DeserializeObject<dynamic>(jsonResponse);
-                string status = (string)response.status;
+                string status = response?.status?.ToString();
 
                 UpdateUIBasedOnStatus(status);
+
+                if (string.IsNullOrEmpty(status)) return;
 
                 if (status == "CARE_CONTEXT_LINKED" || status == "COMPLETED" || status == "SUCCESS")
                 {

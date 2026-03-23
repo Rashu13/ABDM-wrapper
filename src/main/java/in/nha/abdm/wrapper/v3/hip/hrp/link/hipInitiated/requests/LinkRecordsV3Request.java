@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Data
 @Component
 public class LinkRecordsV3Request {
-  @NotNull(message = "requestId is mandatory") public String requestId;
+  @NotNull(message = "requestId is mandatory") private String requestId;
 
   @NotNull(message = "requesterId is mandatory i.e HipID") private String requesterId;
 

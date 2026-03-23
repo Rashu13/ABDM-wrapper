@@ -45,6 +45,7 @@ namespace abdmWinforms
                 var patient = new PatientModel
                 {
                     abhaAddress = txtAbhaAddress.Text.Trim(),
+                    abhaNumber = txtAbhaNumber.Text.Trim(),
                     name = txtName.Text.Trim(),
                     gender = genderCode,
                     dateOfBirth = dtpDob.Value.ToString("yyyy-MM-dd"), // Correct format for your V3 wrapper

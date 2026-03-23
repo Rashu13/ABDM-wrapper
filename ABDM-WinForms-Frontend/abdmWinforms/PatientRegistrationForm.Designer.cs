@@ -32,6 +32,8 @@ namespace abdmWinforms
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.txtAbhaAddress = new System.Windows.Forms.TextBox();
+            this.labelAbhaNumber = new System.Windows.Forms.Label();
+            this.txtAbhaNumber = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.txtName = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -51,6 +53,8 @@ namespace abdmWinforms
             this.pnlCard.Controls.Add(this.label1);
             this.pnlCard.Controls.Add(this.label2);
             this.pnlCard.Controls.Add(this.txtAbhaAddress);
+            this.pnlCard.Controls.Add(this.labelAbhaNumber);
+            this.pnlCard.Controls.Add(this.txtAbhaNumber);
             this.pnlCard.Controls.Add(this.label3);
             this.pnlCard.Controls.Add(this.txtName);
             this.pnlCard.Controls.Add(this.label4);
@@ -63,7 +67,7 @@ namespace abdmWinforms
             this.pnlCard.Location = new System.Drawing.Point(67, 49);
             this.pnlCard.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.pnlCard.Name = "pnlCard";
-            this.pnlCard.Size = new System.Drawing.Size(573, 615);
+            this.pnlCard.Size = new System.Drawing.Size(573, 701);
             this.pnlCard.TabIndex = 0;
             // 
             // label1
@@ -100,14 +104,37 @@ namespace abdmWinforms
             this.txtAbhaAddress.Name = "txtAbhaAddress";
             this.txtAbhaAddress.Size = new System.Drawing.Size(466, 34);
             this.txtAbhaAddress.TabIndex = 2;
-            this.txtAbhaAddress.Text = "91650506512757";
+            this.txtAbhaAddress.Text = "7015750927@sbx";
+            // 
+            // labelAbhaNumber
+            // 
+            this.labelAbhaNumber.AutoSize = true;
+            this.labelAbhaNumber.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold);
+            this.labelAbhaNumber.ForeColor = System.Drawing.Color.DimGray;
+            this.labelAbhaNumber.Location = new System.Drawing.Point(53, 178);
+            this.labelAbhaNumber.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.labelAbhaNumber.Name = "labelAbhaNumber";
+            this.labelAbhaNumber.Size = new System.Drawing.Size(130, 23);
+            this.labelAbhaNumber.TabIndex = 12;
+            this.labelAbhaNumber.Text = "ABHA Number *";
+            // 
+            // txtAbhaNumber
+            // 
+            this.txtAbhaNumber.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(249)))), ((int)(((byte)(250)))));
+            this.txtAbhaNumber.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtAbhaNumber.Font = new System.Drawing.Font("Segoe UI", 12F);
+            this.txtAbhaNumber.Location = new System.Drawing.Point(53, 203);
+            this.txtAbhaNumber.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtAbhaNumber.Name = "txtAbhaNumber";
+            this.txtAbhaNumber.Size = new System.Drawing.Size(466, 34);
+            this.txtAbhaNumber.TabIndex = 13;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold);
             this.label3.ForeColor = System.Drawing.Color.DimGray;
-            this.label3.Location = new System.Drawing.Point(53, 178);
+            this.label3.Location = new System.Drawing.Point(53, 264);
             this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(68, 23);
@@ -119,7 +146,7 @@ namespace abdmWinforms
             this.txtName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(249)))), ((int)(((byte)(250)))));
             this.txtName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtName.Font = new System.Drawing.Font("Segoe UI", 12F);
-            this.txtName.Location = new System.Drawing.Point(53, 203);
+            this.txtName.Location = new System.Drawing.Point(53, 289);
             this.txtName.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.txtName.Name = "txtName";
             this.txtName.Size = new System.Drawing.Size(466, 34);
@@ -131,7 +158,7 @@ namespace abdmWinforms
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold);
             this.label4.ForeColor = System.Drawing.Color.DimGray;
-            this.label4.Location = new System.Drawing.Point(53, 265);
+            this.label4.Location = new System.Drawing.Point(53, 351);
             this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(78, 23);
@@ -147,7 +174,7 @@ namespace abdmWinforms
             "Male",
             "Female",
             "Other"});
-            this.cmbGender.Location = new System.Drawing.Point(53, 289);
+            this.cmbGender.Location = new System.Drawing.Point(53, 375);
             this.cmbGender.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.cmbGender.Name = "cmbGender";
             this.cmbGender.Size = new System.Drawing.Size(465, 36);
@@ -158,7 +185,7 @@ namespace abdmWinforms
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold);
             this.label5.ForeColor = System.Drawing.Color.DimGray;
-            this.label5.Location = new System.Drawing.Point(53, 351);
+            this.label5.Location = new System.Drawing.Point(53, 437);
             this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(120, 23);
@@ -169,7 +196,7 @@ namespace abdmWinforms
             // 
             this.dtpDob.Font = new System.Drawing.Font("Segoe UI", 12F);
             this.dtpDob.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dtpDob.Location = new System.Drawing.Point(53, 375);
+            this.dtpDob.Location = new System.Drawing.Point(53, 461);
             this.dtpDob.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.dtpDob.Name = "dtpDob";
             this.dtpDob.Size = new System.Drawing.Size(465, 34);
@@ -181,7 +208,7 @@ namespace abdmWinforms
             this.labelMobile.AutoSize = true;
             this.labelMobile.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold);
             this.labelMobile.ForeColor = System.Drawing.Color.DimGray;
-            this.labelMobile.Location = new System.Drawing.Point(53, 425);
+            this.labelMobile.Location = new System.Drawing.Point(53, 511);
             this.labelMobile.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelMobile.Name = "labelMobile";
             this.labelMobile.Size = new System.Drawing.Size(143, 23);
@@ -193,7 +220,7 @@ namespace abdmWinforms
             this.txtMobile.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(249)))), ((int)(((byte)(250)))));
             this.txtMobile.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtMobile.Font = new System.Drawing.Font("Segoe UI", 12F);
-            this.txtMobile.Location = new System.Drawing.Point(53, 449);
+            this.txtMobile.Location = new System.Drawing.Point(53, 535);
             this.txtMobile.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.txtMobile.Name = "txtMobile";
             this.txtMobile.Size = new System.Drawing.Size(466, 34);
@@ -208,7 +235,7 @@ namespace abdmWinforms
             this.btnGenerateToken.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnGenerateToken.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold);
             this.btnGenerateToken.ForeColor = System.Drawing.Color.White;
-            this.btnGenerateToken.Location = new System.Drawing.Point(53, 517);
+            this.btnGenerateToken.Location = new System.Drawing.Point(53, 603);
             this.btnGenerateToken.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnGenerateToken.Name = "btnGenerateToken";
             this.btnGenerateToken.Size = new System.Drawing.Size(467, 62);
@@ -222,7 +249,7 @@ namespace abdmWinforms
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(240)))), ((int)(((byte)(241)))));
-            this.ClientSize = new System.Drawing.Size(712, 689);
+            this.ClientSize = new System.Drawing.Size(712, 775);
             this.Controls.Add(this.pnlCard);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
@@ -240,6 +267,8 @@ namespace abdmWinforms
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtAbhaAddress;
+        private System.Windows.Forms.Label labelAbhaNumber; // Added
+        private System.Windows.Forms.TextBox txtAbhaNumber; // Added
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox txtName;
         private System.Windows.Forms.Label label4;

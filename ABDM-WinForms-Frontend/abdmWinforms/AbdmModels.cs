@@ -6,6 +6,7 @@ namespace ABDM_WinForms_Frontend
     public class PatientModel
     {
         public string abhaAddress { get; set; }
+        public string abhaNumber { get; set; }
         public string name { get; set; }
         public string gender { get; set; }
         public string dateOfBirth { get; set; }
