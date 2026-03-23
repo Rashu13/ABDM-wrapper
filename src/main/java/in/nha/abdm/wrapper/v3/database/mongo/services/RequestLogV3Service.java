@@ -245,7 +245,15 @@ public class RequestLogV3Service {
     if (Objects.isNull(linkRecordsV3Request)) {
       return;
     }
-    RequestLog existingLog = logsRepo.findByClientRequestId(linkRecordsV3Request.getRequestId());
+    Query queryStatus =
+        new Query(
+            new Criteria()
+                .orOperator(
+                    Criteria.where(FieldIdentifiers.CLIENT_REQUEST_ID)
+                        .is(linkRecordsV3Request.getRequestId()),
+                    Criteria.where(FieldIdentifiers.GATEWAY_REQUEST_ID)
+                        .is(linkRecordsV3Request.getRequestId())));
+    RequestLog existingLog = mongoTemplate.findOne(queryStatus, RequestLog.class);
     if (Objects.isNull(existingLog)) {
       RequestLog requestLog = new RequestLog();
       requestLog.setAbhaAddress(linkRecordsV3Request.getAbhaAddress());
@@ -267,8 +275,12 @@ public class RequestLogV3Service {
     }
     Query query =
         new Query(
-            Criteria.where(FieldIdentifiers.CLIENT_REQUEST_ID)
-                .is(linkRecordsV3Request.getRequestId()));
+            new Criteria()
+                .orOperator(
+                    Criteria.where(FieldIdentifiers.CLIENT_REQUEST_ID)
+                        .is(linkRecordsV3Request.getRequestId()),
+                    Criteria.where(FieldIdentifiers.GATEWAY_REQUEST_ID)
+                        .is(linkRecordsV3Request.getRequestId())));
     Map<String, Object> map = existingLog.getRequestDetails();
     if (Objects.isNull(map)) {
       map = new HashMap<>();
@@ -290,20 +302,26 @@ public class RequestLogV3Service {
    * @return status of linking after /on-add-contexts acknowledgment.
    */
   public RequestStatusV3Response getStatus(String requestId) throws IllegalDataStateException {
-    RequestLog RequestLog = logsRepo.findByClientRequestId(requestId);
-    if (RequestLog != null) {
-      if (Objects.nonNull(RequestLog.getError())) {
+    Query query =
+        new Query(
+            new Criteria()
+                .orOperator(
+                    Criteria.where(FieldIdentifiers.CLIENT_REQUEST_ID).is(requestId),
+                    Criteria.where(FieldIdentifiers.GATEWAY_REQUEST_ID).is(requestId)));
+    RequestLog requestLog = mongoTemplate.findOne(query, RequestLog.class);
+    if (requestLog != null) {
+      if (Objects.nonNull(requestLog.getError())) {
         return RequestStatusV3Response.builder()
             .requestId(requestId)
-            .status(RequestLog.getStatus().getValue())
-            .errors(ErrorHandler.getErrors(RequestLog.getError()))
+            .status(requestLog.getStatus().getValue())
+            .errors(ErrorHandler.getErrors(requestLog.getError()))
             .build();
       }
-      if (Objects.nonNull(RequestLog.getStatus())
-          && StringUtils.isNotBlank(RequestLog.getStatus().getValue())) {
+      if (Objects.nonNull(requestLog.getStatus())
+          && StringUtils.isNotBlank(requestLog.getStatus().getValue())) {
         return RequestStatusV3Response.builder()
             .requestId(requestId)
-            .status(RequestLog.getStatus().getValue())
+            .status(requestLog.getStatus().getValue())
             .build();
       }
     }
