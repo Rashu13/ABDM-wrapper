@@ -21,7 +21,7 @@ public class V3NotifyRequest {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class V3Notification {
-        private V3CareContext careContext;
+        private List<V3CareContext> careContexts;
         private List<String> hiTypes;
         private V3Patient patient;
         private String date;
