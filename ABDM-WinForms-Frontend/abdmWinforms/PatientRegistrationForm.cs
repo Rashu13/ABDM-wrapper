@@ -56,9 +56,16 @@ namespace abdmWinforms
                 };
 
                 // Step 1: Add to Wrapper DB
+                btnGenerateToken.Text = "SAVING PATIENT...";
                 var addResponse = await _abdmService.AddPatientAsync(patient);
+                if (addResponse.Contains("Error") || addResponse.Contains("Failed"))
+                {
+                    MessageBox.Show("Failed to save patient to database: " + addResponse, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
 
                 // Step 2: Initiate Linking (OTP)
+                btnGenerateToken.Text = "INITIATING LINK...";
                 var linkReq = new LinkRequest
                 {
                     requestId = Guid.NewGuid().ToString(),
@@ -67,8 +74,8 @@ namespace abdmWinforms
                     careContexts = new List<CareContext>
                     {
                         new CareContext { 
-                            referenceNumber = "OPD-" + DateTime.Now.Ticks.ToString().Substring(10), 
-                            display = "OPD Consultation - " + DateTime.Now.ToString("dd-MM-yyyy HH:mm"), 
+                            referenceNumber = "OPD-" + Guid.NewGuid().ToString().Substring(0, 8), 
+                            display = "OPD Consultation", 
                             hiType = "OPConsultation" 
                         }
                     }
@@ -76,30 +83,29 @@ namespace abdmWinforms
 
                 var linkResponse = await _abdmService.InitiateLinkingAsync(linkReq);
 
-                if (linkResponse.Contains("ACCEPTED"))
+                // Use case-insensitive check for ACCEPTED
+                if (linkResponse.IndexOf("ACCEPTED", StringComparison.OrdinalIgnoreCase) >= 0)
                 {
-                    // Parse linkRefNumber from response (PDF Page 10/11)
-                    // Format usually: {"clientRequestId":"...","httpStatusCode":"ACCEPTED","message":"...","linkRefNumber":"cc-123..."}
+                    // Parse linkRefNumber from response
                     string linkRefNumber = "";
-                    if (linkResponse.Contains("linkRefNumber")) {
+                    try {
                         var dynResponse = JsonConvert.DeserializeObject<dynamic>(linkResponse);
                         linkRefNumber = (string)dynResponse.linkRefNumber;
-                    }
+                    } catch { }
 
-                    // Open the modern polling screen instead of the old OTP screen
+                    // Open the modern polling screen
                     using (var pollForm = new LinkingStatusPollForm(linkReq.requestId, patient.abhaAddress, patient.name))
                     {
                         var result = pollForm.ShowDialog(this);
                         if (result == DialogResult.OK)
                         {
-                            // Success! Patient is linked.
-                            // We don't close the main form anymore so user can continue.
+                            // Success!
                         }
                     }
                 }
                 else
                 {
-                    MessageBox.Show("Linking could not be initiated: " + linkResponse, "ABDM Status", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("Linking could not be initiated. ABDM Response: " + linkResponse, "ABDM Status", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
             catch (Exception ex)
