@@ -20,6 +20,7 @@ public class Prescription {
   private String patientName;
   private String date;
   private String careContextReference;
+  private String patientReference;
   private List<Medicine> medicines;
   private String hipId;
 

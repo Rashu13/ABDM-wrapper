@@ -42,7 +42,7 @@ public class V3NotificationService {
                 .notification(V3NotifyRequest.V3Notification.builder()
                         .careContexts(Collections.singletonList(V3NotifyRequest.V3CareContext.builder()
                                 .careContextReference(contextRef) 
-                                .patientReference("P-" + prescription.getAbhaAddress())
+                                .patientReference(prescription.getPatientReference() != null ? prescription.getPatientReference() : "P-" + prescription.getAbhaAddress())
                                 .build()))
                         .hiTypes(Collections.singletonList("Prescription"))
                         .patient(V3NotifyRequest.V3Patient.builder()
