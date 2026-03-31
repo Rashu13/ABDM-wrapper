@@ -91,6 +91,10 @@ public class HIPHealthInformationV3Service implements HIPHealthInformationV3Inte
           InvalidKeySpecException,
           NoSuchProviderException,
           InvalidKeyException {
+    if (hipHealthInformationRequest == null || hipHealthInformationRequest.getHiRequest() == null || hipHealthInformationRequest.getHiRequest().getConsent() == null) {
+        log.error("Invalid health information request: missing hiRequest or consent details");
+        return;
+    }
     OnHealthInformationV3Request onHealthInformationRequest = null;
     RespRequest responseRequestId =
         RespRequest.builder().requestId(headers.getFirst(GatewayConstants.REQUEST_ID)).build();
@@ -215,15 +219,21 @@ public class HIPHealthInformationV3Service implements HIPHealthInformationV3Inte
     ConsentCareContextMapping existingLog =
         consentCareContextsService.findMappingByConsentId(
             hipHealthInformationRequest.getHiRequest().getConsent().getId());
+    RequestLog requestLog = requestLogV3Service
+        .findByConsentId(
+            hipHealthInformationRequest.getHiRequest().getConsent().getId(),
+            GatewayConstants.HIP,
+            headers.getFirst(GatewayConstants.X_HIP_ID));
+    if (requestLog == null) {
+      throw new IllegalDataStateException("Consent notification log not found in database for consentId: " + hipHealthInformationRequest.getHiRequest().getConsent().getId());
+    }
     HIPNotifyRequest hipNotifyRequest =
         (HIPNotifyRequest)
-            requestLogV3Service
-                .findByConsentId(
-                    hipHealthInformationRequest.getHiRequest().getConsent().getId(),
-                    GatewayConstants.HIP,
-                    headers.getFirst(GatewayConstants.X_HIP_ID))
-                .getRequestDetails()
+            requestLog.getRequestDetails()
                 .get(FieldIdentifiers.HIP_NOTIFY_REQUEST);
+    if (hipNotifyRequest == null) {
+        throw new IllegalDataStateException("HIP consent notification details not found in request log for consentId: " + hipHealthInformationRequest.getHiRequest().getConsent().getId());
+    }
     String hipId = hipNotifyRequest.getNotification().getConsentDetail().getHip().getId();
     if (existingLog == null) {
       throw new IllegalDataStateException("consent id not found in db");
@@ -253,14 +263,24 @@ public class HIPHealthInformationV3Service implements HIPHealthInformationV3Inte
       RequestLog requestLog =
           requestLogV3Service.findByConsentId(
               consentId, GatewayConstants.HIP, headers.getFirst(GatewayConstants.X_HIP_ID));
-
+      if (requestLog == null) {
+          log.error("Request log not found for consentId: " + consentId);
+          return Collections.singletonList(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+      }
       HIPNotifyRequest hipNotifyRequest =
           (HIPNotifyRequest)
               requestLog.getRequestDetails().get(FieldIdentifiers.HIP_NOTIFY_REQUEST);
-
+      if (hipNotifyRequest == null) {
+          log.error("HIP consent notification details not found in request log for consentId: " + consentId);
+          return Collections.singletonList(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+      }
       HIPHealthInformationRequest hipHealthInformationRequest =
           (HIPHealthInformationRequest)
               requestLog.getRequestDetails().get(FieldIdentifiers.HEALTH_INFORMATION_REQUEST);
+      if (hipHealthInformationRequest == null) {
+          log.error("HIP health information request details not found in request log for consentId: " + consentId);
+          return Collections.singletonList(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+      }
       List<HealthInformationPushRequest> healthInformationPushRequestList =
           fetchHealthInformationPushRequest(
               hipNotifyRequest, hipHealthInformationRequest, healthInformationBundleResponse);
@@ -372,13 +392,21 @@ public class HIPHealthInformationV3Service implements HIPHealthInformationV3Inte
     String healthInformationStatus = allSuccess ? "DELIVERED" : "ERRORED";
     String sessionStatus = allSuccess ? "TRANSFERRED" : "FAILED";
 
+    RequestLog requestLog = requestLogV3Service
+        .findByConsentId(
+            consentId, GatewayConstants.HIP, headers.getFirst(GatewayConstants.X_HIP_ID));
+    if (requestLog == null) {
+        log.error("Request log not found for consentId: " + consentId);
+        return;
+    }
     HIPNotifyRequest hipNotifyRequest =
         (HIPNotifyRequest)
-            requestLogV3Service
-                .findByConsentId(
-                    consentId, GatewayConstants.HIP, headers.getFirst(GatewayConstants.X_HIP_ID))
-                .getRequestDetails()
+            requestLog.getRequestDetails()
                 .get(FieldIdentifiers.HIP_NOTIFY_REQUEST);
+    if (hipNotifyRequest == null) {
+        log.error("HIP consent notification details not found in request log for consentId: " + consentId);
+        return;
+    }
     List<ConsentCareContexts> listOfCareContexts =
         hipNotifyRequest.getNotification().getConsentDetail().getCareContexts();
     List<HealthInformationStatusResponse> healthInformationStatusResponseList = new ArrayList<>();

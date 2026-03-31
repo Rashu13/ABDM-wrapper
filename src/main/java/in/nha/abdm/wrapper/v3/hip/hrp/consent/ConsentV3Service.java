@@ -115,7 +115,9 @@ public class ConsentV3Service implements ConsentV3Interface {
               + ex.getMessage()
               + " unwrapped exception: "
               + Exceptions.unwrap(ex);
-      log.debug(error);
+      log.error(error);
+      requestLogV3Service.dataTransferNotify(
+          hipNotifyRequest, RequestStatus.HIP_ON_NOTIFY_ERROR, hipOnNotifyRequest, headers);
     }
   }
 
