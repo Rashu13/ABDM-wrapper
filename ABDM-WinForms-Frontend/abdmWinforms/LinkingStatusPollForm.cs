@@ -11,15 +11,19 @@ namespace abdmWinforms
     public partial class LinkingStatusPollForm : Form
     {
         private readonly string _requestId;
+        private readonly string _abhaAddress;
+        private readonly string _patientName;
         private readonly AbdmService _abdmService;
         private Timer _pollTimer;
         private int _pollTicks = 0;
         private bool _isProcessing = false;
 
-        public LinkingStatusPollForm(string requestId)
+        public LinkingStatusPollForm(string requestId, string abhaAddress = "", string patientName = "")
         {
             InitializeComponent();
             _requestId = requestId;
+            _abhaAddress = abhaAddress;
+            _patientName = patientName;
             _abdmService = new AbdmService();
             SetupTimer();
         }
@@ -48,8 +52,6 @@ namespace abdmWinforms
                 lblStatus.Text = $"Checking status... (Attempt {_pollTicks})";
                 string jsonResponse = await _abdmService.GetLinkStatusAsync(_requestId);
                 
-                // Status mapping based on Wrapper logs
-                // Expecting structure like: {"requestId":"...","status":"AUTH_CONFIRM_ACCEPTED", "error":null}
                 var response = JsonConvert.DeserializeObject<dynamic>(jsonResponse);
                 string status = response?.status?.ToString();
 
@@ -57,14 +59,27 @@ namespace abdmWinforms
 
                 if (string.IsNullOrEmpty(status)) return;
 
-                if (status == "CARE_CONTEXT_LINKED" || status == "COMPLETED" || status == "SUCCESS")
+                bool isSuccess = status.ToUpper().Contains("LINKED") || 
+                                status.ToUpper().Contains("SUCCESS") || 
+                                status.ToUpper().Contains("COMPLETED");
+
+                if (isSuccess)
                 {
                     _pollTimer.Stop();
-                    MessageBox.Show("Records linked successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    var diagResult = MessageBox.Show("Records linked successfully! Do you want to write a prescription now?", "Success", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                    
+                    if (diagResult == DialogResult.Yes)
+                    {
+                        using (var prescriptionForm = new PrescriptionForm(_abhaAddress, _patientName))
+                        {
+                            prescriptionForm.ShowDialog(this);
+                        }
+                    }
+                    
                     this.DialogResult = DialogResult.OK;
                     this.Close();
                 }
-                else if (status.Contains("ERROR") || status.Contains("FAILED"))
+                else if (status.ToUpper().Contains("ERROR") || status.ToUpper().Contains("FAILED"))
                 {
                     _pollTimer.Stop();
                     MessageBox.Show($"Linking failed: {status}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -79,7 +94,7 @@ namespace abdmWinforms
             finally
             {
                 _isProcessing = false;
-                if (_pollTicks > 40) // Timeout after ~2 mins
+                if (_pollTicks > 40)
                 {
                     _pollTimer.Stop();
                     MessageBox.Show("Request timeout. Please check your internet or the ABHA app.", "Timeout", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -98,7 +113,6 @@ namespace abdmWinforms
 
             lblCurrentStep.Text = status.Replace("_", " ");
             
-            // Rich Micro-interaction: Change color based on step
             if (status.Contains("ACCEPTED")) lblCurrentStep.ForeColor = Color.SkyBlue;
             else if (status.Contains("GENERATED")) lblCurrentStep.ForeColor = Color.Gold;
             else if (status.Contains("LINKED")) lblCurrentStep.ForeColor = Color.LimeGreen;

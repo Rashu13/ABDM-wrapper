@@ -18,6 +18,18 @@ services:
           cpus: '0.5'
           memory: 512M
 
+  fhir-mapper:
+    build: 
+      context: ./fhir-mapper
+    image: fhir-mapper
+    ports:
+      - '8085:8085'
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
   mongodb:
     image: mongodb/mongodb-community-server:latest
     ports:

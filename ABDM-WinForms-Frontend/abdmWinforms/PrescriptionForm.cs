@@ -1,120 +1,79 @@
 using ABDM_WinForms_Frontend;
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
-using System.Drawing.Printing;
 using System.Drawing;
+using System.Windows.Forms;
 
 namespace abdmWinforms
 {
     public partial class PrescriptionForm : Form
     {
-        private readonly AbdmService _abdmService;
         private readonly string _abhaAddress;
+        private readonly string _patientName;
+        private readonly AbdmService _abdmService;
 
         public PrescriptionForm(string abhaAddress, string patientName)
         {
             InitializeComponent();
-            _abdmService = new AbdmService();
             _abhaAddress = abhaAddress;
-
-            lblPatientName.Text = patientName;
-            lblPatientAbha.Text = abhaAddress;
+            _patientName = patientName;
+            _abdmService = new AbdmService();
+            
+            lblAbha.Text = $"ABHA: {_abhaAddress}";
+            lblPatient.Text = $"Patient: {_patientName}";
         }
 
-        private async void btnSaveAndSend_Click(object sender, EventArgs e)
+        private async void btnPushToAbdm_Click(object sender, EventArgs e)
         {
             try
             {
-                btnSaveAndSend.Enabled = false;
-                btnSaveAndSend.Text = "LINKING...";
+                btnPushToAbdm.Enabled = false;
+                btnPushToAbdm.Text = "PUSHING...";
 
-                // Collect medicines from the Grid
-                var medicinesList = new List<MedicineModel>();
+                var medicines = new List<object>();
                 foreach (DataGridViewRow row in dgvMedicines.Rows)
                 {
                     if (row.Cells[0].Value != null)
                     {
-                        medicinesList.Add(new MedicineModel
+                        medicines.Add(new
                         {
                             name = row.Cells[0].Value.ToString(),
-                            dosage = row.Cells[1].Value?.ToString() ?? "as directed",
-                            duration = row.Cells[2].Value?.ToString() ?? "-"
+                            dosage = row.Cells[1].Value?.ToString() ?? "1-0-1",
+                            duration = row.Cells[2].Value?.ToString() ?? "5 days"
                         });
                     }
                 }
 
-                if (medicinesList.Count == 0)
-                {
-                    MessageBox.Show("Please add at least one medicine.");
-                    return;
-                }
-
-                // Prepare Prescription Object
-                var prescription = new PrescriptionModel
+                var prescription = new
                 {
                     abhaAddress = _abhaAddress,
-                    patientName = lblPatientName.Text,
+                    patientName = _patientName,
                     date = DateTime.Now.ToString("yyyy-MM-dd"),
-                    medicines = medicinesList,
-                    hipId = GlobalConfig.HipName
+                    medicines = medicines,
+                    hipId = GlobalConfig.HipId
                 };
 
-                // Push to Backend for storage & FHIR conversion
-                string response = await _abdmService.SavePrescriptionAsync(prescription);
-
-                MessageBox.Show(response, "ABDM M3 Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                this.Close();
+                var response = await _abdmService.SavePrescriptionAsync(prescription);
+                
+                if (response.Contains("Successfully"))
+                {
+                    MessageBox.Show("Prescription Pushed and FHIR Bundle Generated!", "ABDM Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    this.Close();
+                }
+                else
+                {
+                    MessageBox.Show("Failed to push prescription: " + response, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Failed to save: " + ex.Message);
+                MessageBox.Show("Error: " + ex.Message);
             }
             finally
             {
-                btnSaveAndSend.Enabled = true;
-                btnSaveAndSend.Text = "SAVE & PUSH TO ABDM";
+                btnPushToAbdm.Enabled = true;
+                btnPushToAbdm.Text = "PUSH TO ABDM";
             }
-        }
-
-        private void btnPrint_Click(object sender, EventArgs e)
-        {
-            PrintDocument pd = new PrintDocument();
-            pd.PrintPage += new PrintPageEventHandler(this.pd_PrintPage);
-
-            PrintPreviewDialog ppd = new PrintPreviewDialog();
-            ppd.Document = pd;
-            ppd.ShowDialog();
-        }
-
-        private void pd_PrintPage(object sender, PrintPageEventArgs e)
-        {
-            Graphics g = e.Graphics;
-            Font fontTitle = new Font("Arial", 16, FontStyle.Bold);
-            Font fontSubTitle = new Font("Arial", 12, FontStyle.Bold);
-            Font fontBody = new Font("Arial", 10);
-
-            float y = 50;
-            g.DrawString(GlobalConfig.HipName, fontTitle, Brushes.Black, 50, y); y += 30;
-            g.DrawString("PRESCRIPTION", fontSubTitle, Brushes.Gray, 50, y); y += 40;
-
-            g.DrawString("Patient: " + lblPatientName.Text, fontBody, Brushes.Black, 50, y); y += 20;
-            g.DrawString("ABHA: " + lblPatientAbha.Text, fontBody, Brushes.Black, 50, y); y += 20;
-            g.DrawString("Date: " + DateTime.Now.ToShortDateString(), fontBody, Brushes.Black, 50, y); y += 40;
-
-            g.DrawString("Medicines:", fontSubTitle, Brushes.Black, 50, y); y += 30;
-
-            foreach (DataGridViewRow row in dgvMedicines.Rows)
-            {
-                if (row.Cells[0].Value != null)
-                {
-                    string line = "- " + row.Cells[0].Value.ToString() + " (" + row.Cells[1].Value?.ToString() + ") for " + row.Cells[2].Value?.ToString();
-                    g.DrawString(line, fontBody, Brushes.Black, 70, y); y += 20;
-                }
-            }
-
-            y += 50;
-            g.DrawString("Signature: ________________", fontBody, Brushes.Black, 500, y);
         }
     }
 }

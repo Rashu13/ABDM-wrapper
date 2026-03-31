@@ -87,7 +87,7 @@ namespace abdmWinforms
                     }
 
                     // Open the modern polling screen instead of the old OTP screen
-                    using (var pollForm = new LinkingStatusPollForm(linkReq.requestId))
+                    using (var pollForm = new LinkingStatusPollForm(linkReq.requestId, patient.abhaAddress, patient.name))
                     {
                         var result = pollForm.ShowDialog(this);
                         if (result == DialogResult.OK)
