@@ -49,8 +49,20 @@ import reactor.core.Exceptions;
 @Profile(WrapperConstants.V3)
 @Service
 public class HIPLinkV3Service implements HIPLinkV3Interface {
-  @Autowired PatientV3Service patientV3Service;
-  @Autowired in.nha.abdm.wrapper.v3.common.logger.ActivityLogService activityLogService;
+  @Autowired
+  PatientRepo patientRepo;
+  @Autowired
+  RequestV3Manager requestV3Manager;
+  @Autowired
+  LinkTokenService linkTokenService;
+  @Autowired
+  RequestLogV3Service requestLogV3Service;
+  @Autowired
+  HIPV3Client hipClient;
+  @Autowired
+  PatientV3Service patientV3Service;
+  @Autowired
+  in.nha.abdm.wrapper.v3.common.logger.ActivityLogService activityLogService;
 
   @Value("${generateLinkTokenPath}")
   public String generateLinkTokenPath;
@@ -64,14 +76,17 @@ public class HIPLinkV3Service implements HIPLinkV3Interface {
   private static final Logger log = LogManager.getLogger(HIPLinkV3Service.class);
 
   /**
-   * <B>hipInitiatedLinking</B>
+   * <B>hipInitiatedLinkingnn</B>
    *
-   * <p>1)Build the required body for /auth/init including abhaAddress.<br>
+   * <p>
+   * 1)Build the required body for /auth/init including abhaAddress.<br>
    * 2)Stores the request of linkRecordsRequest into requestLog.<br>
    * 3)makes a POST request to /auth/init API
    *
-   * @param linkRecordsV3Request Response which has authMode, patient details and careContexts.
-   * @return it returns the requestId and status of initiation to the Facility for future tracking
+   * @param linkRecordsV3Request Response which has authMode, patient details and
+   *                             careContexts.
+   * @return it returns the requestId and status of initiation to the Facility for
+   *         future tracking
    */
   public FacadeV3Response addCareContexts(LinkRecordsV3Request linkRecordsV3Request) {
     Patient patient = getPatientOrNull(linkRecordsV3Request);
@@ -82,9 +97,8 @@ public class HIPLinkV3Service implements HIPLinkV3Interface {
           "Patient not found to generate linkToken");
     }
 
-    String linkToken =
-        linkTokenService.getLinkToken(
-            patient.getAbhaAddress(), linkRecordsV3Request.getRequesterId());
+    String linkToken = linkTokenService.getLinkToken(
+        patient.getAbhaAddress(), linkRecordsV3Request.getRequesterId());
     if (linkToken == null) {
       if (linkTokenService.isRequestPending(
           patient.getAbhaAddress(), linkRecordsV3Request.getRequesterId())) {
@@ -96,11 +110,10 @@ public class HIPLinkV3Service implements HIPLinkV3Interface {
       return generateLinkToken(patient, linkRecordsV3Request);
     }
 
-    List<CareContext> sameCareContexts =
-        patientV3Service.getSameCareContexts(
-            linkRecordsV3Request.getAbhaAddress(),
-            linkRecordsV3Request.getRequesterId(),
-            linkRecordsV3Request.getCareContexts());
+    List<CareContext> sameCareContexts = patientV3Service.getSameCareContexts(
+        linkRecordsV3Request.getAbhaAddress(),
+        linkRecordsV3Request.getRequesterId(),
+        linkRecordsV3Request.getCareContexts());
 
     if (sameCareContexts != null && !sameCareContexts.isEmpty()) {
       activityLogService.logActivity("Care contexts already linked for: " + linkRecordsV3Request.getAbhaAddress());
@@ -113,8 +126,7 @@ public class HIPLinkV3Service implements HIPLinkV3Interface {
 
   // Checking the patient, if not found fetching from HIP
   private Patient getPatientOrNull(LinkRecordsV3Request request) {
-    Patient patient =
-        patientRepo.findByAbhaAddress(request.getAbhaAddress(), request.getRequesterId());
+    Patient patient = patientRepo.findByAbhaAddress(request.getAbhaAddress(), request.getRequesterId());
     return patient != null
         ? patient
         : patientV3Service.getPatient(request.getAbhaAddress(), request.getRequesterId());
@@ -133,15 +145,13 @@ public class HIPLinkV3Service implements HIPLinkV3Interface {
         .map(
             entry -> {
               String hiType = entry.getKey();
-              List<CareContext> careContexts =
-                  entry.getValue().stream()
-                      .map(
-                          context ->
-                              CareContext.builder()
-                                  .display(context.getDisplay())
-                                  .referenceNumber(context.getReferenceNumber())
-                                  .build())
-                      .collect(Collectors.toList());
+              List<CareContext> careContexts = entry.getValue().stream()
+                  .map(
+                      context -> CareContext.builder()
+                          .display(context.getDisplay())
+                          .referenceNumber(context.getReferenceNumber())
+                          .build())
+                  .collect(Collectors.toList());
 
               return PatientCareContextHIType.builder()
                   .referenceNumber(patient.getPatientReference())
@@ -158,12 +168,11 @@ public class HIPLinkV3Service implements HIPLinkV3Interface {
   private FacadeV3Response sendAddCareContextsRequest(
       LinkRecordsV3Request request, AddCareContexts addCareContexts, String linkToken) {
     try {
-      ResponseEntity<GenericV3Response> response =
-          requestV3Manager.fetchResponseFromGateway(
-              addCareContextsPath,
-              addCareContexts,
-              Utils.getLinkTokenHeaders(
-                  request.getRequesterId(), request.getRequestId(), linkToken));
+      ResponseEntity<GenericV3Response> response = requestV3Manager.fetchResponseFromGateway(
+          addCareContextsPath,
+          addCareContexts,
+          Utils.getLinkTokenHeaders(
+              request.getRequesterId(), request.getRequestId(), linkToken));
 
       if (response.getStatusCode() == HttpStatus.ACCEPTED) {
         requestLogV3Service.persistHipLinkRequest(
@@ -184,15 +193,13 @@ public class HIPLinkV3Service implements HIPLinkV3Interface {
   private FacadeV3Response processAddCareContexts(
       LinkRecordsV3Request request, Patient patient, String linkToken) {
     Map<String, List<CareContext>> groupedByHiType = groupCareContextsByHiType(request);
-    List<PatientCareContextHIType> patientCareContexts =
-        buildPatientCareContextHIType(patient, groupedByHiType);
+    List<PatientCareContextHIType> patientCareContexts = buildPatientCareContextHIType(patient, groupedByHiType);
 
-    AddCareContexts addCareContexts =
-        AddCareContexts.builder()
-            .abhaNumber(getAbhaNumber(linkToken))
-            .abhaAddress(patient.getAbhaAddress())
-            .patient(patientCareContexts)
-            .build();
+    AddCareContexts addCareContexts = AddCareContexts.builder()
+        .abhaNumber(getAbhaNumber(linkToken))
+        .abhaAddress(patient.getAbhaAddress())
+        .patient(patientCareContexts)
+        .build();
 
     return sendAddCareContextsRequest(request, addCareContexts, linkToken);
   }
@@ -216,11 +223,10 @@ public class HIPLinkV3Service implements HIPLinkV3Interface {
   }
 
   private FacadeV3Response handleAddCareContextError(LinkRecordsV3Request request) {
-    ErrorResponse errorResponse =
-        ErrorResponse.builder()
-            .code(GatewayConstants.ERROR_CODE)
-            .message("Unable to link care contexts")
-            .build();
+    ErrorResponse errorResponse = ErrorResponse.builder()
+        .code(GatewayConstants.ERROR_CODE)
+        .message("Unable to link care contexts")
+        .build();
     requestLogV3Service.persistHipLinkRequest(
         request, RequestStatus.ADD_CARE_CONTEXT_ERROR, ErrorHandler.getErrors(errorResponse));
     return FacadeV3Response.builder()
@@ -238,11 +244,10 @@ public class HIPLinkV3Service implements HIPLinkV3Interface {
   }
 
   private FacadeV3Response handleGeneralException(LinkRecordsV3Request request, Exception ex) {
-    String errorMessage =
-        "Exception while Initiating HIP Linking: "
-            + ex.getMessage()
-            + " unwrapped exception: "
-            + Exceptions.unwrap(ex);
+    String errorMessage = "Exception while Initiating HIP Linking: "
+        + ex.getMessage()
+        + " unwrapped exception: "
+        + Exceptions.unwrap(ex);
     log.debug(errorMessage);
     requestLogV3Service.persistHipLinkRequest(
         request, RequestStatus.ADD_CARE_CONTEXT_ERROR, errorMessage);
@@ -251,26 +256,24 @@ public class HIPLinkV3Service implements HIPLinkV3Interface {
 
   public FacadeV3Response generateLinkToken(
       Patient patient, LinkRecordsV3Request linkRecordsV3Request) {
-    GenerateTokenRequest generateTokenRequest =
-        GenerateTokenRequest.builder()
-            .abhaAddress(patient.getAbhaAddress())
-            .abhaNumber(patient.getAbhaNumber())
-            .gender(patient.getGender())
-            .name(patient.getName())
-            .yearOfBirth(Integer.parseInt(patient.getDateOfBirth().substring(0, 4)))
-            .build();
+    GenerateTokenRequest generateTokenRequest = GenerateTokenRequest.builder()
+        .abhaAddress(patient.getAbhaAddress())
+        .abhaNumber(patient.getAbhaNumber())
+        .gender(patient.getGender())
+        .name(patient.getName())
+        .yearOfBirth(Integer.parseInt(patient.getDateOfBirth().substring(0, 4)))
+        .build();
     String generateTokenRequestId = UUID.randomUUID().toString();
     try {
       linkTokenService.saveLinkTokenRequestId(
           patient.getAbhaAddress(), patient.getHipId(), generateTokenRequestId);
-      ResponseEntity<GenericV3Response> response =
-          requestV3Manager.fetchResponseFromGateway(
-              generateLinkTokenPath,
-              generateTokenRequest,
-              Utils.getCustomHeaders(
-                  GatewayConstants.X_HIP_ID,
-                  linkRecordsV3Request.getRequesterId(),
-                  generateTokenRequestId));
+      ResponseEntity<GenericV3Response> response = requestV3Manager.fetchResponseFromGateway(
+          generateLinkTokenPath,
+          generateTokenRequest,
+          Utils.getCustomHeaders(
+              GatewayConstants.X_HIP_ID,
+              linkRecordsV3Request.getRequesterId(),
+              generateTokenRequestId));
       log.debug(generateLinkTokenPath + " : generateTokenRequest: " + response.getStatusCode());
       if (response.getStatusCode() == HttpStatus.ACCEPTED) {
         activityLogService.logActivity("LinkToken request accepted for: " + patient.getAbhaAddress());
@@ -280,11 +283,10 @@ public class HIPLinkV3Service implements HIPLinkV3Interface {
             .message(RequestStatus.LINK_TOKEN_REQUEST_ACCEPTED.getValue())
             .build();
       } else if (Objects.nonNull(response.getBody())) {
-        ErrorResponse errorResponse =
-            ErrorResponse.builder()
-                .code(GatewayConstants.ERROR_CODE)
-                .message("Unable to generate linkToken")
-                .build();
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .code(GatewayConstants.ERROR_CODE)
+            .message("Unable to generate linkToken")
+            .build();
         requestLogV3Service.saveLinkTokenRequest(
             linkRecordsV3Request,
             generateTokenRequestId,
@@ -319,11 +321,10 @@ public class HIPLinkV3Service implements HIPLinkV3Interface {
           .errors(ErrorHandler.getErrors(error))
           .build();
     } catch (Exception ex) {
-      String error =
-          "Exception while Generation of Link Token for HIP Linking: "
-              + ex.getMessage()
-              + " unwrapped exception: "
-              + Exceptions.unwrap(ex);
+      String error = "Exception while Generation of Link Token for HIP Linking: "
+          + ex.getMessage()
+          + " unwrapped exception: "
+          + Exceptions.unwrap(ex);
       log.debug(error);
       return FacadeV3Response.builder()
           .httpStatusCode(HttpStatus.BAD_REQUEST)
@@ -358,30 +359,27 @@ public class HIPLinkV3Service implements HIPLinkV3Interface {
           onGenerateTokenResponse.getLinkToken(),
           Objects.requireNonNull(headers.getFirst(GatewayConstants.X_HIP_ID)));
       // Fetching the GenerateLinkToken request
-      RequestLog requestLog =
-          requestLogV3Service.getLogsByAbhaAddress(
-              onGenerateTokenResponse.getAbhaAddress(),
-              Objects.requireNonNull(headers.getFirst(GatewayConstants.X_HIP_ID)));
+      RequestLog requestLog = requestLogV3Service.getLogsByAbhaAddress(
+          onGenerateTokenResponse.getAbhaAddress(),
+          Objects.requireNonNull(headers.getFirst(GatewayConstants.X_HIP_ID)));
       if (Objects.isNull(requestLog)) {
         log.error("Request log not found for on-linkToken generation to initiate linking");
         return;
       }
       log.info("RequestLog: " + requestLog);
 
-      LinkRecordsV3Request linkRecordsV3Request =
-          (LinkRecordsV3Request)
-              requestLog.getRequestDetails().get(FieldIdentifiers.LINK_RECORDS_REQUEST);
+      LinkRecordsV3Request linkRecordsV3Request = (LinkRecordsV3Request) requestLog.getRequestDetails()
+          .get(FieldIdentifiers.LINK_RECORDS_REQUEST);
       log.info("Initiating careContext Linking");
       FacadeV3Response facadeV3Response = addCareContexts(linkRecordsV3Request);
     } catch (WebClientResponseException.BadRequest ex) {
       Object error = BadRequestHandler.getError(ex);
       log.error("HTTP error {}: {}", ex.getStatusCode(), error);
     } catch (Exception ex) {
-      String error =
-          "Exception while Generation of Link Token for HIP Linking: "
-              + ex.getMessage()
-              + " unwrapped exception: "
-              + Exceptions.unwrap(ex);
+      String error = "Exception while Generation of Link Token for HIP Linking: "
+          + ex.getMessage()
+          + " unwrapped exception: "
+          + Exceptions.unwrap(ex);
       log.error(error);
     }
   }
@@ -392,7 +390,8 @@ public class HIPLinkV3Service implements HIPLinkV3Interface {
   }
 
   /**
-   * Notifying ABDM gateway that these careContexts with HiTypes were linked with abhaAddress.
+   * Notifying ABDM gateway that these careContexts with HiTypes were linked with
+   * abhaAddress.
    *
    * @param linkRecordsV3Request
    */
@@ -409,28 +408,25 @@ public class HIPLinkV3Service implements HIPLinkV3Interface {
           .build();
     }
     for (CareContext careContext : careContexts) {
-      PatientNotification patientNotification =
-          PatientNotification.builder()
-              .patient(PatientId.builder().id(linkRecordsV3Request.getAbhaAddress()).build())
-              .hip(ConsentHIP.builder().id(linkRecordsV3Request.getRequesterId()).build())
-              .hiTypes(Collections.singletonList(careContext.getHiType()))
-              .date(Utils.getCurrentTimeStamp())
-              .careContext(
-                  ConsentCareContexts.builder()
-                      .careContextReference(careContext.getReferenceNumber())
-                      .patientReference(patient.getPatientReference())
-                      .build())
-              .build();
-      LinkContextNotify linkContextNotify =
-          LinkContextNotify.builder().notification(patientNotification).build();
+      PatientNotification patientNotification = PatientNotification.builder()
+          .patient(PatientId.builder().id(linkRecordsV3Request.getAbhaAddress()).build())
+          .hip(ConsentHIP.builder().id(linkRecordsV3Request.getRequesterId()).build())
+          .hiTypes(Collections.singletonList(careContext.getHiType()))
+          .date(Utils.getCurrentTimeStamp())
+          .careContext(
+              ConsentCareContexts.builder()
+                  .careContextReference(careContext.getReferenceNumber())
+                  .patientReference(patient.getPatientReference())
+                  .build())
+          .build();
+      LinkContextNotify linkContextNotify = LinkContextNotify.builder().notification(patientNotification).build();
       log.debug(linkContextNotifyPath + " : " + linkContextNotify.toString());
       try {
-        ResponseEntity<GenericV3Response> response =
-            requestV3Manager.fetchResponseFromGateway(
-                linkContextNotifyPath,
-                linkContextNotify,
-                Utils.getCustomHeaders(
-                    GatewayConstants.X_HIP_ID, patient.getHipId(), UUID.randomUUID().toString()));
+        ResponseEntity<GenericV3Response> response = requestV3Manager.fetchResponseFromGateway(
+            linkContextNotifyPath,
+            linkContextNotify,
+            Utils.getCustomHeaders(
+                GatewayConstants.X_HIP_ID, patient.getHipId(), UUID.randomUUID().toString()));
         log.debug(linkContextNotifyPath + " : linkContextNotify: " + response.getStatusCode());
       } catch (WebClientResponseException.BadRequest ex) {
         ErrorResponse error = ex.getResponseBodyAs(ErrorV3Response.class).getError();
@@ -444,12 +440,11 @@ public class HIPLinkV3Service implements HIPLinkV3Interface {
             .message(RequestStatus.CARECONTEXT_NOTIFY_ERROR.getValue())
             .build();
       } catch (Exception e) {
-        String error =
-            linkContextNotifyPath
-                + " : context/notify: Error while performing updation of careContexts by gateway: "
-                + e.getMessage()
-                + " unwrapped exception: "
-                + Exceptions.unwrap(e);
+        String error = linkContextNotifyPath
+            + " : context/notify: Error while performing updation of careContexts by gateway: "
+            + e.getMessage()
+            + " unwrapped exception: "
+            + Exceptions.unwrap(e);
         log.error(error);
         requestLogV3Service.persistHipLinkRequest(
             linkRecordsV3Request,
