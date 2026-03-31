@@ -655,6 +655,10 @@ public class RequestLogV3Service {
     mongoTemplate.updateFirst(query, update, RequestLog.class);
   }
 
+  public RequestLog getLogsByRequestId(String linkTokenRequestId) {
+    return logsRepo.findByLinkTokenRequestId(linkTokenRequestId);
+  }
+
   public RequestLog getLogsByAbhaAddress(String abhaAddress, String hipId) {
     LinkToken linkToken = linkTokenRepo.findByAbhaAddress(abhaAddress, hipId);
     if (Objects.isNull(linkToken)) {

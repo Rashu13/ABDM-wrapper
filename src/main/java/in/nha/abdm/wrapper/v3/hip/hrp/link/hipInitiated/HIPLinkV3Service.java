@@ -275,7 +275,12 @@ public class HIPLinkV3Service implements HIPLinkV3Interface {
               linkRecordsV3Request.getRequesterId(),
               generateTokenRequestId));
       log.debug(generateLinkTokenPath + " : generateTokenRequest: " + response.getStatusCode());
-      if (response.getStatusCode() == HttpStatus.ACCEPTED) {
+        if (response.getStatusCode() == HttpStatus.ACCEPTED) {
+        requestLogV3Service.saveLinkTokenRequest(
+            linkRecordsV3Request,
+            generateTokenRequestId,
+            RequestStatus.LINK_TOKEN_REQUEST_ACCEPTED,
+            null);
         activityLogService.logActivity("LinkToken request accepted for: " + patient.getAbhaAddress());
         return FacadeV3Response.builder()
             .httpStatusCode(response.getStatusCode())
@@ -358,10 +363,9 @@ public class HIPLinkV3Service implements HIPLinkV3Interface {
           onGenerateTokenResponse.getAbhaAddress(),
           onGenerateTokenResponse.getLinkToken(),
           Objects.requireNonNull(headers.getFirst(GatewayConstants.X_HIP_ID)));
-      // Fetching the GenerateLinkToken request
-      RequestLog requestLog = requestLogV3Service.getLogsByAbhaAddress(
-          onGenerateTokenResponse.getAbhaAddress(),
-          Objects.requireNonNull(headers.getFirst(GatewayConstants.X_HIP_ID)));
+      // Fetching the GenerateLinkToken request using the requestId from the response
+      RequestLog requestLog = requestLogV3Service.getLogsByRequestId(
+          onGenerateTokenResponse.getResponse().getRequestId());
       if (Objects.isNull(requestLog)) {
         log.error("Request log not found for on-linkToken generation to initiate linking");
         return;
