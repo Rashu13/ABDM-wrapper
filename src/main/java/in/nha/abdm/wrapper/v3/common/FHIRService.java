@@ -61,7 +61,7 @@ public class FHIRService {
             Map<String, Object> m = new HashMap<>();
             m.put("medicine", med.getName());
             m.put("dosage", med.getDosage());
-            m.put("timing", "1-0-1"); // Default if not provided
+            m.put("timing", "1-1-D"); // Valid format: frequency-period-unit (e.g., 1-1-D for once a day)
             m.put("route", "Oral");
             m.put("method", "swallow");
             m.put("additionalInstructions", "Take after meals");
