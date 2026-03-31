@@ -30,6 +30,16 @@ services:
           cpus: '0.5'
           memory: 512M
 
+  sample-hip:
+    build:
+      context: sample-hip
+      dockerfile: ./Dockerfile
+    image: sample-hip
+    ports:
+      - '8081:8081'
+    volumes:
+      - /home/nhadmin/NHA/FHIR:/FHIR
+
   mongodb:
     image: mongodb/mongodb-community-server:latest
     ports:
