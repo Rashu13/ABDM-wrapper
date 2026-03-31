@@ -30,15 +30,15 @@ public class FHIRService {
     public Mono<String> generatePrescriptionBundle(Prescription prescription, String patientGender, String patientBirthDate) {
         Map<String, Object> request = new HashMap<>();
         request.put("bundleType", "PrescriptionRecord");
-        request.put("careContextReference", "V-" + System.currentTimeMillis()); 
+        request.put("careContextReference", prescription.getCareContextReference() != null ? prescription.getCareContextReference() : "V-" + System.currentTimeMillis()); 
         request.put("authoredOn", LocalDate.now().toString()); // yyyy-MM-dd format
         
         // Patient details
         Map<String, Object> patient = new HashMap<>();
         patient.put("name", prescription.getPatientName());
-        patient.put("patientReference", prescription.getAbhaAddress());
+        patient.put("patientReference", prescription.getPatientReference() != null ? prescription.getPatientReference() : prescription.getAbhaAddress());
         patient.put("gender", patientGender != null ? patientGender : "male");
-        patient.put("birthDate", patientBirthDate != null ? patientBirthDate : "1990-01-01");
+        patient.put("birthDate", patientBirthDate != null ? patientBirthDate : "1994-03-27");
         request.put("patient", patient);
 
         // Practitioner (Doctor) - Defaulting to Midha Hospital context if missing

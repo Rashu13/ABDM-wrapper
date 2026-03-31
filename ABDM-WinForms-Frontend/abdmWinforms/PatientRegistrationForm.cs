@@ -93,12 +93,14 @@ namespace abdmWinforms
                         linkRefNumber = (string)dynResponse.linkRefNumber;
                     } catch { }
 
-                    // Capture the referenceNumbers from our link request
+                    // Capture the referenceNumbers and demographics from our link request
                     string refNo = linkReq.careContexts[0].referenceNumber;
                     string patRef = patient.patientReference;
+                    string gender = patient.gender;
+                    string dob = patient.dateOfBirth;
 
                     // Open the modern polling screen
-                    using (var pollForm = new LinkingStatusPollForm(linkReq.requestId, patient.abhaAddress, patient.name, refNo, patRef))
+                    using (var pollForm = new LinkingStatusPollForm(linkReq.requestId, patient.abhaAddress, patient.name, refNo, patRef, gender, dob))
                     {
                         var result = pollForm.ShowDialog(this);
                         if (result == DialogResult.OK)

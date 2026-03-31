@@ -29,7 +29,7 @@ public class PrescriptionController {
     mongoTemplate.save(prescription);
     
     // Trigger FHIR generation (Asynchronously)
-    fhirService.generatePrescriptionBundle(prescription, "male", "1990-01-01")
+    fhirService.generatePrescriptionBundle(prescription, prescription.getGender(), prescription.getBirthDate())
         .subscribe(bundle -> {
             logService.logActivity("FHIR SUCCESS: Generated bundle for " + prescription.getAbhaAddress());
             // M3 Flow: Push the data notification to the Gateway.

@@ -14,5 +14,8 @@ import lombok.NoArgsConstructor;
 @Builder
 public class HealthInformationBundleRequest {
   private String hipId;
+  private String patientName;
+  private String gender;
+  private String birthDate;
   private List<ConsentCareContexts> careContextsWithPatientReferences;
 }

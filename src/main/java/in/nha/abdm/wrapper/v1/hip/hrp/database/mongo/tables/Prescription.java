@@ -19,6 +19,8 @@ public class Prescription {
   private String abhaAddress;
   private String patientName;
   private String date;
+  private String gender;
+  private String birthDate;
   private String careContextReference;
   private String patientReference;
   private List<Medicine> medicines;
