@@ -37,7 +37,15 @@ public class FHIRService {
         Map<String, Object> patient = new HashMap<>();
         patient.put("name", prescription.getPatientName());
         patient.put("patientReference", prescription.getPatientReference() != null ? prescription.getPatientReference() : prescription.getAbhaAddress());
-        patient.put("gender", patientGender != null ? patientGender : "male");
+        
+        String mappedGender = "unknown";
+        if (patientGender != null) {
+            String g = patientGender.toLowerCase();
+            if (g.startsWith("m")) mappedGender = "male";
+            else if (g.startsWith("f")) mappedGender = "female";
+            else if (g.equals("other")) mappedGender = "other";
+        }
+        patient.put("gender", mappedGender);
         patient.put("birthDate", patientBirthDate != null ? patientBirthDate : "1994-03-27");
         request.put("patient", patient);
 
