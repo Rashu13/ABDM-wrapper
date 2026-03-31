@@ -2,6 +2,7 @@
 package in.nha.abdm.wrapper.v3.patient;
 
 import in.nha.abdm.wrapper.v1.hip.hrp.database.mongo.tables.Prescription;
+import in.nha.abdm.wrapper.v3.common.FHIRService;
 import in.nha.abdm.wrapper.v3.common.logger.ActivityLogService;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/v3/prescriptions")
 public class PrescriptionController {
+  private final MongoTemplate mongoTemplate;
+  private final ActivityLogService logService;
   private final FHIRService fhirService;
 
   public PrescriptionController(MongoTemplate mongoTemplate, ActivityLogService logService, FHIRService fhirService) {
