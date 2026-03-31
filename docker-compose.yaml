@@ -8,6 +8,10 @@ services:
       - '8082:8082'
     depends_on:
       - mongodb
+    environment:
+      - ABDM_CLIENT_ID=${ABDM_CLIENT_ID}
+      - ABDM_CLIENT_SECRET=${ABDM_CLIENT_SECRET}
+      - MONGODB_HOST=mongodb
     networks:
       - docker_network
     extra_hosts:
