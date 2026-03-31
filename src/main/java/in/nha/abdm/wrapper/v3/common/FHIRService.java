@@ -75,7 +75,7 @@ public class FHIRService {
         Map<String, Object> dummyDoc = new HashMap<>();
         dummyDoc.put("type", "Prescription");
         dummyDoc.put("contentType", "application/pdf");
-        dummyDoc.put("data", "JVBERi0xLjQKJSDi4u7yCjEgMCBvYmoKPDwNL0xlbmd0aCAyNgoNL0ZpbHRlciAvRmxhdGVEZWNvZGUKPj4Nc3RyZWFtCnicS0vMSeUCAA0SAnUKZW5kc3RyZWFtDWVuZG9iag0yIDAgb2JqCjw8DS9UeXBlIC9QYWdlcw0vQ291bnQgMQ0vS2lkcyBbIDMgMCBSIF0NPj4NZW5kb2JqDTMgMCBvYmoKPDwNL1R5cGUgL1BhZ2UNL1BhcmVudCAyIDAgUg0vUmVzb3VyY2VzIDw8DS9Gb250IDw8DS9GMSA0IDAgUg0++IDUgMCBSID4+DT4+DWVuZG9iag02IDAgb2JqCjw8DS9UeXBlIC9DYXRhbG9nDS9QYWdlcyAyIDAgUg0+Pg1lbmRvYmoNNyAwIG9iago8PA0vUHJvZHVjZXIgKGRvY3VtZW50cy5jb20pDS9DcmVhdGlvbkRhdGUgKEQ6MjAyNDA0MTIxMTU1MzcpDT4+DWVuZG9iag10cmFpbGVyCjw8DS9TaXplIDgNL1Jvb3QgNiAwIFINL0luZm8gNyAwIFINPj4Nc3RhcnR4cmVmDTY0MA0lJUVPRg=="); // Small valid PDF base64
+        dummyDoc.put("data", "JVBERi0xLjEKMSAwIG9iajw8L1R5cGUvQ2F0YWxvZy9QYWdlcyAyIDAgUj4+ZW5kb2JqIDIgMCBvYmo8PC9UeXBlL1BhZ2VzL0tpZHNbMyAwIFJdL0NvdW50IDE+PmVuZG9iagAzIDAgb2JqPDwvVHlwZS9QYWdlL01lZGlhQm94WzAgMCAzIDNdL1BhcmVudCAyIDAgUj4+ZW5kb2JqIHRyYWlsZXI8PC9Sb290IDEgMCBSPj4lJUVPRg==");
         docs.add(dummyDoc);
         request.put("documents", docs);
 
