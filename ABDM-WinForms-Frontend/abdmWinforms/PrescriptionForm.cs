@@ -57,8 +57,10 @@ namespace abdmWinforms
                 
                 if (response.Contains("Successfully"))
                 {
-                    MessageBox.Show("Prescription Pushed and FHIR Bundle Generated!", "ABDM Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    this.Close();
+                    MessageBox.Show("✅ SUCCESS: Prescription Pushed to ABDM! \n\nThe patient can now see this in their ABHA App.", "ABDM Milestone M3", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    dgvMedicines.Rows.Clear();
+                    btnPushToAbdm.Text = "PUSHED SUCCESSFULLY";
+                    btnPushToAbdm.BackColor = Color.LightGreen;
                 }
                 else
                 {
