@@ -10,13 +10,15 @@ namespace abdmWinforms
     {
         private readonly string _abhaAddress;
         private readonly string _patientName;
+        private readonly string _careContextReference;
         private readonly AbdmService _abdmService;
 
-        public PrescriptionForm(string abhaAddress, string patientName)
+        public PrescriptionForm(string abhaAddress, string patientName, string careContextReference = "")
         {
             InitializeComponent();
             _abhaAddress = abhaAddress;
             _patientName = patientName;
+            _careContextReference = careContextReference;
             _abdmService = new AbdmService();
             
             lblAbha.Text = $"ABHA: {_abhaAddress}";
@@ -49,6 +51,7 @@ namespace abdmWinforms
                     abhaAddress = _abhaAddress,
                     patientName = _patientName,
                     date = DateTime.Now.ToString("yyyy-MM-dd"),
+                    careContextReference = _careContextReference,
                     medicines = medicines,
                     hipId = GlobalConfig.HipId
                 };

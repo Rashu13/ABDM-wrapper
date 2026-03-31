@@ -93,8 +93,11 @@ namespace abdmWinforms
                         linkRefNumber = (string)dynResponse.linkRefNumber;
                     } catch { }
 
+                    // Capture the referenceNumber from our link request
+                    string refNo = linkReq.careContexts[0].referenceNumber;
+
                     // Open the modern polling screen
-                    using (var pollForm = new LinkingStatusPollForm(linkReq.requestId, patient.abhaAddress, patient.name))
+                    using (var pollForm = new LinkingStatusPollForm(linkReq.requestId, patient.abhaAddress, patient.name, refNo))
                     {
                         var result = pollForm.ShowDialog(this);
                         if (result == DialogResult.OK)

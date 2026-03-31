@@ -13,17 +13,19 @@ namespace abdmWinforms
         private readonly string _requestId;
         private readonly string _abhaAddress;
         private readonly string _patientName;
+        private readonly string _referenceNumber;
         private readonly AbdmService _abdmService;
         private Timer _pollTimer;
         private int _pollTicks = 0;
         private bool _isProcessing = false;
 
-        public LinkingStatusPollForm(string requestId, string abhaAddress = "", string patientName = "")
+        public LinkingStatusPollForm(string requestId, string abhaAddress = "", string patientName = "", string referenceNumber = "")
         {
             InitializeComponent();
             _requestId = requestId;
             _abhaAddress = abhaAddress;
             _patientName = patientName;
+            _referenceNumber = referenceNumber;
             _abdmService = new AbdmService();
             SetupTimer();
         }
@@ -70,7 +72,7 @@ namespace abdmWinforms
                     
                     if (diagResult == DialogResult.Yes)
                     {
-                        using (var prescriptionForm = new PrescriptionForm(_abhaAddress, _patientName))
+                        using (var prescriptionForm = new PrescriptionForm(_abhaAddress, _patientName, _referenceNumber))
                         {
                             prescriptionForm.ShowDialog(this);
                         }

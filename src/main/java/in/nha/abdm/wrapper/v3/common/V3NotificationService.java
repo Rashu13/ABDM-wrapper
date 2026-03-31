@@ -30,19 +30,18 @@ public class V3NotificationService {
         this.activityLogService = activityLogService;
     }
 
-    /**
-     * Notifies the ABDM Gateway that a new health record (like a prescription)
-     * is available for a patient.
-     */
     public void notifyGateway(Prescription prescription) {
         String requestId = UUID.randomUUID().toString();
-        
+        String contextRef = (prescription.getCareContextReference() != null) 
+                            ? prescription.getCareContextReference() 
+                            : "V-" + System.currentTimeMillis();
+
         V3NotifyRequest request = V3NotifyRequest.builder()
                 .requestId(requestId)
                 .timestamp(Utils.getCurrentTimeStamp())
                 .notification(V3NotifyRequest.V3Notification.builder()
                         .careContexts(Collections.singletonList(V3NotifyRequest.V3CareContext.builder()
-                                .careContextReference("V-" + System.currentTimeMillis()) 
+                                .careContextReference(contextRef) 
                                 .patientReference("P-" + prescription.getAbhaAddress())
                                 .build()))
                         .hiTypes(Collections.singletonList("Prescription"))
