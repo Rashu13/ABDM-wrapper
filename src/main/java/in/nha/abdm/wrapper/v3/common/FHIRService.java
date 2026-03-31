@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,8 +30,8 @@ public class FHIRService {
     public Mono<String> generatePrescriptionBundle(Prescription prescription, String patientGender, String patientBirthDate) {
         Map<String, Object> request = new HashMap<>();
         request.put("bundleType", "PrescriptionRecord");
-        request.put("careContextReference", "V-" + Utils.getCurrentDateTime()); // Unique ref
-        request.put("authoredOn", Utils.getCurrentDateTime());
+        request.put("careContextReference", "V-" + System.currentTimeMillis()); 
+        request.put("authoredOn", LocalDate.now().toString()); // yyyy-MM-dd format
         
         // Patient details
         Map<String, Object> patient = new HashMap<>();
@@ -69,7 +70,14 @@ public class FHIRService {
         request.put("prescriptions", meds);
 
         // Empty document list for now (PDF not mandatory for valid FHIR bundle if data is structured)
-        request.put("documents", new ArrayList<>());
+        // Dummy document (Mandatory for valid FHIR Prescription bundle in fhir-mapper)
+        List<Map<String, Object>> docs = new ArrayList<>();
+        Map<String, Object> dummyDoc = new HashMap<>();
+        dummyDoc.put("type", "Prescription");
+        dummyDoc.put("contentType", "application/pdf");
+        dummyDoc.put("data", "JVBERi0xLjQKJSDi4u7yCjEgMCBvYmoKPDwNL0xlbmd0aCAyNgoNL0ZpbHRlciAvRmxhdGVEZWNvZGUKPj4Nc3RyZWFtCnicS0vMSeUCAA0SAnUKZW5kc3RyZWFtDWVuZG9iag0yIDAgb2JqCjw8DS9UeXBlIC9QYWdlcw0vQ291bnQgMQ0vS2lkcyBbIDMgMCBSIF0NPj4NZW5kb2JqDTMgMCBvYmoKPDwNL1R5cGUgL1BhZ2UNL1BhcmVudCAyIDAgUg0vUmVzb3VyY2VzIDw8DS9Gb250IDw8DS9GMSA0IDAgUg0++IDUgMCBSID4+DT4+DWVuZG9iag02IDAgb2JqCjw8DS9UeXBlIC9DYXRhbG9nDS9QYWdlcyAyIDAgUg0+Pg1lbmRvYmoNNyAwIG9iago8PA0vUHJvZHVjZXIgKGRvY3VtZW50cy5jb20pDS9DcmVhdGlvbkRhdGUgKEQ6MjAyNDA0MTIxMTU1MzcpDT4+DWVuZG9iag10cmFpbGVyCjw8DS9TaXplIDgNL1Jvb3QgNiAwIFINL0luZm8gNyAwIFINPj4Nc3RhcnR4cmVmDTY0MA0lJUVPRg=="); // Small valid PDF base64
+        docs.add(dummyDoc);
+        request.put("documents", docs);
 
         return this.webClient.post()
                 .uri("/v1/bundle/prescription")

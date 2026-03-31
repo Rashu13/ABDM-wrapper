@@ -33,7 +33,7 @@ namespace abdmWinforms
                 var medicines = new List<object>();
                 foreach (DataGridViewRow row in dgvMedicines.Rows)
                 {
-                    if (row.Cells[0].Value != null)
+                    if (row.Cells[0].Value != null && !string.IsNullOrWhiteSpace(row.Cells[0].Value.ToString()))
                     {
                         medicines.Add(new
                         {
