@@ -3,6 +3,7 @@ package in.nha.abdm.wrapper.v3.patient;
 
 import in.nha.abdm.wrapper.v1.hip.hrp.database.mongo.tables.Prescription;
 import in.nha.abdm.wrapper.v3.common.FHIRService;
+import in.nha.abdm.wrapper.v3.common.V3NotificationService;
 import in.nha.abdm.wrapper.v3.common.logger.ActivityLogService;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -13,11 +14,13 @@ public class PrescriptionController {
   private final MongoTemplate mongoTemplate;
   private final ActivityLogService logService;
   private final FHIRService fhirService;
+  private final V3NotificationService notificationService;
 
-  public PrescriptionController(MongoTemplate mongoTemplate, ActivityLogService logService, FHIRService fhirService) {
+  public PrescriptionController(MongoTemplate mongoTemplate, ActivityLogService logService, FHIRService fhirService, V3NotificationService notificationService) {
     this.mongoTemplate = mongoTemplate;
     this.logService = logService;
     this.fhirService = fhirService;
+    this.notificationService = notificationService;
   }
 
   @PostMapping
@@ -29,12 +32,12 @@ public class PrescriptionController {
     fhirService.generatePrescriptionBundle(prescription, "male", "1990-01-01")
         .subscribe(bundle -> {
             logService.logActivity("FHIR SUCCESS: Generated bundle for " + prescription.getAbhaAddress());
-            // In a production M3 flow, here we would push the 'bundle' (as digital asset) to the Gateway.
-            // For now, logging the success is the first step towards M3 compliance.
+            // M3 Flow: Push the data notification to the Gateway.
+            notificationService.notifyGateway(prescription);
         }, error -> {
             logService.logActivity("FHIR ERROR: Failed for " + prescription.getAbhaAddress() + " - " + error.getMessage());
         });
     
-    return "Prescription Saved & FHIR Bundle Generated Successfully!";
+    return "Prescription Saved & FHIR Push Initiated Successfully!";
   }
 }
