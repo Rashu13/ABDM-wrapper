@@ -93,7 +93,7 @@ namespace abdmWinforms
                         if (result == DialogResult.OK)
                         {
                             // Success! Patient is linked.
-                            this.Close();
+                            // We don't close the main form anymore so user can continue.
                         }
                     }
                 }
