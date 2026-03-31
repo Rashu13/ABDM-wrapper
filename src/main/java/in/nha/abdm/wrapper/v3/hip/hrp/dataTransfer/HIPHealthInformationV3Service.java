@@ -104,70 +104,95 @@ public class HIPHealthInformationV3Service implements HIPHealthInformationV3Inte
     ConsentPatient consentPatient =
         consentPatientService.findMappingByConsentId(
             consentId, GatewayConstants.HIP, headers.getFirst(GatewayConstants.X_HIP_ID));
-    if (Objects.nonNull(consentPatient)) {
-      boolean isNotExpired =
-          patientV3Service.isConsentValid(
-              consentPatient.getAbhaAddress(),
-              consentId,
-              headers.getFirst(GatewayConstants.X_HIP_ID));
-      if (isNotExpired) {
-        HealthInformationRequestStatus hiRequestStatus =
-            HealthInformationRequestStatus.builder()
-                .sessionStatus("ACKNOWLEDGED")
-                .transactionId(hipHealthInformationRequest.getTransactionId())
-                .build();
-        onHealthInformationRequest =
-            OnHealthInformationV3Request.builder()
-                .hiRequest(hiRequestStatus)
-                .response(responseRequestId)
-                .build();
+    try {
+      if (Objects.nonNull(consentPatient)) {
+        boolean isNotExpired =
+            patientV3Service.isConsentValid(
+                consentPatient.getAbhaAddress(),
+                consentId,
+                headers.getFirst(GatewayConstants.X_HIP_ID));
+        if (isNotExpired) {
+          HealthInformationRequestStatus hiRequestStatus =
+              HealthInformationRequestStatus.builder()
+                  .sessionStatus("ACKNOWLEDGED")
+                  .transactionId(hipHealthInformationRequest.getTransactionId())
+                  .build();
+          onHealthInformationRequest =
+              OnHealthInformationV3Request.builder()
+                  .hiRequest(hiRequestStatus)
+                  .response(responseRequestId)
+                  .build();
+        } else {
+          ErrorResponse errorResponse = new ErrorResponse();
+          errorResponse.setMessage("Consent EXPIRED: exceeded dataEraseAt");
+          errorResponse.setCode(GatewayConstants.ERROR_CODE);
+          log.error(errorResponse);
+          onHealthInformationRequest =
+              OnHealthInformationV3Request.builder()
+                  .error(errorResponse)
+                  .response(responseRequestId)
+                  .build();
+        }
       } else {
+        String error = "ConsentId not found in database " + consentId;
         ErrorResponse errorResponse = new ErrorResponse();
-        errorResponse.setMessage("Consent EXPIRED: exceeded dataEraseAt");
+        errorResponse.setMessage(error);
         errorResponse.setCode(GatewayConstants.ERROR_CODE);
-        log.error(errorResponse);
+        log.error(error);
         onHealthInformationRequest =
             OnHealthInformationV3Request.builder()
                 .error(errorResponse)
                 .response(responseRequestId)
                 .build();
       }
-    } else {
-      String error = "ConsentId not found in database " + consentId;
-      ErrorResponse errorResponse = new ErrorResponse();
-      errorResponse.setMessage(error);
-      errorResponse.setCode(GatewayConstants.ERROR_CODE);
-      log.error(error);
-      onHealthInformationRequest =
-          OnHealthInformationV3Request.builder()
-              .error(errorResponse)
-              .response(responseRequestId)
-              .build();
-    }
-    log.debug(
-        "health information acknowledgment request body : "
-            + onHealthInformationRequest.toString());
-    // Acknowledge to gateway that health information request has been received.
-    healthInformationAcknowledgementRequest(
-        hipHealthInformationRequest, onHealthInformationRequest, headers);
+      log.debug(
+          "health information acknowledgment request body : "
+              + onHealthInformationRequest.toString());
+      // Acknowledge to gateway that health information request has been received.
+      healthInformationAcknowledgementRequest(
+          hipHealthInformationRequest, onHealthInformationRequest, headers);
 
-    // Sending the data to HIU only if there is no errors
-    if (Objects.isNull(onHealthInformationRequest.getError())) {
-      // Prepare health information bundle request which needs to be sent to HIU.
-      HealthInformationBundleResponse healthInformationBundleResponse =
-          fetchHealthInformationBundle(hipHealthInformationRequest, headers);
-      // Push the health information to HIU.
-      List<ResponseEntity<GenericResponse>> pushHealthInformationResponse =
-          pushHealthInformation(healthInformationBundleResponse, consentId, headers);
-      // Notify Gateway that health information was pushed to HIU.
-      healthInformationPushNotify(
-          hipHealthInformationRequest, consentId, pushHealthInformationResponse, headers);
-    } else {
-      // Sending BAD_REQUEST since there are some errors earlier
+      // Sending the data to HIU only if there is no errors
+      if (Objects.isNull(onHealthInformationRequest.getError())) {
+        // Prepare health information bundle request which needs to be sent to HIU.
+        HealthInformationBundleResponse healthInformationBundleResponse =
+            fetchHealthInformationBundle(hipHealthInformationRequest, headers);
+        if (Objects.nonNull(healthInformationBundleResponse)) {
+          // Push the health information to HIU.
+          List<ResponseEntity<GenericResponse>> pushHealthInformationResponse =
+              pushHealthInformation(healthInformationBundleResponse, consentId, headers);
+          // Notify Gateway that health information was pushed to HIU.
+          healthInformationPushNotify(
+              hipHealthInformationRequest, consentId, pushHealthInformationResponse, headers);
+        } else {
+          log.error("Failed to fetch health information bundle from HIP");
+          healthInformationPushNotify(
+              hipHealthInformationRequest,
+              consentId,
+              Collections.singletonList(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR)),
+              headers);
+        }
+      } else {
+        // Sending BAD_REQUEST since there are some errors earlier
+        healthInformationPushNotify(
+            hipHealthInformationRequest,
+            consentId,
+            Collections.singletonList(new ResponseEntity<>(HttpStatus.BAD_REQUEST)),
+            headers);
+      }
+    } catch (Exception ex) {
+      log.error("Unhandled error in health information callback flow : " + ex.getMessage() + " stacktrace: " + Arrays.toString(ex.getStackTrace()));
+      if (onHealthInformationRequest == null) {
+          onHealthInformationRequest = OnHealthInformationV3Request.builder()
+                  .error(ErrorResponse.builder().code(GatewayConstants.ERROR_CODE).message("Internal error during health information processing").build())
+                  .response(responseRequestId)
+                  .build();
+          healthInformationAcknowledgementRequest(hipHealthInformationRequest, onHealthInformationRequest, headers);
+      }
       healthInformationPushNotify(
           hipHealthInformationRequest,
           consentId,
-          Collections.singletonList(new ResponseEntity<>(HttpStatus.BAD_REQUEST)),
+          Collections.singletonList(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR)),
           headers);
     }
   }
@@ -245,7 +270,12 @@ public class HIPHealthInformationV3Service implements HIPHealthInformationV3Inte
             .build();
     log.debug(
         "Health information bundle request HIP : " + healthInformationBundleRequest.toString());
-    return hipClient.healthInformationBundleRequest(healthInformationBundleRequest).getBody();
+    ResponseEntity<HealthInformationBundleResponse> bundleResponse = hipClient.healthInformationBundleRequest(healthInformationBundleRequest);
+    if (Objects.isNull(bundleResponse) || Objects.isNull(bundleResponse.getBody())) {
+      log.error("HIP returned empty or null bundle response");
+      return null;
+    }
+    return bundleResponse.getBody();
   }
 
   /**

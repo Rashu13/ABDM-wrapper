@@ -140,7 +140,7 @@ public class GatewayCallbackV3Controller {
         GatewayCallbackResponse.builder()
             .error(ErrorResponse.builder().message(ex.getMessage()).build())
             .build(),
-        HttpStatus.INTERNAL_SERVER_ERROR);
+        HttpStatus.BAD_REQUEST);
   }
 
   /**
