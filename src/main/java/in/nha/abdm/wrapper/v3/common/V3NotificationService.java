@@ -1,6 +1,7 @@
 /* (C) 2024 */
 package in.nha.abdm.wrapper.v3.common;
 
+import in.nha.abdm.wrapper.v1.common.GatewayConstants;
 import in.nha.abdm.wrapper.v1.common.Utils;
 import in.nha.abdm.wrapper.v1.hip.hrp.database.mongo.tables.Prescription;
 import in.nha.abdm.wrapper.v3.common.logger.ActivityLogService;
@@ -54,8 +55,11 @@ public class V3NotificationService {
                 .build();
 
         try {
+            String requestId = UUID.randomUUID().toString();
+            HttpHeaders headers = Utils.getCustomHeaders(GatewayConstants.X_HIP_ID, hipId, requestId);
+            
             activityLogService.logActivity("GATEWAY NOTIFY: Initiating for " + prescription.getAbhaAddress());
-            requestV3Manager.fetchResponseFromGateway(linkContextNotifyPath, request, new HttpHeaders());
+            requestV3Manager.fetchResponseFromGateway(linkContextNotifyPath, request, headers);
             activityLogService.logActivity("GATEWAY NOTIFY: Successfully notified for " + prescription.getAbhaAddress());
         } catch (Exception e) {
             activityLogService.logActivity("GATEWAY NOTIFY ERROR: Failed for " + prescription.getAbhaAddress() + " - " + e.getMessage());
