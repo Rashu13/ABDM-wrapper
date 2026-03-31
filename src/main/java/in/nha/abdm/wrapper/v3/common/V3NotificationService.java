@@ -35,8 +35,10 @@ public class V3NotificationService {
      * is available for a patient.
      */
     public void notifyGateway(Prescription prescription) {
+        String requestId = UUID.randomUUID().toString();
+        
         V3NotifyRequest request = V3NotifyRequest.builder()
-                .requestId(UUID.randomUUID().toString())
+                .requestId(requestId)
                 .timestamp(Utils.getCurrentTimeStamp())
                 .notification(V3NotifyRequest.V3Notification.builder()
                         .careContext(V3NotifyRequest.V3CareContext.builder()
@@ -55,7 +57,6 @@ public class V3NotificationService {
                 .build();
 
         try {
-            String requestId = UUID.randomUUID().toString();
             HttpHeaders headers = Utils.getCustomHeaders(GatewayConstants.X_HIP_ID, hipId, requestId);
             
             activityLogService.logActivity("GATEWAY NOTIFY: Initiating for " + prescription.getAbhaAddress());
