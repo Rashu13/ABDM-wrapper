@@ -36,6 +36,7 @@ public class V3NotificationService {
                             ? prescription.getCareContextReference() 
                             : "V-" + System.currentTimeMillis();
 
+        String currentHipId = prescription.getHipId() != null ? prescription.getHipId() : hipId;
         V3NotifyRequest request = V3NotifyRequest.builder()
                 .requestId(requestId)
                 .timestamp(Utils.getCurrentTimeStamp())
@@ -50,15 +51,15 @@ public class V3NotificationService {
                                 .build())
                         .date(Utils.getCurrentTimeStamp())
                         .hip(V3NotifyRequest.V3HIP.builder()
-                                .id(hipId)
+                                .id(currentHipId)
                                 .build())
                         .build())
                 .build();
 
         try {
-            HttpHeaders headers = Utils.getCustomHeaders(GatewayConstants.X_HIP_ID, hipId, requestId);
+            HttpHeaders headers = Utils.getCustomHeaders(GatewayConstants.X_HIP_ID, currentHipId, requestId);
             
-            activityLogService.logActivity("GATEWAY NOTIFY: Initiating for " + prescription.getAbhaAddress());
+            activityLogService.logActivity("GATEWAY NOTIFY: Initiating for " + prescription.getAbhaAddress() + " with HIP ID: " + currentHipId);
             requestV3Manager.fetchResponseFromGateway(linkContextNotifyPath, request, headers);
             activityLogService.logActivity("GATEWAY NOTIFY: Successfully notified for " + prescription.getAbhaAddress());
         } catch (Exception e) {
