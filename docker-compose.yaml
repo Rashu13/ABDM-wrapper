@@ -12,10 +12,6 @@ services:
       - ABDM_CLIENT_ID=${ABDM_CLIENT_ID}
       - ABDM_CLIENT_SECRET=${ABDM_CLIENT_SECRET}
       - MONGODB_HOST=mongodb
-    networks:
-      - docker_network
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     deploy:
       resources:
         limits:
@@ -28,14 +24,6 @@ services:
       - '27017:27017'
     volumes:
       - mongodb_vol:/data/db
-    networks:
-      - docker_network
 
 volumes:
   mongodb_vol:
-
-networks:
-  docker_network:
-    driver: bridge
-    driver_opts:
-      com.docker.network.driver.mtu: 1500
