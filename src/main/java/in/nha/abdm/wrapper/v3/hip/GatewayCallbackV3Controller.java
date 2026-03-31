@@ -45,6 +45,7 @@ public class GatewayCallbackV3Controller {
   @Autowired WorkflowV3Manager workflowV3Manager;
   @Autowired RequestLogV3Service requestLogV3Service;
   @Autowired LogsRepo logsRepo;
+  @Autowired in.nha.abdm.wrapper.v3.common.logger.ActivityLogService activityLogService;
 
   private static final Logger log = LogManager.getLogger(GatewayCallbackV3Controller.class);
 
@@ -239,12 +240,14 @@ public class GatewayCallbackV3Controller {
     log.info("Callback hit: " + GatewayURL.ON_ADD_CARE_CONTEXT_PATH + " : Headers: " + headers);
     if (linkOnAddCareContextsV3Response != null
         && linkOnAddCareContextsV3Response.getError() != null) {
+      activityLogService.logActivity("AddCareContext Error: " + linkOnAddCareContextsV3Response.getError().getMessage());
       updateRequestError(
           linkOnAddCareContextsV3Response.getResponse().getRequestId(),
           "onAddCareContext",
           linkOnAddCareContextsV3Response.getError(),
           RequestStatus.AUTH_ON_ADD_CARE_CONTEXT_ERROR);
     } else if (linkOnAddCareContextsV3Response != null) {
+      activityLogService.logActivity("AddCareContext Success for Request: " + linkOnAddCareContextsV3Response.getResponse().getRequestId());
       log.debug(linkOnAddCareContextsV3Response.toString());
       requestLogV3Service.setHipOnAddCareContextResponse(linkOnAddCareContextsV3Response);
     } else {
@@ -274,6 +277,7 @@ public class GatewayCallbackV3Controller {
       throws IllegalDataStateException {
     log.info("Callback hit: " + GatewayURL.ON_GENERATE_LINK_TOKEN_PATH + " : Headers: " + headers);
     if (onGenerateTokenResponse != null && onGenerateTokenResponse.getError() != null) {
+      activityLogService.logActivity("GenerateToken Error: " + onGenerateTokenResponse.getError().getMessage());
       log.info("Updating error");
       updateLinkTokenRequestError(
           onGenerateTokenResponse.getResponse().getRequestId(),

@@ -49,12 +49,8 @@ import reactor.core.Exceptions;
 @Profile(WrapperConstants.V3)
 @Service
 public class HIPLinkV3Service implements HIPLinkV3Interface {
-  @Autowired PatientRepo patientRepo;
-  @Autowired RequestV3Manager requestV3Manager;
-  @Autowired LinkTokenService linkTokenService;
-  @Autowired RequestLogV3Service requestLogV3Service;
-  @Autowired HIPV3Client hipClient;
   @Autowired PatientV3Service patientV3Service;
+  @Autowired in.nha.abdm.wrapper.v3.common.logger.ActivityLogService activityLogService;
 
   @Value("${generateLinkTokenPath}")
   public String generateLinkTokenPath;
@@ -107,9 +103,11 @@ public class HIPLinkV3Service implements HIPLinkV3Interface {
             linkRecordsV3Request.getCareContexts());
 
     if (sameCareContexts != null && !sameCareContexts.isEmpty()) {
+      activityLogService.logActivity("Care contexts already linked for: " + linkRecordsV3Request.getAbhaAddress());
       return hipContextNotify(linkRecordsV3Request, patient, sameCareContexts);
     }
 
+    activityLogService.logActivity("Adding new care contexts for: " + linkRecordsV3Request.getAbhaAddress());
     return processAddCareContexts(linkRecordsV3Request, patient, linkToken);
   }
 
@@ -275,11 +273,7 @@ public class HIPLinkV3Service implements HIPLinkV3Interface {
                   generateTokenRequestId));
       log.debug(generateLinkTokenPath + " : generateTokenRequest: " + response.getStatusCode());
       if (response.getStatusCode() == HttpStatus.ACCEPTED) {
-        requestLogV3Service.saveLinkTokenRequest(
-            linkRecordsV3Request,
-            generateTokenRequestId,
-            RequestStatus.LINK_TOKEN_REQUEST_ACCEPTED,
-            null);
+        activityLogService.logActivity("LinkToken request accepted for: " + patient.getAbhaAddress());
         return FacadeV3Response.builder()
             .httpStatusCode(response.getStatusCode())
             .clientRequestId(linkRecordsV3Request.getRequestId())
@@ -393,7 +387,8 @@ public class HIPLinkV3Service implements HIPLinkV3Interface {
   }
 
   private String getAbhaNumber(String linkToken) {
-    return JWT.decode(linkToken).getClaim("abhaNumber").asString();
+    Object abhaNumber = JWT.decode(linkToken).getClaim("abhaNumber").as(Object.class);
+    return abhaNumber != null ? abhaNumber.toString() : null;
   }
 
   /**

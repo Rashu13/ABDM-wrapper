@@ -67,8 +67,8 @@ namespace abdmWinforms
                     careContexts = new List<CareContext>
                     {
                         new CareContext { 
-                            referenceNumber = "OPD-" + DateTime.Now.Day + DateTime.Now.Month, 
-                            display = "OPD Consultation - " + DateTime.Now.ToShortDateString(), 
+                            referenceNumber = "OPD-" + DateTime.Now.Ticks.ToString().Substring(10), 
+                            display = "OPD Consultation - " + DateTime.Now.ToString("dd-MM-yyyy HH:mm"), 
                             hiType = "OPConsultation" 
                         }
                     }
