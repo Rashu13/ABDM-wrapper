@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="AbdmModels.cs" />
     <Compile Include="AbdmService.cs" />
+    <Compile Include="FhirParser.cs" />
     <Compile Include="ConsentRequestForm.cs">
       <SubType>Form</SubType>
     </Compile>

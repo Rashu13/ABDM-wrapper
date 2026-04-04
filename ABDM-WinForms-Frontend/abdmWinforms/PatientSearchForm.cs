@@ -111,7 +111,24 @@ namespace abdmWinforms
         {
             if (_currentPatient != null)
             {
-                using (var prescriptionForm = new PrescriptionForm(_currentPatient.abhaAddress, _currentPatient.name))
+                // To show data in PHR App, we MUST use a linked care context.
+                string linkedContext = "";
+                if (_currentPatient.careContexts != null && _currentPatient.careContexts.Count > 0)
+                {
+                    linkedContext = _currentPatient.careContexts[0].referenceNumber;
+                }
+                else
+                {
+                    MessageBox.Show("This patient has NO linked care contexts.\n\nPlease 'START OTP LINKING (M2)' first, otherwise the prescription won't show in their ABHA App.", "Linking Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+
+                using (var prescriptionForm = new PrescriptionForm(
+                    _currentPatient.abhaAddress, 
+                    _currentPatient.name, 
+                    linkedContext, 
+                    _currentPatient.patientReference, 
+                    _currentPatient.gender, 
+                    _currentPatient.dateOfBirth))
                 {
                     prescriptionForm.ShowDialog(this);
                 }

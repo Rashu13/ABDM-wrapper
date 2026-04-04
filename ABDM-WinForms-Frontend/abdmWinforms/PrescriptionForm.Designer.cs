@@ -11,6 +11,7 @@ namespace abdmWinforms
         private System.Windows.Forms.DataGridViewTextBoxColumn colDuration;
         private System.Windows.Forms.Button btnPushToAbdm;
         private System.Windows.Forms.Label lblTitle;
+        private System.Windows.Forms.Label lblStatus;
 
         protected override void Dispose(bool disposing)
         {
@@ -30,6 +31,7 @@ namespace abdmWinforms
             this.colMedicine = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colDosage = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colDuration = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.lblStatus = new System.Windows.Forms.Label();
             this.btnPushToAbdm = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvMedicines)).BeginInit();
             this.SuspendLayout();
@@ -61,9 +63,19 @@ namespace abdmWinforms
             this.lblPatient.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.lblPatient.Location = new System.Drawing.Point(15, 68);
             this.lblPatient.Name = "lblPatient";
-            this.lblPatient.Size = new System.Drawing.Size(100, 19);
+            this.lblPatient.Size = new System.Drawing.Size(65, 19);
             this.lblPatient.TabIndex = 2;
             this.lblPatient.Text = "Patient: ...";
+            // 
+            // lblStatus
+            // 
+            this.lblStatus.AutoSize = true;
+            this.lblStatus.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Italic);
+            this.lblStatus.Location = new System.Drawing.Point(15, 87);
+            this.lblStatus.Name = "lblStatus";
+            this.lblStatus.Size = new System.Drawing.Size(55, 15);
+            this.lblStatus.TabIndex = 5;
+            this.lblStatus.Text = "Status: ...";
             // 
             // dgvMedicines
             // 
@@ -118,6 +130,7 @@ namespace abdmWinforms
             this.ClientSize = new System.Drawing.Size(584, 380);
             this.Controls.Add(this.btnPushToAbdm);
             this.Controls.Add(this.dgvMedicines);
+            this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.lblPatient);
             this.Controls.Add(this.lblAbha);
             this.Controls.Add(this.lblTitle);

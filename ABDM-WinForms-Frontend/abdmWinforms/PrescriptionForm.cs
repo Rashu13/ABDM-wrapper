@@ -29,6 +29,17 @@ namespace abdmWinforms
             
             lblAbha.Text = $"ABHA: {_abhaAddress}";
             lblPatient.Text = $"Patient: {_patientName}";
+
+            if (string.IsNullOrEmpty(_careContextReference))
+            {
+                lblStatus.Text = "⚠️ WARNING: No Linked Care Context found. Push will NOT appear in ABHA App.";
+                lblStatus.ForeColor = Color.OrangeRed;
+            }
+            else
+            {
+                lblStatus.Text = $"✅ Linked to: {_careContextReference}";
+                lblStatus.ForeColor = Color.SeaGreen;
+            }
         }
 
         private async void btnPushToAbdm_Click(object sender, EventArgs e)

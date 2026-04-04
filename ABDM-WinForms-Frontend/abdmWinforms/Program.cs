@@ -16,7 +16,7 @@ namespace abdmWinforms
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new PatientRegistrationForm());
+            Application.Run(new PatientSearchForm());
         }
     }
 }

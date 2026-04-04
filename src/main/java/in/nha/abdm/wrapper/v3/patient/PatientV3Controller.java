@@ -18,7 +18,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(path = FacadeURL.PATIENT_V3_PATH)
+@RequestMapping(path = "/v3")
 @Validated
 public class PatientV3Controller {
   private final PatientV3Service patientService;
@@ -37,7 +37,7 @@ public class PatientV3Controller {
    * @param hipId facilityId
    * @return patient
    */
-  @GetMapping(FacadeURL.PATIENT_ID_PATH)
+  @GetMapping("/patient" + FacadeURL.PATIENT_ID_PATH)
   public ResponseEntity<Object> getPatientDetails(
       @PathVariable("patientId") String patientId,
       @RequestParam(WrapperConstants.HIP_ID) @NotNull(message = "hipId is mandatory") String hipId) {
@@ -65,7 +65,7 @@ public class PatientV3Controller {
     return new ResponseEntity<>(patient, HttpStatus.OK);
   }
 
-  @GetMapping("/v3/patients")
+  @GetMapping("/patients")
   public ResponseEntity<java.util.List<in.nha.abdm.wrapper.v1.hip.hrp.database.mongo.tables.Patient>> getAllPatients(
       @RequestParam(WrapperConstants.HIP_ID) @NotNull(message = "hipId is mandatory") String hipId) {
     java.util.List<in.nha.abdm.wrapper.v1.hip.hrp.database.mongo.tables.Patient> patients = patientService.getAllPatients(hipId);

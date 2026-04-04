@@ -38,6 +38,46 @@ namespace ABDM_WinForms_Frontend
         public string clientRequestId { get; set; }
     }
 
+    public class FacadeV3Response
+    {
+        public string clientRequestId { get; set; }
+        public string httpStatusCode { get; set; }
+        public List<ErrorV3Response> errors { get; set; }
+    }
+
+    public class ErrorV3Response
+    {
+        public ErrorDetail error { get; set; }
+    }
+
+    public class ErrorDetail
+    {
+        public string code { get; set; }
+        public string message { get; set; }
+    }
+
+    public class HealthInformationV3Response
+    {
+        public string status { get; set; }
+        public List<DecryptedHealthInformationEntry> decryptedHealthInformationEntries { get; set; }
+        public List<ErrorV3Response> errors { get; set; }
+    }
+
+    public class DecryptedHealthInformationEntry
+    {
+        public string careContextReference { get; set; }
+        public string bundleContent { get; set; }
+    }
+
+    public class HealthRecordSummary
+    {
+        public string Date { get; set; }
+        public string Type { get; set; }
+        public string Provider { get; set; }
+        public string ContentHtml { get; set; }
+        public string RawJson { get; set; }
+    }
+
     public class PrescriptionModel
     {
         public string abhaAddress { get; set; }

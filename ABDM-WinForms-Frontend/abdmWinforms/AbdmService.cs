@@ -144,7 +144,7 @@ namespace ABDM_WinForms_Frontend
                 var response = await client.GetAsync($"{BaseUrl}/patients?hipId={hipId}");
                 return await response.Content.ReadAsStringAsync();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return "[]";
             }
@@ -206,7 +206,7 @@ namespace ABDM_WinForms_Frontend
         }
 
         // Step 10: HIU - Fetch Health Records after consent grant
-        public async Task<string> FetchRecordsAsync(string consentId)
+        public async Task<FacadeV3Response> FetchRecordsAsync(string consentId)
         {
             try
             {
@@ -219,24 +219,23 @@ namespace ABDM_WinForms_Frontend
                 };
                 var content = new StringContent(JsonConvert.SerializeObject(payload), System.Text.Encoding.UTF8, "application/json");
                 
-                // Correct path from FacadeURL.java: /v3/health-information/fetch-records
-                // Note: /v3 is already in BaseUrl
                 var response = await client.PostAsync($"{BaseUrl}/health-information/fetch-records", content);
-                return await response.Content.ReadAsStringAsync();
+                var result = await response.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<FacadeV3Response>(result);
             }
-            catch (Exception ex) { return "Error: " + ex.Message; }
+            catch (Exception ex) { return new FacadeV3Response { errors = new List<ErrorV3Response> { new ErrorV3Response { error = new ErrorDetail { message = ex.Message } } } }; }
         }
 
         // Step 10.1: Check Health Information Status (and get decrypted bundles)
-        public async Task<string> GetHealthInformationStatusAsync(string requestId)
+        public async Task<HealthInformationV3Response> GetHealthInformationStatusAsync(string requestId)
         {
             try
             {
-                // Correct path from FacadeURL.java: /v3/health-information/status/{requestId}
                 var response = await client.GetAsync($"{BaseUrl}/health-information/status/{requestId}");
-                return await response.Content.ReadAsStringAsync();
+                var result = await response.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<HealthInformationV3Response>(result);
             }
-            catch (Exception ex) { return "Error: " + ex.Message; }
+            catch (Exception ex) { return new HealthInformationV3Response { errors = new List<ErrorV3Response> { new ErrorV3Response { error = new ErrorDetail { message = ex.Message } } } }; }
         }
     }
 }
