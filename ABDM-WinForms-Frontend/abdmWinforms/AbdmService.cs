@@ -182,27 +182,35 @@ namespace ABDM_WinForms_Frontend
         }
 
         // Step 9: HIU - Request Consent from Patient
-        public async Task<string> RequestConsentAsync(object request)
+        public async Task<FacadeV3Response> RequestConsentAsync(object request)
         {
             try
             {
                 var content = new StringContent(JsonConvert.SerializeObject(new { consent = request }), System.Text.Encoding.UTF8, "application/json");
                 // Correct path from FacadeURL.java: /consent-init
                 var response = await client.PostAsync($"{BaseUrl}/consent-init", content);
-                return await response.Content.ReadAsStringAsync();
+                var result = await response.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<FacadeV3Response>(result);
             }
-            catch (Exception ex) { return "Error: " + ex.Message; }
+            catch (Exception ex) 
+            { 
+                return new FacadeV3Response { errors = new List<ErrorV3Response> { new ErrorV3Response { error = new ErrorDetail { message = ex.Message } } } }; 
+            }
         }
 
         // Step 9.1: Check Consent Status
-        public async Task<string> GetConsentStatusAsync(string requestId)
+        public async Task<ConsentStatusV3Response> GetConsentStatusAsync(string requestId)
         {
             try
             {
                 var response = await client.GetAsync($"{BaseUrl}/consent-status/{requestId}");
-                return await response.Content.ReadAsStringAsync();
+                var result = await response.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<ConsentStatusV3Response>(result);
             }
-            catch (Exception ex) { return "Error: " + ex.Message; }
+            catch (Exception ex) 
+            { 
+                return new ConsentStatusV3Response { errors = new List<ErrorV3Response> { new ErrorV3Response { error = new ErrorDetail { message = ex.Message } } } }; 
+            }
         }
 
         // Step 10: HIU - Fetch Health Records after consent grant

@@ -1,6 +1,7 @@
 using ABDM_WinForms_Frontend;
 using Newtonsoft.Json;
 using System;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace abdmWinforms
@@ -9,6 +10,7 @@ namespace abdmWinforms
     {
         private readonly AbdmService _abdmService;
         private PatientModel _currentPatient;
+        private string _lastConsentRequestId;
 
         public PatientSearchForm()
         {
@@ -66,9 +68,11 @@ namespace abdmWinforms
                         // If name is empty, it's a fail
                         lblStatus.Text = "Status: PATIENT NOT FOUND";
                         lblStatus.ForeColor = System.Drawing.Color.Red;
-                        pnlDetails.Visible = false;
-
-                        MessageBox.Show("No valid record found for this ABHA address.", "Search Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        if (jsonResponse.Contains("No Patient found") || jsonResponse.Contains("Error"))
+                        {
+                            MessageBox.Show("Patient not found in local system.\n\nPlease click 'REGISTER NEW PATIENT' to add them to your hospital first.", "Registration Required", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            pnlDetails.Visible = false;
+                        }
                     }
                 }
             }
@@ -83,27 +87,58 @@ namespace abdmWinforms
             }
         }
 
-        private void btnRequestConsent_Click(object sender, EventArgs e)
+        private void btnRequestAccess_Click(object sender, EventArgs e)
         {
             if (_currentPatient != null)
             {
-                using (var requestForm = new ConsentRequestForm(_currentPatient.abhaAddress))
+                using (var consentForm = new ConsentRequestForm(_currentPatient.abhaAddress))
                 {
-                    requestForm.ShowDialog(this);
+                    if (consentForm.ShowDialog(this) == DialogResult.OK)
+                    {
+                        _lastConsentRequestId = consentForm.LastRequestId;
+                    }
                 }
             }
         }
 
-        private void btnViewHistory_Click(object sender, EventArgs e)
+        private async void btnViewHistory_Click(object sender, EventArgs e)
         {
             if (_currentPatient != null)
             {
-                // In a real scenario, we'd find the latest 'GRANTED' consentId for this patient
-                string dummyConsentId = "CONSENT-" + Guid.NewGuid().ToString().Substring(0, 8);
-                using (var viewerForm = new HealthRecordViewerForm(dummyConsentId, _currentPatient.name))
+                if (string.IsNullOrEmpty(_lastConsentRequestId))
                 {
-                    viewerForm.ShowDialog(this);
+                    MessageBox.Show("Please send a 'CONSENT REQUEST' first to view health records.", "Request Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
                 }
+
+                btnViewHistory.Enabled = false;
+                btnViewHistory.Text = "CHECKING STATUS...";
+
+                var statusResponse = await _abdmService.GetConsentStatusAsync(_lastConsentRequestId);
+
+                if (statusResponse?.consentArtifacts != null && statusResponse.consentArtifacts.Count > 0)
+                {
+                    var grantedArtifact = statusResponse.consentArtifacts.FirstOrDefault(a => a.status == "GRANTED");
+                    if (grantedArtifact != null)
+                    {
+                        using (var viewerForm = new HealthRecordViewerForm(grantedArtifact.consentId, _currentPatient.name))
+                        {
+                            viewerForm.ShowDialog(this);
+                        }
+                    }
+                    else
+                    {
+                        string currentStatus = statusResponse.consentArtifacts[0].status;
+                        MessageBox.Show($"Current Consent Status: {currentStatus}\n\nAsk the patient to GRANT the request in their ABHA app.", "Access Pending", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Waiting for ABDM Gateway to process the request. Status: PENDING", "Access Pending", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+
+                btnViewHistory.Enabled = true;
+                btnViewHistory.Text = "VIEW FOLDER (M3)";
             }
         }
 

@@ -127,11 +127,11 @@ namespace abdmWinforms
             this.btnShowRegistration.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnShowRegistration.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
             this.btnShowRegistration.ForeColor = System.Drawing.Color.White;
-            this.btnShowRegistration.Location = new System.Drawing.Point(365, 125);
+            this.btnShowRegistration.Location = new System.Drawing.Point(60, 140);
             this.btnShowRegistration.Name = "btnShowRegistration";
-            this.btnShowRegistration.Size = new System.Drawing.Size(200, 30);
+            this.btnShowRegistration.Size = new System.Drawing.Size(450, 35);
             this.btnShowRegistration.TabIndex = 9;
-            this.btnShowRegistration.Text = "REGISTER NEW PATIENT";
+            this.btnShowRegistration.Text = "➕  REGISTER NEW PATIENT (If Not Found)";
             this.btnShowRegistration.UseVisualStyleBackColor = false;
             this.btnShowRegistration.Click += new System.EventHandler(this.btnShowRegistration_Click);
             // 
@@ -148,9 +148,9 @@ namespace abdmWinforms
             this.pnlDetails.Controls.Add(this.lblGender);
             this.pnlDetails.Controls.Add(this.lblName);
             this.pnlDetails.Controls.Add(this.pnlResultHeader);
-            this.pnlDetails.Location = new System.Drawing.Point(60, 160);
+            this.pnlDetails.Location = new System.Drawing.Point(60, 185);
             this.pnlDetails.Name = "pnlDetails";
-            this.pnlDetails.Size = new System.Drawing.Size(450, 420);
+            this.pnlDetails.Size = new System.Drawing.Size(450, 400);
             this.pnlDetails.TabIndex = 3;
             this.pnlDetails.Visible = false;
             // 
@@ -199,7 +199,7 @@ namespace abdmWinforms
             this.btnRequestConsent.Text = "REQUEST ACCESS";
             this.btnRequestConsent.UseVisualStyleBackColor = false;
             this.btnRequestConsent.Visible = false;
-            this.btnRequestConsent.Click += new System.EventHandler(this.btnRequestConsent_Click);
+            this.btnRequestConsent.Click += new System.EventHandler(this.btnRequestAccess_Click);
             // 
             // btnViewHistory
             // 
@@ -288,6 +288,7 @@ namespace abdmWinforms
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(240)))), ((int)(((byte)(241)))));
             this.ClientSize = new System.Drawing.Size(580, 680);
+            this.Controls.Add(this.btnShowRegistration);
             this.Controls.Add(this.btnM3Dashboard);
             this.Controls.Add(this.btnViewLogs);
             this.Controls.Add(this.pnlDetails);

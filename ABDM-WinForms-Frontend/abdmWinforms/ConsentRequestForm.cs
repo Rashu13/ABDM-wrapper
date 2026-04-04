@@ -22,6 +22,8 @@ namespace abdmWinforms
             dtTo.Value = DateTime.Now;
         }
 
+        public string LastRequestId { get; private set; }
+
         private async void btnSendRequest_Click(object sender, EventArgs e)
         {
             try
@@ -34,21 +36,30 @@ namespace abdmWinforms
                 if (chkDiagnostic.Checked) hiTypes.Add("DiagnosticReport");
                 if (chkOPD.Checked) hiTypes.Add("OPConsultation");
 
-                // Prepare HIU Consent Request Object
+                // Prepare HIU Consent Request Object with strict UTC ISO format
                 var request = new
                 {
                     abhaAddress = _abhaAddress,
                     purpose = "CAREMGT", // Care Management
-                    dateFrom = dtFrom.Value.ToString("yyyy-MM-dd"),
-                    dateTo = dtTo.Value.ToString("yyyy-MM-dd"),
+                    dateFrom = dtFrom.Value.Date.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+                    dateTo = dtTo.Value.Date.AddDays(1).AddTicks(-1).ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
                     hiTypes = hiTypes,
                     requester = GlobalConfig.HipName
                 };
 
-                string response = await _abdmService.RequestConsentAsync(request);
+                var response = await _abdmService.RequestConsentAsync(request);
 
-                MessageBox.Show(response, "HIU Consent Status", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                this.Close();
+                if (response?.errors != null && response.errors.Count > 0)
+                {
+                    MessageBox.Show("Error: " + response.errors[0].error.message, "Request Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                else
+                {
+                    this.LastRequestId = response.clientRequestId;
+                    MessageBox.Show("Consent request sent successfully! \n\nRequest ID: " + this.LastRequestId + "\n\nPlease ask the patient to approve in their ABHA app.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    this.DialogResult = DialogResult.OK;
+                    this.Close();
+                }
             }
             catch (Exception ex)
             {

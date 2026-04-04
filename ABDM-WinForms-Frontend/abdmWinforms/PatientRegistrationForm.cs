@@ -10,16 +10,18 @@ namespace abdmWinforms
     {
         private readonly AbdmService _abdmService;
 
-        public PatientRegistrationForm(string prefillAbha = "")
+        public PatientRegistrationForm()
         {
             InitializeComponent();
             _abdmService = new AbdmService();
-            if (cmbGender.Items.Count > 0) cmbGender.SelectedIndex = 0;
 
-            if (!string.IsNullOrEmpty(prefillAbha))
-            {
-                txtAbhaAddress.Text = prefillAbha;
-            }
+            // PRE-FILLING TEST DATA FOR user.5682@sbx
+            txtAbhaAddress.Text = "user.5682@sbx";
+            txtAbhaNumber.Text = "91650506512757";
+            txtName.Text = "Ravi Kumar";
+            cmbGender.SelectedItem = "Male";
+            dtpDob.Value = new DateTime(1994, 03, 27);
+            txtMobile.Text = "9416056193";
         }
 
         private async void btnGenerateToken_Click(object sender, EventArgs e)

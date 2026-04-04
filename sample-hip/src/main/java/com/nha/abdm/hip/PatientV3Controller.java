@@ -21,8 +21,8 @@ import java.util.stream.Stream;
 @RequestMapping(path = "/v3")
 public class PatientV3Controller {
 
-    @Value("${filePath}")
-    private String fhirFilePath;
+    @Value("${recordsPath:records}")
+    private String recordsPath;
 
     private static final Logger log = LogManager.getLogger(PatientV3Controller.class);
     private static final String requestId = "263ad643-ffb9-4c7d-b5bc-e099577e7e99";
@@ -137,29 +137,36 @@ public class PatientV3Controller {
 
     @PostMapping(value="/health-information")
     public @ResponseBody ResponseEntity<HealthInformationResponse> fetchHealthInformation(
-            @RequestBody HealthInformationBundleRequest healthInformationBundleRequest) throws IOException {
+            @RequestBody HealthInformationBundleRequest healthInformationBundleRequest) {
         log.debug("healthInformationBundleRequest" + healthInformationBundleRequest);
-        HealthInformationResponse healthInformationResponse=new HealthInformationResponse();
-//        List<HealthInformationBundle> healthInformationBundles=new ArrayList<>();
-//        for(ConsentCareContexts careContexts:healthInformationBundleRequest.getCareContextsWithPatientReferences()){
-//            HealthInformationBundle healthInformationBundle=new HealthInformationBundle();
-//            String randomFilePath = getRandomFileFromDirectory("/FHIR");
-//            String bundle = new String(Files.readAllBytes(Paths.get(randomFilePath)));
-//            healthInformationBundle.setBundleContent(bundle);
-//            healthInformationBundle.setCareContextReference(careContexts.getCareContextReference());
-//            healthInformationBundles.add(healthInformationBundle);
-//        }
-        String filePath = fhirFilePath;
-        String bundle= new String(Files.readAllBytes(Paths.get(filePath)));
-        List<HealthInformationBundle> healthInformationBundles=new ArrayList<>();
-        for(ConsentCareContexts careContexts:healthInformationBundleRequest.getCareContextsWithPatientReferences()){
-            HealthInformationBundle healthInformationBundle=new HealthInformationBundle();
-            healthInformationBundle.setBundleContent(bundle);
-            healthInformationBundle.setCareContextReference(careContexts.getCareContextReference());
-            healthInformationBundles.add(healthInformationBundle);
+        HealthInformationResponse healthInformationResponse = new HealthInformationResponse();
+        List<HealthInformationBundle> healthInformationBundles = new ArrayList<>();
+
+        try {
+            for (ConsentCareContexts careContexts : healthInformationBundleRequest.getCareContextsWithPatientReferences()) {
+                HealthInformationBundle healthInformationBundle = new HealthInformationBundle();
+                
+                // Fetch the REAL record saved by the Wrapper from WinForms push
+                String filename = careContexts.getCareContextReference() + ".json";
+                Path path = Paths.get(recordsPath, filename);
+                
+                if (Files.exists(path)) {
+                    String bundle = new String(Files.readAllBytes(path));
+                    healthInformationBundle.setBundleContent(bundle);
+                    healthInformationBundle.setCareContextReference(careContexts.getCareContextReference());
+                    healthInformationBundles.add(healthInformationBundle);
+                    log.info("RETRIEVAL SUCCESS: Loaded live record for context: " + careContexts.getCareContextReference());
+                } else {
+                    log.warn("RETRIEVAL WARNING: No real record found for context: " + careContexts.getCareContextReference() + " at " + path.toAbsolutePath());
+                    // Optional: Return a clear FHIR error or empty list if no real data exists
+                }
+            }
+            healthInformationResponse.setHealthInformationBundle(healthInformationBundles);
+            return new ResponseEntity<>(healthInformationResponse, HttpStatus.OK);
+        } catch (IOException e) {
+            log.error("RETRIEVAL ERROR: Failed to read record file - " + e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        healthInformationResponse.setHealthInformationBundle(healthInformationBundles);
-        return new ResponseEntity<>(healthInformationResponse, HttpStatus.OK);
     }
 
     public static String getRandomFileFromDirectory(String directoryPath) throws IOException {

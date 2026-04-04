@@ -90,6 +90,66 @@ namespace abdmWinforms
                     details.AppendLine();
                 }
 
+                // Diagnostic Reports (Lab/Imaging)
+                var reports = entries.Where(e => e["resource"]?["resourceType"]?.ToString() == "DiagnosticReport");
+                if (reports.Any())
+                {
+                    details.AppendLine("DIAGNOSTIC REPORTS:");
+                    foreach (var rep in reports)
+                    {
+                        var res = rep["resource"];
+                        string name = res["code"]?["text"]?.ToString() ?? "Lab Report";
+                        string status = res["status"]?.ToString() ?? "";
+                        details.AppendLine($"- {name} ({status})");
+                    }
+                    details.AppendLine();
+                }
+
+                // Procedures
+                var procedures = entries.Where(e => e["resource"]?["resourceType"]?.ToString() == "Procedure");
+                if (procedures.Any())
+                {
+                    details.AppendLine("PROCEDURES:");
+                    foreach (var proc in procedures)
+                    {
+                        var res = proc["resource"];
+                        string name = res["code"]?["text"]?.ToString() ?? "Procedure";
+                        string date = TryParseDate(res["performedDateTime"]?.ToString()) ?? "";
+                        details.AppendLine($"- {name} {date}");
+                    }
+                    details.AppendLine();
+                }
+
+                // Immunizations
+                var immunizations = entries.Where(e => e["resource"]?["resourceType"]?.ToString() == "Immunization");
+                if (immunizations.Any())
+                {
+                    details.AppendLine("IMMUNIZATIONS:");
+                    foreach (var imm in immunizations)
+                    {
+                        var res = imm["resource"];
+                        string name = res["vaccineCode"]?["text"]?.ToString() ?? "Vaccine";
+                        string status = res["status"]?.ToString() ?? "";
+                        details.AppendLine($"- {name} ({status})");
+                    }
+                    details.AppendLine();
+                }
+
+                // Allergy Intolerance
+                var allergies = entries.Where(e => e["resource"]?["resourceType"]?.ToString() == "AllergyIntolerance");
+                if (allergies.Any())
+                {
+                    details.AppendLine("ALLERGIES & INTOLERANCE:");
+                    foreach (var allergy in allergies)
+                    {
+                        var res = allergy["resource"];
+                        string name = res["code"]?["text"]?.ToString() ?? "Allergy";
+                        string criticality = res["criticality"]?.ToString() ?? "Unknown";
+                        details.AppendLine($"- {name} (Criticality: {criticality})");
+                    }
+                    details.AppendLine();
+                }
+
                 summaries.Add(new HealthRecordSummary
                 {
                     Date = docDate,

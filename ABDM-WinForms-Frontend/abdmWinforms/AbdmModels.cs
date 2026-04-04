@@ -78,6 +78,25 @@ namespace ABDM_WinForms_Frontend
         public string RawJson { get; set; }
     }
 
+    // --- HIU CONSENT MODELS ---
+
+    public class ConsentStatusV3Response
+    {
+        public string httpStatusCode { get; set; }
+        public List<ConsentArtifact> consentArtifacts { get; set; }
+        public List<ErrorV3Response> errors { get; set; }
+    }
+
+    public class ConsentArtifact
+    {
+        public string status { get; set; } // GRANTED, EXPIRED, REVOKED
+        public string consentId { get; set; }
+        public string dateFrom { get; set; }
+        public string dateTo { get; set; }
+        public string expiry { get; set; }
+        public List<string> hiTypes { get; set; }
+    }
+
     public class PrescriptionModel
     {
         public string abhaAddress { get; set; }
