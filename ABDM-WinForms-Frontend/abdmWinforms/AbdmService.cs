@@ -23,7 +23,7 @@ namespace ABDM_WinForms_Frontend
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 // V3 Endpoint: /v3/add-patients
-                var response = await client.PutAsync($"{BaseUrl}/add-patients", content);
+                var response = await client.PutAsync(string.Format("{0}/add-patients", BaseUrl), content);
                 var result = await response.Content.ReadAsStringAsync();
 
                 return result;
@@ -43,7 +43,7 @@ namespace ABDM_WinForms_Frontend
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 // V3 Endpoint: /v3/link-carecontexts
-                var response = await client.PostAsync($"{BaseUrl}/link-carecontexts", content);
+                var response = await client.PostAsync(string.Format("{0}/link-carecontexts", BaseUrl), content);
                 var result = await response.Content.ReadAsStringAsync();
 
                 return result;
@@ -57,9 +57,17 @@ namespace ABDM_WinForms_Frontend
         // Step 2.1: Check Linking Status
         public async Task<string> GetLinkStatusAsync(string requestId)
         {
-            // Corrected path to match HIPFacadeLinkV3Controller (/v3/link-status/{requestId})
-            var response = await client.GetAsync($"{BaseUrl}/link-status/{requestId}");
-            return await response.Content.ReadAsStringAsync();
+            try
+            {
+                // Corrected path to match HIPFacadeLinkV3Controller (/v3/link-status/{requestId})
+                var response = await client.GetAsync(string.Format("{0}/link-status/{1}", BaseUrl, Uri.EscapeDataString(requestId)));
+                var result = await response.Content.ReadAsStringAsync();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return "Error: " + ex.Message;
+            }
         }
 
         // Step 3: SMS Notify (Quick Invite)
@@ -81,7 +89,7 @@ namespace ABDM_WinForms_Frontend
                 var json = JsonConvert.SerializeObject(payload);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                var response = await client.PostAsync($"{BaseUrl}/sms/notify", content);
+                var response = await client.PostAsync(string.Format("{0}/sms/notify", BaseUrl), content);
                 var result = await response.Content.ReadAsStringAsync();
 
                 return result;
@@ -108,7 +116,7 @@ namespace ABDM_WinForms_Frontend
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 // Correcting to V1 endpoint: /v1/verify-otp
-                var response = await client.PostAsync($"{DomainUrl}/v1/verify-otp", content);
+                var response = await client.PostAsync(string.Format("{0}/v1/verify-otp", DomainUrl), content);
                 var result = await response.Content.ReadAsStringAsync();
 
                 return result;
@@ -124,7 +132,9 @@ namespace ABDM_WinForms_Frontend
             try
             {
                 // Calling: GET /v3/patient/{abhaAddress}
-                var response = await client.GetAsync($"{BaseUrl}/patient/{abhaAddress}");
+                // URL encode the ABHA Address (e.g., user@sbx -> user%40sbx)
+                string encodedAbha = Uri.EscapeDataString(abhaAddress);
+                var response = await client.GetAsync(string.Format("{0}/patient/{1}", BaseUrl, encodedAbha));
                 var result = await response.Content.ReadAsStringAsync();
 
                 return result;
@@ -141,7 +151,7 @@ namespace ABDM_WinForms_Frontend
             try
             {
                 // Calling: GET /v3/patients?hipId=...
-                var response = await client.GetAsync($"{BaseUrl}/patients?hipId={hipId}");
+                var response = await client.GetAsync(string.Format("{0}/patients?hipId={hipId}", BaseUrl));
                 return await response.Content.ReadAsStringAsync();
             }
             catch (Exception)
@@ -156,7 +166,7 @@ namespace ABDM_WinForms_Frontend
             try
             {
                 // Calling our debug endpoint: GET /v3/activities
-                var response = await client.GetAsync($"{BaseUrl}/activities");
+                var response = await client.GetAsync(string.Format("{0}/activities", BaseUrl));
                 return await response.Content.ReadAsStringAsync();
             }
             catch (Exception)
@@ -172,7 +182,7 @@ namespace ABDM_WinForms_Frontend
             {
                 // Calling: POST /v3/prescriptions
                 var content = new StringContent(JsonConvert.SerializeObject(prescription), System.Text.Encoding.UTF8, "application/json");
-                var response = await client.PostAsync($"{BaseUrl}/prescriptions", content);
+                var response = await client.PostAsync(string.Format("{0}/prescriptions", BaseUrl), content);
                 return await response.Content.ReadAsStringAsync();
             }
             catch (Exception ex)
@@ -188,7 +198,7 @@ namespace ABDM_WinForms_Frontend
             {
                 var content = new StringContent(JsonConvert.SerializeObject(new { consent = request }), System.Text.Encoding.UTF8, "application/json");
                 // Correct path from FacadeURL.java: /consent-init
-                var response = await client.PostAsync($"{BaseUrl}/consent-init", content);
+                var response = await client.PostAsync(string.Format("{0}/consent-init", BaseUrl), content);
                 var result = await response.Content.ReadAsStringAsync();
                 return JsonConvert.DeserializeObject<FacadeV3Response>(result);
             }
@@ -203,7 +213,7 @@ namespace ABDM_WinForms_Frontend
         {
             try
             {
-                var response = await client.GetAsync($"{BaseUrl}/consent-status/{requestId}");
+                var response = await client.GetAsync(string.Format("{0}/consent-status/{requestId}", BaseUrl));
                 var result = await response.Content.ReadAsStringAsync();
                 return JsonConvert.DeserializeObject<ConsentStatusV3Response>(result);
             }
@@ -227,7 +237,7 @@ namespace ABDM_WinForms_Frontend
                 };
                 var content = new StringContent(JsonConvert.SerializeObject(payload), System.Text.Encoding.UTF8, "application/json");
                 
-                var response = await client.PostAsync($"{BaseUrl}/health-information/fetch-records", content);
+                var response = await client.PostAsync(string.Format("{0}/health-information/fetch-records", BaseUrl), content);
                 var result = await response.Content.ReadAsStringAsync();
                 return JsonConvert.DeserializeObject<FacadeV3Response>(result);
             }
@@ -239,7 +249,7 @@ namespace ABDM_WinForms_Frontend
         {
             try
             {
-                var response = await client.GetAsync($"{BaseUrl}/health-information/status/{requestId}");
+                var response = await client.GetAsync(string.Format("{0}/health-information/status/{requestId}", BaseUrl));
                 var result = await response.Content.ReadAsStringAsync();
                 return JsonConvert.DeserializeObject<HealthInformationV3Response>(result);
             }

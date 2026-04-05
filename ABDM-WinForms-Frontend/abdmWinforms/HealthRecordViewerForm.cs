@@ -53,7 +53,7 @@ namespace abdmWinforms
 
                 while (retryCount < maxRetries)
                 {
-                    lblStatus.Text = $"Polling Gateway for data... (Attempt {retryCount + 1}/{maxRetries})";
+                    lblStatus.Text = string.Format("Polling Gateway for data... (Attempt {0}/{maxRetries})", retryCount + 1);
                     statusResponse = await _abdmService.GetHealthInformationStatusAsync(requestId);
 
                     if (statusResponse?.decryptedHealthInformationEntries != null && statusResponse.decryptedHealthInformationEntries.Count > 0)

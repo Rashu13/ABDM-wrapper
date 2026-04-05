@@ -10,44 +10,63 @@ namespace abdmWinforms
     {
         private readonly string _abhaAddress;
         private readonly string _patientName;
-        private readonly string _careContextReference;
+        private readonly List<CareContext> _careContexts;
+
         private readonly string _patientReference;
         private readonly string _gender;
         private readonly string _birthDate;
         private readonly AbdmService _abdmService;
 
-        public PrescriptionForm(string abhaAddress, string patientName, string careContextReference = "", string patientReference = "", string gender = "", string dob = "")
+        public PrescriptionForm(string abhaAddress, string patientName, List<CareContext> careContexts, string patientReference = "", string gender = "", string dob = "")
         {
             InitializeComponent();
             _abhaAddress = abhaAddress;
             _patientName = patientName;
-            _careContextReference = careContextReference;
+            _careContexts = careContexts ?? new List<CareContext>();
             _patientReference = patientReference;
             _gender = gender;
             _birthDate = dob;
             _abdmService = new AbdmService();
             
-            lblAbha.Text = $"ABHA: {_abhaAddress}";
-            lblPatient.Text = $"Patient: {_patientName}";
+            lblAbha.Text = string.Format("ABHA: {0}", _abhaAddress);
+            lblPatient.Text = string.Format("Patient: {0}", _patientName);
 
-            if (string.IsNullOrEmpty(_careContextReference))
+            // Populate Care Contexts Dropdown
+            cmbCareContext.Items.Clear();
+            foreach (var ctx in _careContexts)
             {
-                lblStatus.Text = "⚠️ WARNING: No Linked Care Context found. Push will NOT appear in ABHA App.";
-                lblStatus.ForeColor = Color.OrangeRed;
+                cmbCareContext.Items.Add(string.Format("{0} ({1})", ctx.referenceNumber, ctx.display));
+            }
+
+            if (cmbCareContext.Items.Count > 0)
+            {
+                cmbCareContext.SelectedIndex = 0;
+                lblStatus.Text = "✅ Ready to push to selected Visit ID.";
+                lblStatus.ForeColor = Color.SeaGreen;
             }
             else
             {
-                lblStatus.Text = $"✅ Linked to: {_careContextReference}";
-                lblStatus.ForeColor = Color.SeaGreen;
+                lblStatus.Text = "⚠️ WARNING: No Linked Care Context found.";
+                lblStatus.ForeColor = Color.OrangeRed;
             }
+
+            cmbHiType.SelectedIndex = 0; // Default to Prescription
         }
 
         private async void btnPushToAbdm_Click(object sender, EventArgs e)
         {
             try
             {
+                if (cmbCareContext.SelectedIndex < 0)
+                {
+                    MessageBox.Show("Please select a Visit ID (Care Context) to push data.", "Selection Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
                 btnPushToAbdm.Enabled = false;
                 btnPushToAbdm.Text = "PUSHING...";
+
+                string selectedRef = _careContexts[cmbCareContext.SelectedIndex].referenceNumber;
 
                 var medicines = new List<object>();
                 foreach (DataGridViewRow row in dgvMedicines.Rows)
@@ -70,10 +89,11 @@ namespace abdmWinforms
                     date = DateTime.Now.ToString("yyyy-MM-dd"),
                     gender = _gender,
                     birthDate = _birthDate,
-                    careContextReference = _careContextReference,
+                    careContextReference = selectedRef,
                     patientReference = _patientReference,
                     medicines = medicines,
-                    hipId = GlobalConfig.HipId
+                    hipId = GlobalConfig.HipId,
+                    hiType = cmbHiType.SelectedItem.ToString()
                 };
 
                 var response = await _abdmService.SavePrescriptionAsync(prescription);

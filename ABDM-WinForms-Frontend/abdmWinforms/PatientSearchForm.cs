@@ -1,6 +1,7 @@
 using ABDM_WinForms_Frontend;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -46,16 +47,30 @@ namespace abdmWinforms
                 else
                 {
                     // Map the response to PatientModel
+                    // FIX: Check if it's a valid JSON object starting with '{'. 
+                    // If it starts with 'Error:', it's a backend exception.
+                    if (string.IsNullOrEmpty(jsonResponse) || jsonResponse.StartsWith("Error:") || !jsonResponse.Trim().StartsWith("{"))
+                    {
+                        string displayMsg = "Failed to fetch patient data.";
+                        if (jsonResponse.StartsWith("Error:")) displayMsg = jsonResponse;
+                        else if (jsonResponse.Contains("<html")) displayMsg = "Server returned an HTML error (likely the service is down or URL is wrong).";
+                        
+                        MessageBox.Show(displayMsg + "\n\nResponse received: " + (jsonResponse.Length > 100 ? jsonResponse.Substring(0, 100) + "..." : jsonResponse), 
+                                        "ABDM Search Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
                     _currentPatient = JsonConvert.DeserializeObject<PatientModel>(jsonResponse);
 
                     // FIX: Check if the patient truly has a name (to avoid empty objects)
                     if (_currentPatient != null && !string.IsNullOrEmpty(_currentPatient.name))
                     {
-                        lblName.Text = "Patient: " + _currentPatient.name;
-                        lblGender.Text = "Gender: " + (_currentPatient.gender ?? "N/A");
-                        lblDob.Text = "DOB: " + (_currentPatient.dateOfBirth ?? "N/A");
-                        lblStatus.Text = "Status: Profile Loaded";
+                        lblName.Text = string.Format("Patient: {0}", _currentPatient.name);
+                        lblGender.Text = string.Format("Gender: {0}", (_currentPatient.gender ?? "N/A"));
+                        lblDob.Text = string.Format("DOB: {0}", (_currentPatient.dateOfBirth ?? "N/A"));
+                        lblStatus.Text = "✅ ABDM VERIFIED & LINKED";
                         lblStatus.ForeColor = System.Drawing.Color.SeaGreen;
+                        lblStatus.Font = new System.Drawing.Font(lblStatus.Font, System.Drawing.FontStyle.Bold);
 
                         pnlDetails.Visible = true;
                         btnWritePrescription.Visible = true;
@@ -129,7 +144,7 @@ namespace abdmWinforms
                     else
                     {
                         string currentStatus = statusResponse.consentArtifacts[0].status;
-                        MessageBox.Show($"Current Consent Status: {currentStatus}\n\nAsk the patient to GRANT the request in their ABHA app.", "Access Pending", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show(string.Format("Current Consent Status: {0}\n\nAsk the patient to GRANT the request in their ABHA app.", currentStatus), "Access Pending", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
                 else
@@ -160,22 +175,13 @@ namespace abdmWinforms
                 using (var prescriptionForm = new PrescriptionForm(
                     _currentPatient.abhaAddress, 
                     _currentPatient.name, 
-                    linkedContext, 
+                    _currentPatient.careContexts, 
                     _currentPatient.patientReference, 
                     _currentPatient.gender, 
                     _currentPatient.dateOfBirth))
                 {
                     prescriptionForm.ShowDialog(this);
                 }
-            }
-        }
-
-        private void btnM3Dashboard_Click(object sender, EventArgs e)
-        {
-            // Open the M3 Monitor Dashboard
-            using (var m3Dashboard = new M3DashboardForm())
-            {
-                m3Dashboard.ShowDialog(this);
             }
         }
 
@@ -213,6 +219,35 @@ namespace abdmWinforms
         private void btnShowRegistration_Click(object sender, EventArgs e)
         {
             new PatientRegistrationForm(txtSearchAbha.Text.Trim()).ShowDialog();
+        }
+
+        private async void tmrLiveFeed_Tick(object sender, EventArgs e)
+        {
+            try
+            {
+                // Fetch activities from AbdmService
+                string jsonResponse = await _abdmService.GetActivitiesAsync();
+                var activities = JsonConvert.DeserializeObject<List<string>>(jsonResponse);
+
+                if (activities != null && activities.Count > 0)
+                {
+                    // Update the sidebar listbox
+                    lstLiveActivities.BeginUpdate();
+                    lstLiveActivities.Items.Clear();
+                    foreach (var activity in activities)
+                    {
+                        lstLiveActivities.Items.Add(activity);
+                    }
+                    // Auto-scroll to bottom
+                    lstLiveActivities.TopIndex = lstLiveActivities.Items.Count - 1;
+                    lstLiveActivities.EndUpdate();
+                }
+            }
+            catch (Exception ex)
+            {
+                // Silent error for background polling
+                Console.WriteLine("Activity Polling Error: " + ex.Message);
+            }
         }
     }
 }

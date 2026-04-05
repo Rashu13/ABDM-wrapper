@@ -21,6 +21,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
+import reactor.core.scheduler.Schedulers;
 import reactor.util.retry.Retry;
 
 @Component
@@ -94,6 +95,7 @@ public class RequestV3Manager {
                             || throwable instanceof WebClientRequestException
                             || throwable instanceof ReadTimeoutException
                             || throwable instanceof TimeoutException))
+        .subscribeOn(Schedulers.boundedElastic())
         .block();
   }
 }

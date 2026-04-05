@@ -35,6 +35,11 @@ namespace abdmWinforms
                 if (chkPrescription.Checked) hiTypes.Add("Prescription");
                 if (chkDiagnostic.Checked) hiTypes.Add("DiagnosticReport");
                 if (chkOPD.Checked) hiTypes.Add("OPConsultation");
+                if (chkDischarge.Checked) hiTypes.Add("DischargeSummary");
+                if (chkImmunization.Checked) hiTypes.Add("ImmunizationRecord");
+                if (chkHealthDoc.Checked) hiTypes.Add("HealthDocumentRecord");
+                if (chkWellness.Checked) hiTypes.Add("WellnessRecord");
+                if (chkClinicalDoc.Checked) hiTypes.Add("ClinicalDocument");
 
                 // Prepare HIU Consent Request Object with strict UTC ISO format
                 var request = new

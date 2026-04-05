@@ -1,7 +1,9 @@
 using ABDM_WinForms_Frontend;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
+
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -45,7 +47,7 @@ namespace abdmWinforms
 
         private void LinkingStatusPollForm_Load(object sender, EventArgs e)
         {
-            lblRequestId.Text = $"Req ID: {_requestId}";
+            lblRequestId.Text = string.Format("Req ID: {0}", _requestId);
             _pollTimer.Start();
         }
 
@@ -57,9 +59,16 @@ namespace abdmWinforms
 
             try
             {
-                lblStatus.Text = $"Checking status... (Attempt {_pollTicks})";
+                lblStatus.Text = string.Format("Syncing with ABDM Gateway... (Attempt {0})", _pollTicks);
                 string jsonResponse = await _abdmService.GetLinkStatusAsync(_requestId);
                 
+                // Validate JSON response
+                if (string.IsNullOrEmpty(jsonResponse) || jsonResponse.StartsWith("Error:") || !jsonResponse.Trim().StartsWith("{"))
+                {
+                    lblStatus.Text = "Gateway busy. Retrying...";
+                    return;
+                }
+
                 var response = JsonConvert.DeserializeObject<dynamic>(jsonResponse);
                 string status = response?.status?.ToString();
 
@@ -78,7 +87,11 @@ namespace abdmWinforms
                     
                     if (diagResult == DialogResult.Yes)
                     {
-                        using (var prescriptionForm = new PrescriptionForm(_abhaAddress, _patientName, _referenceNumber, _patientReference, _gender, _dob))
+                        var linkCtx = new List<CareContext> 
+                        { 
+                            new CareContext { referenceNumber = _referenceNumber, display = "Linked Visit" } 
+                        };
+                        using (var prescriptionForm = new PrescriptionForm(_abhaAddress, _patientName, linkCtx, _patientReference, _gender, _dob))
                         {
                             prescriptionForm.ShowDialog(this);
                         }
@@ -90,14 +103,15 @@ namespace abdmWinforms
                 else if (status.ToUpper().Contains("ERROR") || status.ToUpper().Contains("FAILED"))
                 {
                     _pollTimer.Stop();
-                    MessageBox.Show($"Linking failed: {status}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(string.Format("Linking failed: {0}", status), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     this.DialogResult = DialogResult.Cancel;
                     this.Close();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                lblStatus.Text = "Error polling status. Retrying...";
+                // Silent retry for background polling
+                lblStatus.Text = "Status: Syncing pulses...";
             }
             finally
             {

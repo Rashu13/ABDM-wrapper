@@ -20,6 +20,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
+import reactor.core.scheduler.Schedulers;
 import reactor.util.retry.Retry;
 
 @Component
@@ -60,6 +61,7 @@ public class HIUV3Client {
                                             || throwable instanceof WebClientRequestException
                                             || throwable instanceof ReadTimeoutException
                                             || throwable instanceof TimeoutException))
+                        .subscribeOn(Schedulers.boundedElastic())
                         .block();
 
                 log.info("Pushed health information. Response headers: {}", response.getHeaders());

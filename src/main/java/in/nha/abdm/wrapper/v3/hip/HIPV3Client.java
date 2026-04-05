@@ -26,6 +26,7 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
+import reactor.core.scheduler.Schedulers;
 import reactor.util.retry.Retry;
 
 @Validated
@@ -75,6 +76,7 @@ public class HIPV3Client {
                                 || throwable instanceof WebClientRequestException
                                 || throwable instanceof ReadTimeoutException
                                 || throwable instanceof TimeoutException))
+            .subscribeOn(Schedulers.boundedElastic())
             .block();
 
     return responseEntity.getBody();
@@ -114,6 +116,7 @@ public class HIPV3Client {
                             || throwable instanceof WebClientRequestException
                             || throwable instanceof ReadTimeoutException
                             || throwable instanceof TimeoutException))
+        .subscribeOn(Schedulers.boundedElastic())
         .block();
   }
 
@@ -138,6 +141,7 @@ public class HIPV3Client {
                                 || throwable instanceof WebClientRequestException
                                 || throwable instanceof ReadTimeoutException
                                 || throwable instanceof TimeoutException))
+            .subscribeOn(Schedulers.boundedElastic())
             .block();
 
     return responseEntity.getBody();
@@ -164,6 +168,7 @@ public class HIPV3Client {
                             || throwable instanceof WebClientRequestException
                             || throwable instanceof ReadTimeoutException
                             || throwable instanceof TimeoutException))
+        .subscribeOn(Schedulers.boundedElastic())
         .block();
   }
 
@@ -188,6 +193,7 @@ public class HIPV3Client {
                             || throwable instanceof WebClientRequestException
                             || throwable instanceof ReadTimeoutException
                             || throwable instanceof TimeoutException))
+        .subscribeOn(Schedulers.boundedElastic())
         .block();
   }
 
@@ -210,6 +216,7 @@ public class HIPV3Client {
                             || throwable instanceof WebClientRequestException
                             || throwable instanceof ReadTimeoutException
                             || throwable instanceof TimeoutException))
+        .subscribeOn(Schedulers.boundedElastic())
         .block();
   }
 

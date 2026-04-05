@@ -25,6 +25,7 @@ public class Prescription {
   private String patientReference;
   private List<Medicine> medicines;
   private String hipId;
+  private String hiType; // Standard ABDM HI Types: Prescription, DiagnosticReport, etc.
 
   @Data
   public static class Medicine {

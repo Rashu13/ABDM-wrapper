@@ -24,6 +24,11 @@ namespace abdmWinforms
             this.chkPrescription = new System.Windows.Forms.CheckBox();
             this.chkDiagnostic = new System.Windows.Forms.CheckBox();
             this.chkOPD = new System.Windows.Forms.CheckBox();
+            this.chkDischarge = new System.Windows.Forms.CheckBox();
+            this.chkImmunization = new System.Windows.Forms.CheckBox();
+            this.chkHealthDoc = new System.Windows.Forms.CheckBox();
+            this.chkWellness = new System.Windows.Forms.CheckBox();
+            this.chkClinicalDoc = new System.Windows.Forms.CheckBox();
             this.label5 = new System.Windows.Forms.Label();
             this.btnSendRequest = new System.Windows.Forms.Button();
             this.SuspendLayout();
@@ -115,6 +120,56 @@ namespace abdmWinforms
             this.chkOPD.Text = "OPD Consultation";
             this.chkOPD.UseVisualStyleBackColor = true;
             // 
+            // chkDischarge
+            // 
+            this.chkDischarge.AutoSize = true;
+            this.chkDischarge.Location = new System.Drawing.Point(36, 280);
+            this.chkDischarge.Name = "chkDischarge";
+            this.chkDischarge.Size = new System.Drawing.Size(115, 17);
+            this.chkDischarge.TabIndex = 11;
+            this.chkDischarge.Text = "Discharge Summary";
+            this.chkDischarge.UseVisualStyleBackColor = true;
+            // 
+            // chkImmunization
+            // 
+            this.chkImmunization.AutoSize = true;
+            this.chkImmunization.Location = new System.Drawing.Point(238, 205);
+            this.chkImmunization.Name = "chkImmunization";
+            this.chkImmunization.Size = new System.Drawing.Size(126, 17);
+            this.chkImmunization.TabIndex = 12;
+            this.chkImmunization.Text = "Immunization Record";
+            this.chkImmunization.UseVisualStyleBackColor = true;
+            // 
+            // chkHealthDoc
+            // 
+            this.chkHealthDoc.AutoSize = true;
+            this.chkHealthDoc.Location = new System.Drawing.Point(238, 230);
+            this.chkHealthDoc.Name = "chkHealthDoc";
+            this.chkHealthDoc.Size = new System.Drawing.Size(142, 17);
+            this.chkHealthDoc.TabIndex = 13;
+            this.chkHealthDoc.Text = "Health Document Record";
+            this.chkHealthDoc.UseVisualStyleBackColor = true;
+            // 
+            // chkWellness
+            // 
+            this.chkWellness.AutoSize = true;
+            this.chkWellness.Location = new System.Drawing.Point(238, 255);
+            this.chkWellness.Name = "chkWellness";
+            this.chkWellness.Size = new System.Drawing.Size(107, 17);
+            this.chkWellness.TabIndex = 14;
+            this.chkWellness.Text = "Wellness Record";
+            this.chkWellness.UseVisualStyleBackColor = true;
+            // 
+            // chkClinicalDoc
+            // 
+            this.chkClinicalDoc.AutoSize = true;
+            this.chkClinicalDoc.Location = new System.Drawing.Point(238, 280);
+            this.chkClinicalDoc.Name = "chkClinicalDoc";
+            this.chkClinicalDoc.Size = new System.Drawing.Size(108, 17);
+            this.chkClinicalDoc.TabIndex = 15;
+            this.chkClinicalDoc.Text = "Clinical Document";
+            this.chkClinicalDoc.UseVisualStyleBackColor = true;
+            // 
             // label5
             // 
             this.label5.AutoSize = true;
@@ -132,7 +187,7 @@ namespace abdmWinforms
             this.btnSendRequest.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSendRequest.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
             this.btnSendRequest.ForeColor = System.Drawing.Color.White;
-            this.btnSendRequest.Location = new System.Drawing.Point(30, 310);
+            this.btnSendRequest.Location = new System.Drawing.Point(30, 315);
             this.btnSendRequest.Name = "btnSendRequest";
             this.btnSendRequest.Size = new System.Drawing.Size(390, 50);
             this.btnSendRequest.TabIndex = 10;
@@ -146,6 +201,11 @@ namespace abdmWinforms
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(460, 400);
+            this.Controls.Add(this.chkClinicalDoc);
+            this.Controls.Add(this.chkWellness);
+            this.Controls.Add(this.chkHealthDoc);
+            this.Controls.Add(this.chkImmunization);
+            this.Controls.Add(this.chkDischarge);
             this.Controls.Add(this.btnSendRequest);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.chkOPD);
@@ -176,6 +236,11 @@ namespace abdmWinforms
         private System.Windows.Forms.CheckBox chkPrescription;
         private System.Windows.Forms.CheckBox chkDiagnostic;
         private System.Windows.Forms.CheckBox chkOPD;
+        private System.Windows.Forms.CheckBox chkDischarge;
+        private System.Windows.Forms.CheckBox chkImmunization;
+        private System.Windows.Forms.CheckBox chkHealthDoc;
+        private System.Windows.Forms.CheckBox chkWellness;
+        private System.Windows.Forms.CheckBox chkClinicalDoc;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Button btnSendRequest;
     }

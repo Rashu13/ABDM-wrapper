@@ -77,12 +77,6 @@
     <Compile Include="LinkingStatusPollForm.Designer.cs">
       <DependentUpon>LinkingStatusPollForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="M3DashboardForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="M3DashboardForm.Designer.cs">
-      <DependentUpon>M3DashboardForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="OtpVerificationForm.cs">
       <SubType>Form</SubType>
     </Compile>

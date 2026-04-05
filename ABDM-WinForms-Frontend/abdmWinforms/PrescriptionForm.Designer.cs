@@ -12,6 +12,11 @@ namespace abdmWinforms
         private System.Windows.Forms.Button btnPushToAbdm;
         private System.Windows.Forms.Label lblTitle;
         private System.Windows.Forms.Label lblStatus;
+        private System.Windows.Forms.ComboBox cmbHiType;
+        private System.Windows.Forms.Label labelHiType;
+        private System.Windows.Forms.ComboBox cmbCareContext;
+        private System.Windows.Forms.Label labelCareContext;
+
 
         protected override void Dispose(bool disposing)
         {
@@ -32,6 +37,11 @@ namespace abdmWinforms
             this.colDosage = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colDuration = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.lblStatus = new System.Windows.Forms.Label();
+            this.cmbHiType = new System.Windows.Forms.ComboBox();
+            this.labelHiType = new System.Windows.Forms.Label();
+            this.cmbCareContext = new System.Windows.Forms.ComboBox();
+            this.labelCareContext = new System.Windows.Forms.Label();
+
             this.btnPushToAbdm = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvMedicines)).BeginInit();
             this.SuspendLayout();
@@ -85,10 +95,57 @@ namespace abdmWinforms
             this.colMedicine,
             this.colDosage,
             this.colDuration});
-            this.dgvMedicines.Location = new System.Drawing.Point(15, 100);
+            this.dgvMedicines.Location = new System.Drawing.Point(15, 140);
             this.dgvMedicines.Name = "dgvMedicines";
             this.dgvMedicines.Size = new System.Drawing.Size(550, 200);
             this.dgvMedicines.TabIndex = 3;
+            // 
+            // cmbHiType
+            // 
+            this.cmbHiType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbHiType.FormattingEnabled = true;
+            this.cmbHiType.Items.AddRange(new object[] {
+            "Prescription",
+            "DiagnosticReport",
+            "OPConsultation",
+            "DischargeSummary",
+            "ImmunizationRecord",
+            "HealthDocumentRecord",
+            "WellnessRecord",
+            "ClinicalDocument"});
+            this.cmbHiType.Location = new System.Drawing.Point(125, 108);
+            this.cmbHiType.Name = "cmbHiType";
+            this.cmbHiType.Size = new System.Drawing.Size(440, 23);
+            this.cmbHiType.TabIndex = 10;
+            // 
+            // labelHiType
+            // 
+            this.labelHiType.AutoSize = true;
+            this.labelHiType.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.labelHiType.Location = new System.Drawing.Point(15, 111);
+            this.labelHiType.Name = "labelHiType";
+            this.labelHiType.Size = new System.Drawing.Size(104, 15);
+            this.labelHiType.TabIndex = 11;
+            this.labelHiType.Text = "Information Type:";
+            // 
+            // cmbCareContext
+            // 
+            this.cmbCareContext.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbCareContext.FormattingEnabled = true;
+            this.cmbCareContext.Location = new System.Drawing.Point(125, 87);
+            this.cmbCareContext.Name = "cmbCareContext";
+            this.cmbCareContext.Size = new System.Drawing.Size(440, 23);
+            this.cmbCareContext.TabIndex = 12;
+            // 
+            // labelCareContext
+            // 
+            this.labelCareContext.AutoSize = true;
+            this.labelCareContext.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.labelCareContext.Location = new System.Drawing.Point(15, 90);
+            this.labelCareContext.Name = "labelCareContext";
+            this.labelCareContext.Size = new System.Drawing.Size(100, 15);
+            this.labelCareContext.TabIndex = 13;
+            this.labelCareContext.Text = "Select Visit ID:";
             // 
             // colMedicine
             // 
@@ -127,7 +184,11 @@ namespace abdmWinforms
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(584, 380);
+            this.ClientSize = new System.Drawing.Size(584, 450);
+            this.Controls.Add(this.labelCareContext);
+            this.Controls.Add(this.cmbCareContext);
+            this.Controls.Add(this.labelHiType);
+            this.Controls.Add(this.cmbHiType);
             this.Controls.Add(this.btnPushToAbdm);
             this.Controls.Add(this.dgvMedicines);
             this.Controls.Add(this.lblStatus);

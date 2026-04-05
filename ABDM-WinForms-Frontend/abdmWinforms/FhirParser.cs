@@ -40,9 +40,9 @@ namespace abdmWinforms
 
                 // 3. Extract Clinical Content
                 StringBuilder details = new StringBuilder();
-                details.AppendLine($"--- {docType} ---");
-                details.AppendLine($"Date: {docDate}");
-                details.AppendLine($"Facility: {provider}");
+                details.AppendLine(string.Format("--- {0} ---", docType));
+                details.AppendLine(string.Format("Date: {0}", docDate));
+                details.AppendLine(string.Format("Facility: {0}", provider));
                 details.AppendLine();
 
                 // Medications
@@ -55,7 +55,7 @@ namespace abdmWinforms
                         var res = med["resource"];
                         string name = res["medicationCodeableConcept"]?["text"]?.ToString() ?? "Unknown Medicine";
                         string dosage = res["dosageInstruction"]?[0]?["text"]?.ToString() ?? "";
-                        details.AppendLine($"- {name} {dosage}");
+                        details.AppendLine(string.Format("- {0} {dosage}", name));
                     }
                     details.AppendLine();
                 }
@@ -71,7 +71,7 @@ namespace abdmWinforms
                         string name = res["code"]?["text"]?.ToString() ?? "Observation";
                         string val = res["valueQuantity"]?["value"]?.ToString() ?? res["valueString"]?.ToString() ?? "";
                         string unit = res["valueQuantity"]?["unit"]?.ToString() ?? "";
-                        details.AppendLine($"- {name}: {val} {unit}");
+                        details.AppendLine(string.Format("- {0}: {val} {unit}", name));
                     }
                     details.AppendLine();
                 }
@@ -85,7 +85,7 @@ namespace abdmWinforms
                     {
                         var res = cond["resource"];
                         string name = res["code"]?["text"]?.ToString() ?? "Condition";
-                        details.AppendLine($"- {name}");
+                        details.AppendLine(string.Format("- {0}", name));
                     }
                     details.AppendLine();
                 }
@@ -100,7 +100,7 @@ namespace abdmWinforms
                         var res = rep["resource"];
                         string name = res["code"]?["text"]?.ToString() ?? "Lab Report";
                         string status = res["status"]?.ToString() ?? "";
-                        details.AppendLine($"- {name} ({status})");
+                        details.AppendLine(string.Format("- {0} ({status})", name));
                     }
                     details.AppendLine();
                 }
@@ -115,7 +115,7 @@ namespace abdmWinforms
                         var res = proc["resource"];
                         string name = res["code"]?["text"]?.ToString() ?? "Procedure";
                         string date = TryParseDate(res["performedDateTime"]?.ToString()) ?? "";
-                        details.AppendLine($"- {name} {date}");
+                        details.AppendLine(string.Format("- {0} {date}", name));
                     }
                     details.AppendLine();
                 }
@@ -130,7 +130,7 @@ namespace abdmWinforms
                         var res = imm["resource"];
                         string name = res["vaccineCode"]?["text"]?.ToString() ?? "Vaccine";
                         string status = res["status"]?.ToString() ?? "";
-                        details.AppendLine($"- {name} ({status})");
+                        details.AppendLine(string.Format("- {0} ({status})", name));
                     }
                     details.AppendLine();
                 }
@@ -145,7 +145,7 @@ namespace abdmWinforms
                         var res = allergy["resource"];
                         string name = res["code"]?["text"]?.ToString() ?? "Allergy";
                         string criticality = res["criticality"]?.ToString() ?? "Unknown";
-                        details.AppendLine($"- {name} (Criticality: {criticality})");
+                        details.AppendLine(string.Format("- {0} (Criticality: {criticality})", name));
                     }
                     details.AppendLine();
                 }

@@ -15,12 +15,13 @@ namespace abdmWinforms
 
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.label1 = new System.Windows.Forms.Label();
             this.txtSearchAbha = new System.Windows.Forms.TextBox();
             this.btnSearch = new System.Windows.Forms.Button();
             this.btnShowInvite = new System.Windows.Forms.Button();
             this.btnViewLogs = new System.Windows.Forms.Button();
-            this.btnM3Dashboard = new System.Windows.Forms.Button();
+            this.btnViewLogs = new System.Windows.Forms.Button();
             this.btnShowRegistration = new System.Windows.Forms.Button();
             this.btnWritePrescription = new System.Windows.Forms.Button();
             this.btnRequestConsent = new System.Windows.Forms.Button();
@@ -32,7 +33,11 @@ namespace abdmWinforms
             this.lblGender = new System.Windows.Forms.Label();
             this.lblName = new System.Windows.Forms.Label();
             this.pnlResultHeader = new System.Windows.Forms.Panel();
+            this.pnlMonitor = new System.Windows.Forms.Panel();
+            this.lblMonitorHeader = new System.Windows.Forms.Label();
+            this.lstLiveActivities = new System.Windows.Forms.ListBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.tmrLiveFeed = new System.Windows.Forms.Timer(this.components);
             this.pnlDetails.SuspendLayout();
             this.pnlResultHeader.SuspendLayout();
             this.SuspendLayout();
@@ -104,21 +109,6 @@ namespace abdmWinforms
             this.btnViewLogs.Text = "VIEW ACTIVITY LOGS / FULL LIST";
             this.btnViewLogs.UseVisualStyleBackColor = false;
             this.btnViewLogs.Click += new System.EventHandler(this.btnViewLogs_Click);
-            // 
-            // btnM3Dashboard
-            // 
-            this.btnM3Dashboard.BackColor = System.Drawing.Color.OrangeRed;
-            this.btnM3Dashboard.FlatAppearance.BorderSize = 0;
-            this.btnM3Dashboard.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnM3Dashboard.Font = new System.Drawing.Font("Segoe UI", 8F, System.Drawing.FontStyle.Bold);
-            this.btnM3Dashboard.ForeColor = System.Drawing.Color.White;
-            this.btnM3Dashboard.Location = new System.Drawing.Point(60, 71);
-            this.btnM3Dashboard.Name = "btnM3Dashboard";
-            this.btnM3Dashboard.Size = new System.Drawing.Size(120, 23);
-            this.btnM3Dashboard.TabIndex = 7;
-            this.btnM3Dashboard.Text = "M3 MONITOR";
-            this.btnM3Dashboard.UseVisualStyleBackColor = false;
-            this.btnM3Dashboard.Click += new System.EventHandler(this.btnM3Dashboard_Click);
             // 
             // btnShowRegistration
             // 
@@ -268,8 +258,43 @@ namespace abdmWinforms
             this.pnlResultHeader.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlResultHeader.Location = new System.Drawing.Point(0, 0);
             this.pnlResultHeader.Name = "pnlResultHeader";
-            this.pnlResultHeader.Size = new System.Drawing.Size(448, 40);
+            this.pnlResultHeader.Size = new System.Drawing.Size(530, 40);
             this.pnlResultHeader.TabIndex = 0;
+            // 
+            // pnlMonitor
+            // 
+            this.pnlMonitor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(62)))), ((int)(((byte)(80)))));
+            this.pnlMonitor.Controls.Add(this.lstLiveActivities);
+            this.pnlMonitor.Controls.Add(this.lblMonitorHeader);
+            this.pnlMonitor.Dock = System.Windows.Forms.DockStyle.Right;
+            this.pnlMonitor.Location = new System.Drawing.Point(600, 0);
+            this.pnlMonitor.Name = "pnlMonitor";
+            this.pnlMonitor.Size = new System.Drawing.Size(384, 641);
+            this.pnlMonitor.TabIndex = 10;
+            // 
+            // lblMonitorHeader
+            // 
+            this.lblMonitorHeader.AutoSize = true;
+            this.lblMonitorHeader.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
+            this.lblMonitorHeader.ForeColor = System.Drawing.Color.White;
+            this.lblMonitorHeader.Location = new System.Drawing.Point(15, 15);
+            this.lblMonitorHeader.Name = "lblMonitorHeader";
+            this.lblMonitorHeader.Size = new System.Drawing.Size(215, 21);
+            this.lblMonitorHeader.TabIndex = 0;
+            this.lblMonitorHeader.Text = "LIVE GATEWAY MONITOR";
+            // 
+            // lstLiveActivities
+            // 
+            this.lstLiveActivities.BackColor = System.Drawing.Color.Black;
+            this.lstLiveActivities.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.lstLiveActivities.Font = new System.Drawing.Font("Consolas", 9F);
+            this.lstLiveActivities.ForeColor = System.Drawing.Color.PaleGreen;
+            this.lstLiveActivities.FormattingEnabled = true;
+            this.lstLiveActivities.ItemHeight = 14;
+            this.lstLiveActivities.Location = new System.Drawing.Point(15, 50);
+            this.lstLiveActivities.Name = "lstLiveActivities";
+            this.lstLiveActivities.Size = new System.Drawing.Size(355, 574);
+            this.lstLiveActivities.TabIndex = 1;
             // 
             // label2
             // 
@@ -286,10 +311,10 @@ namespace abdmWinforms
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(240)))), ((int)(((byte)(241)))));
-            this.ClientSize = new System.Drawing.Size(580, 680);
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.ClientSize = new System.Drawing.Size(984, 641);
+            this.Controls.Add(this.pnlMonitor);
             this.Controls.Add(this.btnShowRegistration);
-            this.Controls.Add(this.btnM3Dashboard);
             this.Controls.Add(this.btnViewLogs);
             this.Controls.Add(this.pnlDetails);
             this.Controls.Add(this.btnShowInvite);
@@ -299,12 +324,18 @@ namespace abdmWinforms
             this.Name = "PatientSearchForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "ABDM Dashboard";
-            this.pnlDetails.ResumeLayout(false);
-            this.pnlDetails.PerformLayout();
             this.pnlResultHeader.ResumeLayout(false);
             this.pnlResultHeader.PerformLayout();
+            this.pnlMonitor.ResumeLayout(false);
+            this.pnlMonitor.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
+            // 
+            // tmrLiveFeed
+            // 
+            this.tmrLiveFeed.Enabled = true;
+            this.tmrLiveFeed.Interval = 5000;
+            this.tmrLiveFeed.Tick += new System.EventHandler(this.tmrLiveFeed_Tick);
 
         }
 
@@ -326,5 +357,9 @@ namespace abdmWinforms
         private System.Windows.Forms.Button btnShowRegistration;
         private System.Windows.Forms.Button btnRequestConsent;
         private System.Windows.Forms.Button btnViewHistory;
+        private System.Windows.Forms.Panel pnlMonitor;
+        private System.Windows.Forms.Label lblMonitorHeader;
+        private System.Windows.Forms.ListBox lstLiveActivities;
+        private System.Windows.Forms.Timer tmrLiveFeed;
     }
 }

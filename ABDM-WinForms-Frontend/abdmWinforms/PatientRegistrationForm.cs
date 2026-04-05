@@ -24,6 +24,18 @@ namespace abdmWinforms
             txtMobile.Text = "9416056193";
         }
 
+        public PatientRegistrationForm(string abhaAddress) : this()
+        {
+            if (!string.IsNullOrEmpty(abhaAddress))
+            {
+                txtAbhaAddress.Text = abhaAddress;
+                // Clear out other test data if a specific ABHA is provided
+                txtAbhaNumber.Text = "";
+                txtName.Text = "";
+                txtMobile.Text = "";
+            }
+        }
+
         private async void btnGenerateToken_Click(object sender, EventArgs e)
         {
             try
@@ -79,6 +91,21 @@ namespace abdmWinforms
                             referenceNumber = "OPD-" + Guid.NewGuid().ToString().Substring(0, 8), 
                             display = "OPD Consultation", 
                             hiType = "OPConsultation" 
+                        },
+                        new CareContext { 
+                            referenceNumber = "LAB-" + Guid.NewGuid().ToString().Substring(0, 8), 
+                            display = "Diagnostic Lab Report", 
+                            hiType = "DiagnosticReport" 
+                        },
+                        new CareContext { 
+                            referenceNumber = "RX-" + Guid.NewGuid().ToString().Substring(0, 8), 
+                            display = "Doctor Prescription", 
+                            hiType = "Prescription" 
+                        },
+                        new CareContext { 
+                            referenceNumber = "WEL-" + Guid.NewGuid().ToString().Substring(0, 8), 
+                            display = "General Wellness Record", 
+                            hiType = "WellnessRecord" 
                         }
                     }
                 };
