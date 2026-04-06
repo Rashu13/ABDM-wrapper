@@ -16,7 +16,6 @@ namespace abdmWinforms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.label1 = new System.Windows.Forms.Label();
             this.txtSearchAbha = new System.Windows.Forms.TextBox();
             this.btnSearch = new System.Windows.Forms.Button();
             this.btnShowInvite = new System.Windows.Forms.Button();
@@ -33,26 +32,11 @@ namespace abdmWinforms
             this.lblName = new System.Windows.Forms.Label();
             this.pnlResultHeader = new System.Windows.Forms.Panel();
             this.label2 = new System.Windows.Forms.Label();
-            this.pnlMonitor = new System.Windows.Forms.Panel();
-            this.lstLiveActivities = new System.Windows.Forms.ListBox();
-            this.lblMonitorHeader = new System.Windows.Forms.Label();
             this.tmrLiveFeed = new System.Windows.Forms.Timer(this.components);
+            this.lstLiveActivities = new System.Windows.Forms.ListBox();
             this.pnlDetails.SuspendLayout();
             this.pnlResultHeader.SuspendLayout();
-            this.pnlMonitor.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Segoe UI", 20.25F, System.Drawing.FontStyle.Bold);
-            this.label1.ForeColor = System.Drawing.Color.MidnightBlue;
-            this.label1.Location = new System.Drawing.Point(133, 37);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(415, 46);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "ABDM Patient Navigator";
             // 
             // txtSearchAbha
             // 
@@ -60,7 +44,7 @@ namespace abdmWinforms
             this.txtSearchAbha.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtSearchAbha.Font = new System.Drawing.Font("Segoe UI", 14.25F);
             this.txtSearchAbha.ForeColor = System.Drawing.Color.DimGray;
-            this.txtSearchAbha.Location = new System.Drawing.Point(80, 123);
+            this.txtSearchAbha.Location = new System.Drawing.Point(78, 50);
             this.txtSearchAbha.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.txtSearchAbha.Name = "txtSearchAbha";
             this.txtSearchAbha.Size = new System.Drawing.Size(426, 39);
@@ -74,7 +58,7 @@ namespace abdmWinforms
             this.btnSearch.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSearch.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold);
             this.btnSearch.ForeColor = System.Drawing.Color.White;
-            this.btnSearch.Location = new System.Drawing.Point(520, 123);
+            this.btnSearch.Location = new System.Drawing.Point(518, 50);
             this.btnSearch.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnSearch.Name = "btnSearch";
             this.btnSearch.Size = new System.Drawing.Size(160, 41);
@@ -90,7 +74,7 @@ namespace abdmWinforms
             this.btnShowInvite.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnShowInvite.Font = new System.Drawing.Font("Segoe UI", 8F, System.Drawing.FontStyle.Bold);
             this.btnShowInvite.ForeColor = System.Drawing.Color.White;
-            this.btnShowInvite.Location = new System.Drawing.Point(520, 87);
+            this.btnShowInvite.Location = new System.Drawing.Point(518, 14);
             this.btnShowInvite.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnShowInvite.Name = "btnShowInvite";
             this.btnShowInvite.Size = new System.Drawing.Size(160, 28);
@@ -106,7 +90,7 @@ namespace abdmWinforms
             this.btnViewLogs.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnViewLogs.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold);
             this.btnViewLogs.ForeColor = System.Drawing.Color.White;
-            this.btnViewLogs.Location = new System.Drawing.Point(79, 728);
+            this.btnViewLogs.Location = new System.Drawing.Point(77, 497);
             this.btnViewLogs.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnViewLogs.Name = "btnViewLogs";
             this.btnViewLogs.Size = new System.Drawing.Size(600, 49);
@@ -122,7 +106,7 @@ namespace abdmWinforms
             this.btnShowRegistration.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnShowRegistration.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
             this.btnShowRegistration.ForeColor = System.Drawing.Color.White;
-            this.btnShowRegistration.Location = new System.Drawing.Point(80, 172);
+            this.btnShowRegistration.Location = new System.Drawing.Point(78, 99);
             this.btnShowRegistration.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnShowRegistration.Name = "btnShowRegistration";
             this.btnShowRegistration.Size = new System.Drawing.Size(600, 43);
@@ -138,10 +122,10 @@ namespace abdmWinforms
             this.btnWritePrescription.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnWritePrescription.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.btnWritePrescription.ForeColor = System.Drawing.Color.White;
-            this.btnWritePrescription.Location = new System.Drawing.Point(40, 320);
+            this.btnWritePrescription.Location = new System.Drawing.Point(302, 202);
             this.btnWritePrescription.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnWritePrescription.Name = "btnWritePrescription";
-            this.btnWritePrescription.Size = new System.Drawing.Size(520, 55);
+            this.btnWritePrescription.Size = new System.Drawing.Size(263, 55);
             this.btnWritePrescription.TabIndex = 6;
             this.btnWritePrescription.Text = "WRITE PRESCRIPTION (M3)";
             this.btnWritePrescription.UseVisualStyleBackColor = false;
@@ -155,7 +139,7 @@ namespace abdmWinforms
             this.btnRequestConsent.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRequestConsent.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
             this.btnRequestConsent.ForeColor = System.Drawing.Color.White;
-            this.btnRequestConsent.Location = new System.Drawing.Point(40, 382);
+            this.btnRequestConsent.Location = new System.Drawing.Point(40, 265);
             this.btnRequestConsent.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnRequestConsent.Name = "btnRequestConsent";
             this.btnRequestConsent.Size = new System.Drawing.Size(253, 55);
@@ -172,7 +156,7 @@ namespace abdmWinforms
             this.btnViewHistory.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnViewHistory.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
             this.btnViewHistory.ForeColor = System.Drawing.Color.White;
-            this.btnViewHistory.Location = new System.Drawing.Point(307, 382);
+            this.btnViewHistory.Location = new System.Drawing.Point(312, 265);
             this.btnViewHistory.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnViewHistory.Name = "btnViewHistory";
             this.btnViewHistory.Size = new System.Drawing.Size(253, 55);
@@ -195,10 +179,10 @@ namespace abdmWinforms
             this.pnlDetails.Controls.Add(this.lblGender);
             this.pnlDetails.Controls.Add(this.lblName);
             this.pnlDetails.Controls.Add(this.pnlResultHeader);
-            this.pnlDetails.Location = new System.Drawing.Point(80, 228);
+            this.pnlDetails.Location = new System.Drawing.Point(78, 155);
             this.pnlDetails.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.pnlDetails.Name = "pnlDetails";
-            this.pnlDetails.Size = new System.Drawing.Size(599, 492);
+            this.pnlDetails.Size = new System.Drawing.Size(599, 334);
             this.pnlDetails.TabIndex = 3;
             this.pnlDetails.Visible = false;
             // 
@@ -209,10 +193,10 @@ namespace abdmWinforms
             this.btnStartLinking.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnStartLinking.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.btnStartLinking.ForeColor = System.Drawing.Color.White;
-            this.btnStartLinking.Location = new System.Drawing.Point(40, 258);
+            this.btnStartLinking.Location = new System.Drawing.Point(41, 202);
             this.btnStartLinking.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnStartLinking.Name = "btnStartLinking";
-            this.btnStartLinking.Size = new System.Drawing.Size(520, 55);
+            this.btnStartLinking.Size = new System.Drawing.Size(253, 55);
             this.btnStartLinking.TabIndex = 5;
             this.btnStartLinking.Text = "START OTP LINKING (M2)";
             this.btnStartLinking.UseVisualStyleBackColor = false;
@@ -223,7 +207,7 @@ namespace abdmWinforms
             this.lblStatus.AutoSize = true;
             this.lblStatus.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold);
             this.lblStatus.ForeColor = System.Drawing.Color.OrangeRed;
-            this.lblStatus.Location = new System.Drawing.Point(40, 197);
+            this.lblStatus.Location = new System.Drawing.Point(35, 176);
             this.lblStatus.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Size = new System.Drawing.Size(150, 23);
@@ -235,7 +219,7 @@ namespace abdmWinforms
             this.lblDob.AutoSize = true;
             this.lblDob.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.lblDob.ForeColor = System.Drawing.Color.DimGray;
-            this.lblDob.Location = new System.Drawing.Point(40, 160);
+            this.lblDob.Location = new System.Drawing.Point(35, 139);
             this.lblDob.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblDob.Name = "lblDob";
             this.lblDob.Size = new System.Drawing.Size(140, 23);
@@ -247,7 +231,7 @@ namespace abdmWinforms
             this.lblGender.AutoSize = true;
             this.lblGender.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.lblGender.ForeColor = System.Drawing.Color.DimGray;
-            this.lblGender.Location = new System.Drawing.Point(40, 123);
+            this.lblGender.Location = new System.Drawing.Point(35, 102);
             this.lblGender.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblGender.Name = "lblGender";
             this.lblGender.Size = new System.Drawing.Size(90, 23);
@@ -259,7 +243,7 @@ namespace abdmWinforms
             this.lblName.AutoSize = true;
             this.lblName.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Bold);
             this.lblName.ForeColor = System.Drawing.Color.Black;
-            this.lblName.Location = new System.Drawing.Point(40, 74);
+            this.lblName.Location = new System.Drawing.Point(35, 53);
             this.lblName.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblName.Name = "lblName";
             this.lblName.Size = new System.Drawing.Size(199, 32);
@@ -289,17 +273,11 @@ namespace abdmWinforms
             this.label2.TabIndex = 0;
             this.label2.Text = "PATIENT PROFILE";
             // 
-            // pnlMonitor
+            // tmrLiveFeed
             // 
-            this.pnlMonitor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(62)))), ((int)(((byte)(80)))));
-            this.pnlMonitor.Controls.Add(this.lstLiveActivities);
-            this.pnlMonitor.Controls.Add(this.lblMonitorHeader);
-            this.pnlMonitor.Dock = System.Windows.Forms.DockStyle.Right;
-            this.pnlMonitor.Location = new System.Drawing.Point(687, 0);
-            this.pnlMonitor.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.pnlMonitor.Name = "pnlMonitor";
-            this.pnlMonitor.Size = new System.Drawing.Size(625, 789);
-            this.pnlMonitor.TabIndex = 10;
+            this.tmrLiveFeed.Enabled = true;
+            this.tmrLiveFeed.Interval = 5000;
+            this.tmrLiveFeed.Tick += new System.EventHandler(this.tmrLiveFeed_Tick);
             // 
             // lstLiveActivities
             // 
@@ -310,32 +288,14 @@ namespace abdmWinforms
             this.lstLiveActivities.FormattingEnabled = true;
             this.lstLiveActivities.HorizontalScrollbar = true;
             this.lstLiveActivities.ItemHeight = 18;
-            this.lstLiveActivities.Location = new System.Drawing.Point(20, 62);
-            this.lstLiveActivities.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.lstLiveActivities.Location = new System.Drawing.Point(-3, 554);
+            this.lstLiveActivities.Margin = new System.Windows.Forms.Padding(4);
             this.lstLiveActivities.MultiColumn = true;
             this.lstLiveActivities.Name = "lstLiveActivities";
             this.lstLiveActivities.ScrollAlwaysVisible = true;
             this.lstLiveActivities.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
-            this.lstLiveActivities.Size = new System.Drawing.Size(605, 702);
+            this.lstLiveActivities.Size = new System.Drawing.Size(1302, 252);
             this.lstLiveActivities.TabIndex = 1;
-            // 
-            // lblMonitorHeader
-            // 
-            this.lblMonitorHeader.AutoSize = true;
-            this.lblMonitorHeader.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
-            this.lblMonitorHeader.ForeColor = System.Drawing.Color.White;
-            this.lblMonitorHeader.Location = new System.Drawing.Point(20, 18);
-            this.lblMonitorHeader.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lblMonitorHeader.Name = "lblMonitorHeader";
-            this.lblMonitorHeader.Size = new System.Drawing.Size(252, 28);
-            this.lblMonitorHeader.TabIndex = 0;
-            this.lblMonitorHeader.Text = "LIVE GATEWAY MONITOR";
-            // 
-            // tmrLiveFeed
-            // 
-            this.tmrLiveFeed.Enabled = true;
-            this.tmrLiveFeed.Interval = 5000;
-            this.tmrLiveFeed.Tick += new System.EventHandler(this.tmrLiveFeed_Tick);
             // 
             // PatientSearchForm
             // 
@@ -343,14 +303,13 @@ namespace abdmWinforms
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
             this.ClientSize = new System.Drawing.Size(1312, 789);
-            this.Controls.Add(this.pnlMonitor);
+            this.Controls.Add(this.lstLiveActivities);
             this.Controls.Add(this.btnShowRegistration);
             this.Controls.Add(this.btnViewLogs);
             this.Controls.Add(this.pnlDetails);
             this.Controls.Add(this.btnShowInvite);
             this.Controls.Add(this.btnSearch);
             this.Controls.Add(this.txtSearchAbha);
-            this.Controls.Add(this.label1);
             this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "PatientSearchForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -359,14 +318,10 @@ namespace abdmWinforms
             this.pnlDetails.PerformLayout();
             this.pnlResultHeader.ResumeLayout(false);
             this.pnlResultHeader.PerformLayout();
-            this.pnlMonitor.ResumeLayout(false);
-            this.pnlMonitor.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
-
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txtSearchAbha;
         private System.Windows.Forms.Button btnSearch;
         private System.Windows.Forms.Panel pnlDetails;
@@ -384,9 +339,7 @@ namespace abdmWinforms
         private System.Windows.Forms.Button btnShowRegistration;
         private System.Windows.Forms.Button btnRequestConsent;
         private System.Windows.Forms.Button btnViewHistory;
-        private System.Windows.Forms.Panel pnlMonitor;
-        private System.Windows.Forms.Label lblMonitorHeader;
-        private System.Windows.Forms.ListBox lstLiveActivities;
         private System.Windows.Forms.Timer tmrLiveFeed;
+        private System.Windows.Forms.ListBox lstLiveActivities;
     }
 }

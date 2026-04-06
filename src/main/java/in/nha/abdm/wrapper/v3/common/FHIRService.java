@@ -25,19 +25,50 @@ public class FHIRService {
     }
 
     /**
-     * Converts a simple Prescription object into a FHIR Bundle using the fhir-mapper service.
+     * Converts a generic Health Record (stored in Prescription model) into a HI-type specific FHIR Bundle.
      */
-    public Mono<String> generatePrescriptionBundle(Prescription prescription, String patientGender, String patientBirthDate) {
+    public Mono<String> generateFHIRBundle(Prescription record, String hiType, String patientGender, String patientBirthDate) {
         Map<String, Object> request = new HashMap<>();
-        request.put("bundleType", "PrescriptionRecord");
-        request.put("careContextReference", prescription.getCareContextReference() != null ? prescription.getCareContextReference() : "V-" + System.currentTimeMillis()); 
-        request.put("authoredOn", LocalDate.now().toString()); // yyyy-MM-dd format
-        
+        String endpoint = "/v1/bundle/prescription"; // default
+        String bundleType = "PrescriptionRecord";
+
+        // Mapping HI Types to fhir-mapper endpoints and bundle types
+        if ("DiagnosticReport".equalsIgnoreCase(hiType)) {
+            endpoint = "/v1/bundle/diagnostic-report";
+            bundleType = "DiagnosticReportRecord";
+            request.put("visitDate", LocalDate.now().toString());
+        } else if ("DischargeSummary".equalsIgnoreCase(hiType)) {
+            endpoint = "/v1/bundle/discharge-summary";
+            bundleType = "DischargeSummaryRecord";
+            request.put("authoredOn", LocalDate.now().toString());
+        } else if ("OPConsultation".equalsIgnoreCase(hiType)) {
+            endpoint = "/v1/bundle/op-consultation";
+            bundleType = "OPConsultRecord";
+            request.put("visitDate", LocalDate.now().toString());
+        } else if ("ImmunizationRecord".equalsIgnoreCase(hiType)) {
+            endpoint = "/v1/bundle/immunization";
+            bundleType = "ImmunizationRecord";
+            request.put("occuredOn", LocalDate.now().toString());
+        } else if ("WellnessRecord".equalsIgnoreCase(hiType)) {
+            endpoint = "/v1/bundle/wellness-record";
+            bundleType = "WellnessRecord";
+            request.put("visitDate", LocalDate.now().toString());
+        } else if ("HealthDocumentRecord".equalsIgnoreCase(hiType)) {
+            endpoint = "/v1/bundle/health-document";
+            bundleType = "HealthDocumentRecord";
+        } else {
+            // Default to Prescription
+            request.put("authoredOn", LocalDate.now().toString());
+        }
+
+        request.put("bundleType", bundleType);
+        request.put("careContextReference", record.getCareContextReference() != null ? record.getCareContextReference() : "V-" + System.currentTimeMillis());
+
         // Patient details
         Map<String, Object> patient = new HashMap<>();
-        patient.put("name", prescription.getPatientName());
-        patient.put("patientReference", prescription.getPatientReference() != null ? prescription.getPatientReference() : prescription.getAbhaAddress());
-        
+        patient.put("name", record.getPatientName());
+        patient.put("patientReference", record.getPatientReference() != null ? record.getPatientReference() : record.getAbhaAddress());
+
         String mappedGender = "unknown";
         if (patientGender != null) {
             String g = patientGender.toLowerCase();
@@ -49,7 +80,7 @@ public class FHIRService {
         patient.put("birthDate", patientBirthDate != null ? patientBirthDate : "1994-03-27");
         request.put("patient", patient);
 
-        // Practitioner (Doctor) - Defaulting to Midha Hospital context if missing
+        // Practitioner
         List<Map<String, Object>> practitioners = new ArrayList<>();
         Map<String, Object> doctor = new HashMap<>();
         doctor.put("name", "Dr. Midha");
@@ -57,38 +88,55 @@ public class FHIRService {
         practitioners.add(doctor);
         request.put("practitioners", practitioners);
 
-        // Organisation (Hospital)
+        // Organisation
         Map<String, Object> organisation = new HashMap<>();
         organisation.put("facilityName", "MIDHA HOSPITAL");
-        organisation.put("facilityId", prescription.getHipId());
+        organisation.put("facilityId", record.getHipId());
         request.put("organisation", organisation);
 
-        // Medicines
+        // Map medicines as medications/diagnostic observations
         List<Map<String, Object>> meds = new ArrayList<>();
-        for (Prescription.Medicine med : prescription.getMedicines()) {
-            Map<String, Object> m = new HashMap<>();
-            m.put("medicine", med.getName());
-            m.put("dosage", med.getDosage());
-            m.put("timing", "1-1-D"); // Valid format: frequency-period-unit (e.g., 1-1-D for once a day)
-            m.put("route", "Oral");
-            m.put("method", "swallow");
-            m.put("additionalInstructions", "Take after meals");
-            meds.add(m);
+        if (record.getMedicines() != null) {
+            for (Prescription.Medicine med : record.getMedicines()) {
+                Map<String, Object> m = new HashMap<>();
+                m.put("medicine", med.getName());
+                m.put("dosage", med.getDosage() != null ? med.getDosage() : "1-0-1");
+                m.put("timing", "1-1-D");
+                m.put("route", "Oral");
+                m.put("method", "swallow");
+                m.put("additionalInstructions", "Take as directed");
+                meds.add(m);
+            }
         }
-        request.put("prescriptions", meds);
+        
+        // fhir-mapper expects different keys for medications depending on type
+        if ("DischargeSummary".equalsIgnoreCase(hiType) || "OPConsultation".equalsIgnoreCase(hiType)) {
+            request.put("medications", meds);
+        } else {
+            request.put("prescriptions", meds);
+        }
 
-        // Empty document list for now (PDF not mandatory for valid FHIR bundle if data is structured)
-        // Dummy document (Mandatory for valid FHIR Prescription bundle in fhir-mapper)
+        // Add dummy diagnostic observations if type is DiagnosticReport
+        if ("DiagnosticReport".equalsIgnoreCase(hiType)) {
+            List<Map<String, Object>> diagnostics = new ArrayList<>();
+            Map<String, Object> d = new HashMap<>();
+            d.put("serviceName", "Complete Blood Count");
+            d.put("result", "Normal");
+            diagnostics.add(d);
+            request.put("diagnostics", diagnostics);
+        }
+
+        // Common Document (PDF)
         List<Map<String, Object>> docs = new ArrayList<>();
         Map<String, Object> dummyDoc = new HashMap<>();
-        dummyDoc.put("type", "Prescription");
+        dummyDoc.put("type", hiType != null ? hiType : "Prescription");
         dummyDoc.put("contentType", "application/pdf");
         dummyDoc.put("data", "JVBERi0xLjEKMSAwIG9iajw8L1R5cGUvQ2F0YWxvZy9QYWdlcyAyIDAgUj4+ZW5kb2JqIDIgMCBvYmo8PC9UeXBlL1BhZ2VzL0tpZHNbMyAwIFJdL0NvdW50IDE+PmVuZG9iagAzIDAgb2JqPDwvVHlwZS9QYWdlL01lZGlhQm94WzAgMCAzIDNdL1BhcmVudCAyIDAgUj4+ZW5kb2JqIHRyYWlsZXI8PC9Sb290IDEgMCBSPj4lJUVPRg==");
         docs.add(dummyDoc);
         request.put("documents", docs);
 
         return this.webClient.post()
-                .uri("/v1/bundle/prescription")
+                .uri(endpoint)
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(request)
                 .retrieve()
