@@ -106,7 +106,7 @@ namespace abdmWinforms
             this.btnViewLogs.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnViewLogs.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold);
             this.btnViewLogs.ForeColor = System.Drawing.Color.White;
-            this.btnViewLogs.Location = new System.Drawing.Point(80, 548);
+            this.btnViewLogs.Location = new System.Drawing.Point(79, 728);
             this.btnViewLogs.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnViewLogs.Name = "btnViewLogs";
             this.btnViewLogs.Size = new System.Drawing.Size(600, 49);
