@@ -21,7 +21,6 @@ namespace abdmWinforms
             this.btnSearch = new System.Windows.Forms.Button();
             this.btnShowInvite = new System.Windows.Forms.Button();
             this.btnViewLogs = new System.Windows.Forms.Button();
-            this.btnViewLogs = new System.Windows.Forms.Button();
             this.btnShowRegistration = new System.Windows.Forms.Button();
             this.btnWritePrescription = new System.Windows.Forms.Button();
             this.btnRequestConsent = new System.Windows.Forms.Button();
@@ -33,13 +32,14 @@ namespace abdmWinforms
             this.lblGender = new System.Windows.Forms.Label();
             this.lblName = new System.Windows.Forms.Label();
             this.pnlResultHeader = new System.Windows.Forms.Panel();
-            this.pnlMonitor = new System.Windows.Forms.Panel();
-            this.lblMonitorHeader = new System.Windows.Forms.Label();
-            this.lstLiveActivities = new System.Windows.Forms.ListBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.pnlMonitor = new System.Windows.Forms.Panel();
+            this.lstLiveActivities = new System.Windows.Forms.ListBox();
+            this.lblMonitorHeader = new System.Windows.Forms.Label();
             this.tmrLiveFeed = new System.Windows.Forms.Timer(this.components);
             this.pnlDetails.SuspendLayout();
             this.pnlResultHeader.SuspendLayout();
+            this.pnlMonitor.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -47,9 +47,10 @@ namespace abdmWinforms
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Segoe UI", 20.25F, System.Drawing.FontStyle.Bold);
             this.label1.ForeColor = System.Drawing.Color.MidnightBlue;
-            this.label1.Location = new System.Drawing.Point(100, 30);
+            this.label1.Location = new System.Drawing.Point(133, 37);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(350, 37);
+            this.label1.Size = new System.Drawing.Size(415, 46);
             this.label1.TabIndex = 0;
             this.label1.Text = "ABDM Patient Navigator";
             // 
@@ -59,9 +60,10 @@ namespace abdmWinforms
             this.txtSearchAbha.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtSearchAbha.Font = new System.Drawing.Font("Segoe UI", 14.25F);
             this.txtSearchAbha.ForeColor = System.Drawing.Color.DimGray;
-            this.txtSearchAbha.Location = new System.Drawing.Point(60, 100);
+            this.txtSearchAbha.Location = new System.Drawing.Point(80, 123);
+            this.txtSearchAbha.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.txtSearchAbha.Name = "txtSearchAbha";
-            this.txtSearchAbha.Size = new System.Drawing.Size(320, 33);
+            this.txtSearchAbha.Size = new System.Drawing.Size(426, 39);
             this.txtSearchAbha.TabIndex = 1;
             this.txtSearchAbha.Text = "enter abha address...";
             // 
@@ -72,9 +74,10 @@ namespace abdmWinforms
             this.btnSearch.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSearch.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold);
             this.btnSearch.ForeColor = System.Drawing.Color.White;
-            this.btnSearch.Location = new System.Drawing.Point(390, 100);
+            this.btnSearch.Location = new System.Drawing.Point(520, 123);
+            this.btnSearch.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnSearch.Name = "btnSearch";
-            this.btnSearch.Size = new System.Drawing.Size(120, 33);
+            this.btnSearch.Size = new System.Drawing.Size(160, 41);
             this.btnSearch.TabIndex = 2;
             this.btnSearch.Text = "SEARCH";
             this.btnSearch.UseVisualStyleBackColor = false;
@@ -87,9 +90,10 @@ namespace abdmWinforms
             this.btnShowInvite.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnShowInvite.Font = new System.Drawing.Font("Segoe UI", 8F, System.Drawing.FontStyle.Bold);
             this.btnShowInvite.ForeColor = System.Drawing.Color.White;
-            this.btnShowInvite.Location = new System.Drawing.Point(390, 71);
+            this.btnShowInvite.Location = new System.Drawing.Point(520, 87);
+            this.btnShowInvite.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnShowInvite.Name = "btnShowInvite";
-            this.btnShowInvite.Size = new System.Drawing.Size(120, 23);
+            this.btnShowInvite.Size = new System.Drawing.Size(160, 28);
             this.btnShowInvite.TabIndex = 4;
             this.btnShowInvite.Text = "INVITE VIA SMS";
             this.btnShowInvite.UseVisualStyleBackColor = false;
@@ -102,9 +106,10 @@ namespace abdmWinforms
             this.btnViewLogs.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnViewLogs.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold);
             this.btnViewLogs.ForeColor = System.Drawing.Color.White;
-            this.btnViewLogs.Location = new System.Drawing.Point(60, 445);
+            this.btnViewLogs.Location = new System.Drawing.Point(80, 548);
+            this.btnViewLogs.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnViewLogs.Name = "btnViewLogs";
-            this.btnViewLogs.Size = new System.Drawing.Size(450, 40);
+            this.btnViewLogs.Size = new System.Drawing.Size(600, 49);
             this.btnViewLogs.TabIndex = 6;
             this.btnViewLogs.Text = "VIEW ACTIVITY LOGS / FULL LIST";
             this.btnViewLogs.UseVisualStyleBackColor = false;
@@ -117,13 +122,65 @@ namespace abdmWinforms
             this.btnShowRegistration.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnShowRegistration.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
             this.btnShowRegistration.ForeColor = System.Drawing.Color.White;
-            this.btnShowRegistration.Location = new System.Drawing.Point(60, 140);
+            this.btnShowRegistration.Location = new System.Drawing.Point(80, 172);
+            this.btnShowRegistration.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnShowRegistration.Name = "btnShowRegistration";
-            this.btnShowRegistration.Size = new System.Drawing.Size(450, 35);
+            this.btnShowRegistration.Size = new System.Drawing.Size(600, 43);
             this.btnShowRegistration.TabIndex = 9;
             this.btnShowRegistration.Text = "➕  REGISTER NEW PATIENT (If Not Found)";
             this.btnShowRegistration.UseVisualStyleBackColor = false;
             this.btnShowRegistration.Click += new System.EventHandler(this.btnShowRegistration_Click);
+            // 
+            // btnWritePrescription
+            // 
+            this.btnWritePrescription.BackColor = System.Drawing.Color.SeaGreen;
+            this.btnWritePrescription.FlatAppearance.BorderSize = 0;
+            this.btnWritePrescription.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnWritePrescription.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.btnWritePrescription.ForeColor = System.Drawing.Color.White;
+            this.btnWritePrescription.Location = new System.Drawing.Point(40, 320);
+            this.btnWritePrescription.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnWritePrescription.Name = "btnWritePrescription";
+            this.btnWritePrescription.Size = new System.Drawing.Size(520, 55);
+            this.btnWritePrescription.TabIndex = 6;
+            this.btnWritePrescription.Text = "WRITE PRESCRIPTION (M3)";
+            this.btnWritePrescription.UseVisualStyleBackColor = false;
+            this.btnWritePrescription.Visible = false;
+            this.btnWritePrescription.Click += new System.EventHandler(this.btnWritePrescription_Click);
+            // 
+            // btnRequestConsent
+            // 
+            this.btnRequestConsent.BackColor = System.Drawing.Color.SlateGray;
+            this.btnRequestConsent.FlatAppearance.BorderSize = 0;
+            this.btnRequestConsent.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnRequestConsent.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.btnRequestConsent.ForeColor = System.Drawing.Color.White;
+            this.btnRequestConsent.Location = new System.Drawing.Point(40, 382);
+            this.btnRequestConsent.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnRequestConsent.Name = "btnRequestConsent";
+            this.btnRequestConsent.Size = new System.Drawing.Size(253, 55);
+            this.btnRequestConsent.TabIndex = 7;
+            this.btnRequestConsent.Text = "REQUEST ACCESS";
+            this.btnRequestConsent.UseVisualStyleBackColor = false;
+            this.btnRequestConsent.Visible = false;
+            this.btnRequestConsent.Click += new System.EventHandler(this.btnRequestAccess_Click);
+            // 
+            // btnViewHistory
+            // 
+            this.btnViewHistory.BackColor = System.Drawing.Color.DarkOrchid;
+            this.btnViewHistory.FlatAppearance.BorderSize = 0;
+            this.btnViewHistory.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnViewHistory.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.btnViewHistory.ForeColor = System.Drawing.Color.White;
+            this.btnViewHistory.Location = new System.Drawing.Point(307, 382);
+            this.btnViewHistory.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnViewHistory.Name = "btnViewHistory";
+            this.btnViewHistory.Size = new System.Drawing.Size(253, 55);
+            this.btnViewHistory.TabIndex = 8;
+            this.btnViewHistory.Text = "VIEW FOLDER";
+            this.btnViewHistory.UseVisualStyleBackColor = false;
+            this.btnViewHistory.Visible = false;
+            this.btnViewHistory.Click += new System.EventHandler(this.btnViewHistory_Click);
             // 
             // pnlDetails
             // 
@@ -138,9 +195,10 @@ namespace abdmWinforms
             this.pnlDetails.Controls.Add(this.lblGender);
             this.pnlDetails.Controls.Add(this.lblName);
             this.pnlDetails.Controls.Add(this.pnlResultHeader);
-            this.pnlDetails.Location = new System.Drawing.Point(60, 185);
+            this.pnlDetails.Location = new System.Drawing.Point(80, 228);
+            this.pnlDetails.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.pnlDetails.Name = "pnlDetails";
-            this.pnlDetails.Size = new System.Drawing.Size(450, 400);
+            this.pnlDetails.Size = new System.Drawing.Size(599, 492);
             this.pnlDetails.TabIndex = 3;
             this.pnlDetails.Visible = false;
             // 
@@ -151,70 +209,24 @@ namespace abdmWinforms
             this.btnStartLinking.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnStartLinking.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.btnStartLinking.ForeColor = System.Drawing.Color.White;
-            this.btnStartLinking.Location = new System.Drawing.Point(30, 210);
+            this.btnStartLinking.Location = new System.Drawing.Point(40, 258);
+            this.btnStartLinking.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnStartLinking.Name = "btnStartLinking";
-            this.btnStartLinking.Size = new System.Drawing.Size(390, 45);
+            this.btnStartLinking.Size = new System.Drawing.Size(520, 55);
             this.btnStartLinking.TabIndex = 5;
             this.btnStartLinking.Text = "START OTP LINKING (M2)";
             this.btnStartLinking.UseVisualStyleBackColor = false;
             this.btnStartLinking.Click += new System.EventHandler(this.btnStartLinking_Click);
-            // 
-            // btnWritePrescription
-            // 
-            this.btnWritePrescription.BackColor = System.Drawing.Color.SeaGreen;
-            this.btnWritePrescription.FlatAppearance.BorderSize = 0;
-            this.btnWritePrescription.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnWritePrescription.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.btnWritePrescription.ForeColor = System.Drawing.Color.White;
-            this.btnWritePrescription.Location = new System.Drawing.Point(30, 260);
-            this.btnWritePrescription.Name = "btnWritePrescription";
-            this.btnWritePrescription.Size = new System.Drawing.Size(390, 45);
-            this.btnWritePrescription.TabIndex = 6;
-            this.btnWritePrescription.Text = "WRITE PRESCRIPTION (M3)";
-            this.btnWritePrescription.UseVisualStyleBackColor = false;
-            this.btnWritePrescription.Visible = false;
-            this.btnWritePrescription.Click += new System.EventHandler(this.btnWritePrescription_Click);
-            // 
-            // btnRequestConsent
-            // 
-            this.btnRequestConsent.BackColor = System.Drawing.Color.SlateGray;
-            this.btnRequestConsent.FlatAppearance.BorderSize = 0;
-            this.btnRequestConsent.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnRequestConsent.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.btnRequestConsent.ForeColor = System.Drawing.Color.White;
-            this.btnRequestConsent.Location = new System.Drawing.Point(30, 310);
-            this.btnRequestConsent.Name = "btnRequestConsent";
-            this.btnRequestConsent.Size = new System.Drawing.Size(190, 45);
-            this.btnRequestConsent.TabIndex = 7;
-            this.btnRequestConsent.Text = "REQUEST ACCESS";
-            this.btnRequestConsent.UseVisualStyleBackColor = false;
-            this.btnRequestConsent.Visible = false;
-            this.btnRequestConsent.Click += new System.EventHandler(this.btnRequestAccess_Click);
-            // 
-            // btnViewHistory
-            // 
-            this.btnViewHistory.BackColor = System.Drawing.Color.DarkOrchid;
-            this.btnViewHistory.FlatAppearance.BorderSize = 0;
-            this.btnViewHistory.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnViewHistory.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.btnViewHistory.ForeColor = System.Drawing.Color.White;
-            this.btnViewHistory.Location = new System.Drawing.Point(230, 310);
-            this.btnViewHistory.Name = "btnViewHistory";
-            this.btnViewHistory.Size = new System.Drawing.Size(190, 45);
-            this.btnViewHistory.TabIndex = 8;
-            this.btnViewHistory.Text = "VIEW FOLDER";
-            this.btnViewHistory.UseVisualStyleBackColor = false;
-            this.btnViewHistory.Visible = false;
-            this.btnViewHistory.Click += new System.EventHandler(this.btnViewHistory_Click);
             // 
             // lblStatus
             // 
             this.lblStatus.AutoSize = true;
             this.lblStatus.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold);
             this.lblStatus.ForeColor = System.Drawing.Color.OrangeRed;
-            this.lblStatus.Location = new System.Drawing.Point(30, 160);
+            this.lblStatus.Location = new System.Drawing.Point(40, 197);
+            this.lblStatus.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(126, 19);
+            this.lblStatus.Size = new System.Drawing.Size(150, 23);
             this.lblStatus.TabIndex = 4;
             this.lblStatus.Text = "Status: Not Linked";
             // 
@@ -223,9 +235,10 @@ namespace abdmWinforms
             this.lblDob.AutoSize = true;
             this.lblDob.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.lblDob.ForeColor = System.Drawing.Color.DimGray;
-            this.lblDob.Location = new System.Drawing.Point(30, 130);
+            this.lblDob.Location = new System.Drawing.Point(40, 160);
+            this.lblDob.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblDob.Name = "lblDob";
-            this.lblDob.Size = new System.Drawing.Size(128, 19);
+            this.lblDob.Size = new System.Drawing.Size(140, 23);
             this.lblDob.TabIndex = 3;
             this.lblDob.Text = "DOB: 1990-01-01";
             // 
@@ -234,9 +247,10 @@ namespace abdmWinforms
             this.lblGender.AutoSize = true;
             this.lblGender.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.lblGender.ForeColor = System.Drawing.Color.DimGray;
-            this.lblGender.Location = new System.Drawing.Point(30, 100);
+            this.lblGender.Location = new System.Drawing.Point(40, 123);
+            this.lblGender.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblGender.Name = "lblGender";
-            this.lblGender.Size = new System.Drawing.Size(81, 19);
+            this.lblGender.Size = new System.Drawing.Size(90, 23);
             this.lblGender.TabIndex = 2;
             this.lblGender.Text = "Gender: M";
             // 
@@ -245,9 +259,10 @@ namespace abdmWinforms
             this.lblName.AutoSize = true;
             this.lblName.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Bold);
             this.lblName.ForeColor = System.Drawing.Color.Black;
-            this.lblName.Location = new System.Drawing.Point(30, 60);
+            this.lblName.Location = new System.Drawing.Point(40, 74);
+            this.lblName.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblName.Name = "lblName";
-            this.lblName.Size = new System.Drawing.Size(155, 25);
+            this.lblName.Size = new System.Drawing.Size(199, 32);
             this.lblName.TabIndex = 1;
             this.lblName.Text = "RAVI KUMAR JP";
             // 
@@ -257,9 +272,22 @@ namespace abdmWinforms
             this.pnlResultHeader.Controls.Add(this.label2);
             this.pnlResultHeader.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlResultHeader.Location = new System.Drawing.Point(0, 0);
+            this.pnlResultHeader.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.pnlResultHeader.Name = "pnlResultHeader";
-            this.pnlResultHeader.Size = new System.Drawing.Size(530, 40);
+            this.pnlResultHeader.Size = new System.Drawing.Size(707, 49);
             this.pnlResultHeader.TabIndex = 0;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold);
+            this.label2.ForeColor = System.Drawing.Color.DimGray;
+            this.label2.Location = new System.Drawing.Point(13, 12);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(148, 23);
+            this.label2.TabIndex = 0;
+            this.label2.Text = "PATIENT PROFILE";
             // 
             // pnlMonitor
             // 
@@ -267,21 +295,11 @@ namespace abdmWinforms
             this.pnlMonitor.Controls.Add(this.lstLiveActivities);
             this.pnlMonitor.Controls.Add(this.lblMonitorHeader);
             this.pnlMonitor.Dock = System.Windows.Forms.DockStyle.Right;
-            this.pnlMonitor.Location = new System.Drawing.Point(600, 0);
+            this.pnlMonitor.Location = new System.Drawing.Point(687, 0);
+            this.pnlMonitor.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.pnlMonitor.Name = "pnlMonitor";
-            this.pnlMonitor.Size = new System.Drawing.Size(384, 641);
+            this.pnlMonitor.Size = new System.Drawing.Size(625, 789);
             this.pnlMonitor.TabIndex = 10;
-            // 
-            // lblMonitorHeader
-            // 
-            this.lblMonitorHeader.AutoSize = true;
-            this.lblMonitorHeader.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
-            this.lblMonitorHeader.ForeColor = System.Drawing.Color.White;
-            this.lblMonitorHeader.Location = new System.Drawing.Point(15, 15);
-            this.lblMonitorHeader.Name = "lblMonitorHeader";
-            this.lblMonitorHeader.Size = new System.Drawing.Size(215, 21);
-            this.lblMonitorHeader.TabIndex = 0;
-            this.lblMonitorHeader.Text = "LIVE GATEWAY MONITOR";
             // 
             // lstLiveActivities
             // 
@@ -290,29 +308,41 @@ namespace abdmWinforms
             this.lstLiveActivities.Font = new System.Drawing.Font("Consolas", 9F);
             this.lstLiveActivities.ForeColor = System.Drawing.Color.PaleGreen;
             this.lstLiveActivities.FormattingEnabled = true;
-            this.lstLiveActivities.ItemHeight = 14;
-            this.lstLiveActivities.Location = new System.Drawing.Point(15, 50);
+            this.lstLiveActivities.HorizontalScrollbar = true;
+            this.lstLiveActivities.ItemHeight = 18;
+            this.lstLiveActivities.Location = new System.Drawing.Point(20, 62);
+            this.lstLiveActivities.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.lstLiveActivities.MultiColumn = true;
             this.lstLiveActivities.Name = "lstLiveActivities";
-            this.lstLiveActivities.Size = new System.Drawing.Size(355, 574);
+            this.lstLiveActivities.ScrollAlwaysVisible = true;
+            this.lstLiveActivities.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
+            this.lstLiveActivities.Size = new System.Drawing.Size(605, 702);
             this.lstLiveActivities.TabIndex = 1;
             // 
-            // label2
+            // lblMonitorHeader
             // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold);
-            this.label2.ForeColor = System.Drawing.Color.DimGray;
-            this.label2.Location = new System.Drawing.Point(10, 10);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(111, 17);
-            this.label2.TabIndex = 0;
-            this.label2.Text = "PATIENT PROFILE";
+            this.lblMonitorHeader.AutoSize = true;
+            this.lblMonitorHeader.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
+            this.lblMonitorHeader.ForeColor = System.Drawing.Color.White;
+            this.lblMonitorHeader.Location = new System.Drawing.Point(20, 18);
+            this.lblMonitorHeader.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblMonitorHeader.Name = "lblMonitorHeader";
+            this.lblMonitorHeader.Size = new System.Drawing.Size(252, 28);
+            this.lblMonitorHeader.TabIndex = 0;
+            this.lblMonitorHeader.Text = "LIVE GATEWAY MONITOR";
+            // 
+            // tmrLiveFeed
+            // 
+            this.tmrLiveFeed.Enabled = true;
+            this.tmrLiveFeed.Interval = 5000;
+            this.tmrLiveFeed.Tick += new System.EventHandler(this.tmrLiveFeed_Tick);
             // 
             // PatientSearchForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
-            this.ClientSize = new System.Drawing.Size(984, 641);
+            this.ClientSize = new System.Drawing.Size(1312, 789);
             this.Controls.Add(this.pnlMonitor);
             this.Controls.Add(this.btnShowRegistration);
             this.Controls.Add(this.btnViewLogs);
@@ -321,21 +351,18 @@ namespace abdmWinforms
             this.Controls.Add(this.btnSearch);
             this.Controls.Add(this.txtSearchAbha);
             this.Controls.Add(this.label1);
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "PatientSearchForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "ABDM Dashboard";
+            this.pnlDetails.ResumeLayout(false);
+            this.pnlDetails.PerformLayout();
             this.pnlResultHeader.ResumeLayout(false);
             this.pnlResultHeader.PerformLayout();
             this.pnlMonitor.ResumeLayout(false);
             this.pnlMonitor.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
-            // 
-            // tmrLiveFeed
-            // 
-            this.tmrLiveFeed.Enabled = true;
-            this.tmrLiveFeed.Interval = 5000;
-            this.tmrLiveFeed.Tick += new System.EventHandler(this.tmrLiveFeed_Tick);
 
         }
 

@@ -56,14 +56,13 @@ public class V3NotificationService {
                         .build())
                 .build();
 
-        try {
-            HttpHeaders headers = Utils.getCustomHeaders(GatewayConstants.X_HIP_ID, currentHipId, requestId);
-            
-            activityLogService.logActivity("GATEWAY NOTIFY: Initiating for " + prescription.getAbhaAddress() + " with HIP ID: " + currentHipId);
-            requestV3Manager.fetchResponseFromGateway(linkContextNotifyPath, request, headers);
-            activityLogService.logActivity("GATEWAY NOTIFY: Successfully notified for " + prescription.getAbhaAddress());
-        } catch (Exception e) {
-            activityLogService.logActivity("GATEWAY NOTIFY ERROR: Failed for " + prescription.getAbhaAddress() + " - " + e.getMessage());
-        }
+        HttpHeaders headers = Utils.getCustomHeaders(GatewayConstants.X_HIP_ID, currentHipId, requestId);
+        activityLogService.logActivity("GATEWAY NOTIFY: Initiating for " + prescription.getAbhaAddress() + " with HIP ID: " + currentHipId);
+        
+        requestV3Manager.fetchResponseFromGatewayAsync(linkContextNotifyPath, request, headers)
+            .subscribe(
+                response -> activityLogService.logActivity("GATEWAY NOTIFY: Successfully notified for " + prescription.getAbhaAddress()),
+                error -> activityLogService.logActivity("GATEWAY NOTIFY ERROR: Failed for " + prescription.getAbhaAddress() + " - " + error.getMessage())
+            );
     }
 }

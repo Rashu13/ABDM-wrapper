@@ -21,6 +21,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
+import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import reactor.util.retry.Retry;
 
@@ -59,13 +60,12 @@ public class RequestV3Manager {
             .build();
   }
 
-  // Initializing headers every time to avoid setting the old headers/session token and getting
-  // unauthorised error from gateway.
-  @Retryable(
-      value = {WebClientRequestException.class, ReadTimeoutException.class, TimeoutException.class},
-      maxAttempts = 5,
-      backoff = @Backoff(delay = 1000, multiplier = 2))
   public <T> ResponseEntity<GenericV3Response> fetchResponseFromGateway(
+      String uri, T request, HttpHeaders customHeader) {
+    return fetchResponseFromGatewayAsync(uri, request, customHeader).block();
+  }
+
+  public <T> Mono<ResponseEntity<GenericV3Response>> fetchResponseFromGatewayAsync(
       String uri, T request, HttpHeaders customHeader) {
 
     // Logging the headers which has hipId
@@ -95,7 +95,6 @@ public class RequestV3Manager {
                             || throwable instanceof WebClientRequestException
                             || throwable instanceof ReadTimeoutException
                             || throwable instanceof TimeoutException))
-        .subscribeOn(Schedulers.boundedElastic())
-        .block();
+        .subscribeOn(Schedulers.boundedElastic());
   }
 }
