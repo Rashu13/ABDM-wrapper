@@ -275,14 +275,14 @@ public class HIPHealthInformationV3Service implements HIPHealthInformationV3Inte
         "Health information bundle request HIP : " + healthInformationBundleRequest.toString());
     
     // --- Optimized "New Flow": Try local retrieval first ---
-    List<in.nha.abdm.wrapper.v1.hip.hrp.dataTransfer.requests.HealthInformationBundle> localBundles = new ArrayList<>();
+    List<in.nha.abdm.wrapper.v1.hip.hrp.dataTransfer.requests.helpers.HealthInformationBundle> localBundles = new ArrayList<>();
     for (ConsentCareContexts careContext : existingLog.getCareContexts()) {
         try {
             String filename = careContext.getCareContextReference() + ".json";
             java.nio.file.Path filePath = java.nio.file.Paths.get(recordsPath, filename);
             if (java.nio.file.Files.exists(filePath)) {
                 String content = new String(java.nio.file.Files.readAllBytes(filePath));
-                localBundles.add(in.nha.abdm.wrapper.v1.hip.hrp.dataTransfer.requests.HealthInformationBundle.builder()
+                localBundles.add(in.nha.abdm.wrapper.v1.hip.hrp.dataTransfer.requests.helpers.HealthInformationBundle.builder()
                     .bundleContent(content)
                     .careContextReference(careContext.getCareContextReference())
                     .build());
