@@ -51,11 +51,13 @@ public class HealthRecordV3Controller {
             
             // --- Save to Shared Records Folder for M3 Real-world Transfer ---
             try {
-                File dir = new File(recordsPath);
-                if (!dir.exists()) dir.mkdirs();
-                
                 String filename = (record.getCareContextReference() != null ? record.getCareContextReference() : "V-" + System.currentTimeMillis()) + ".json";
-                Files.write(Paths.get(recordsPath, filename), bundle.getBytes());
+                java.nio.file.Path filePath = java.nio.file.Paths.get(recordsPath, filename);
+                
+                // Ensure parent directories (e.g. Prescription/) exist
+                java.nio.file.Files.createDirectories(filePath.getParent());
+                
+                java.nio.file.Files.write(filePath, bundle.getBytes());
                 logService.logActivity("STORAGE SUCCESS: Saved record to " + filename);
             } catch (Exception e) {
                 logService.logActivity("STORAGE ERROR: Failed to save record - " + e.getMessage());

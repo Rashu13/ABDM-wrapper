@@ -62,6 +62,9 @@ public class HIPHealthInformationV3Service implements HIPHealthInformationV3Inte
   @Value("${healthInformationPushNotificationPath}")
   public String healthInformationPushNotificationPath;
 
+  @Value("${recordsPath:records}")
+  private String recordsPath;
+
   @Autowired RequestV3Manager requestV3Manager;
   private final HIPV3Client hipClient;
   private final HIUV3Client hiuClient;
@@ -270,6 +273,34 @@ public class HIPHealthInformationV3Service implements HIPHealthInformationV3Inte
             .build();
     log.debug(
         "Health information bundle request HIP : " + healthInformationBundleRequest.toString());
+    
+    // --- Optimized "New Flow": Try local retrieval first ---
+    List<in.nha.abdm.wrapper.v1.hip.hrp.dataTransfer.requests.HealthInformationBundle> localBundles = new ArrayList<>();
+    for (ConsentCareContexts careContext : existingLog.getCareContexts()) {
+        try {
+            String filename = careContext.getCareContextReference() + ".json";
+            java.nio.file.Path filePath = java.nio.file.Paths.get(recordsPath, filename);
+            if (java.nio.file.Files.exists(filePath)) {
+                String content = new String(java.nio.file.Files.readAllBytes(filePath));
+                localBundles.add(in.nha.abdm.wrapper.v1.hip.hrp.dataTransfer.requests.HealthInformationBundle.builder()
+                    .bundleContent(content)
+                    .careContextReference(careContext.getCareContextReference())
+                    .build());
+                log.info("LOCAL RETRIEVAL SUCCESS: Found record for " + careContext.getCareContextReference());
+            }
+        } catch (Exception e) {
+            log.warn("LOCAL RETRIEVAL ERROR: Failed to read from " + recordsPath + " - " + e.getMessage());
+        }
+    }
+
+    if (!localBundles.isEmpty()) {
+        return HealthInformationBundleResponse.builder()
+            .healthInformationBundle(localBundles)
+            .build();
+    }
+
+    // Fallback to sample-hip if local retrieval found nothing
+    log.info("LOCAL RETRIEVAL EMPTY: Falling back to sample-hip for data retrieval.");
     ResponseEntity<HealthInformationBundleResponse> bundleResponse = hipClient.healthInformationBundleRequest(healthInformationBundleRequest);
     if (Objects.isNull(bundleResponse) || Objects.isNull(bundleResponse.getBody())) {
       log.error("HIP returned empty or null bundle response");
