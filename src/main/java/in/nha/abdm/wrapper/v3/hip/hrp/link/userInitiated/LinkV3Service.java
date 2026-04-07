@@ -329,7 +329,7 @@ public class LinkV3Service implements LinkV3Interface {
                   UUID.randomUUID().toString()));
       log.info(onConfirmLinkPath + " : onConfirmCall: " + responseEntity.getStatusCode());
       patientV3Service.updateCareContextStatus(
-          abhaAddress, careContexts, headers.getFirst(GatewayConstants.X_HIP_ID));
+          patientReference, careContexts, headers.getFirst(GatewayConstants.X_HIP_ID));
     } catch (WebClientResponseException.BadRequest ex) {
       Object error = BadRequestHandler.getError(ex);
       log.error("HTTP error {}: {}", ex.getStatusCode(), error);
