@@ -12,8 +12,8 @@ COPY . .
 RUN chmod +x ./gradlew
 
 # Build without spotless and tests to ensure a fast & successful deployment
-# Spotless often fails in restricted CI environments with exit code 255
-RUN ./gradlew build -x test -x spotlessCheck -x spotlessApply
+# Use --no-daemon and limit memory to avoid Error 255 in low-resource environments
+RUN ./gradlew build -x test -x spotlessCheck -x spotlessApply --no-daemon -Dorg.gradle.jvmargs="-Xmx480m"
 
 EXPOSE 8082
 
