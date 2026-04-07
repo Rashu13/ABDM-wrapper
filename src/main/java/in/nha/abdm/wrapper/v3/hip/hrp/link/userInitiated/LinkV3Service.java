@@ -55,6 +55,9 @@ public class LinkV3Service implements LinkV3Interface {
   @Value("${verifyOtpPath}")
   public String verifyOtpPath;
 
+  @Value("${otpInternal:false}")
+  private boolean otpInternal;
+
   @Autowired
   public LinkV3Service(RequestV3Manager requestV3Manager, HIPV3Client hipClient) {
     this.requestV3Manager = requestV3Manager;
@@ -118,40 +121,56 @@ public class LinkV3Service implements LinkV3Interface {
               .patientReference(initResponse.getPatient().get(0).getReferenceNumber())
               .hipId(headers.getFirst(GatewayConstants.X_HIP_ID))
               .build();
-      ResponseEntity<ResponseOtp> hipResponse = hipClient.requestOtp(this.requestOtp, requestOtp);
-      log.info(this.requestOtp + " : requestOtp: " + hipResponse.getStatusCode());
-
-      if (Objects.requireNonNull(hipResponse.getBody()).getStatus().equalsIgnoreCase("SUCCESS")
-          || Objects.isNull(hipResponse.getBody().getError())) {
-        onInitRequest.getLink().setReferenceNumber(hipResponse.getBody().getLinkRefNumber());
-        ResponseEntity<GenericV3Response> responseEntity =
-            requestV3Manager.fetchResponseFromGateway(
-                onInitLinkPath,
-                onInitRequest,
-                Utils.getCustomHeaders(
-                    GatewayConstants.X_HIP_ID,
-                    headers.getFirst(GatewayConstants.X_HIP_ID),
-                    UUID.randomUUID().toString()));
-        log.info(onInitLinkPath + " : onInitCall: " + responseEntity.getStatusCode());
-
+      if (otpInternal) {
+          log.info("MOCK OTP: Bypassing sample-hip for OTP request. Using internal success.");
+          String mockLinkRefNumber = "L-" + UUID.randomUUID().toString();
+          onInitRequest.getLink().setReferenceNumber(mockLinkRefNumber);
+          
+          ResponseEntity<GenericV3Response> responseEntity =
+              requestV3Manager.fetchResponseFromGateway(
+                  onInitLinkPath,
+                  onInitRequest,
+                  Utils.getCustomHeaders(
+                      GatewayConstants.X_HIP_ID,
+                      headers.getFirst(GatewayConstants.X_HIP_ID),
+                      UUID.randomUUID().toString()));
+          log.info(onInitLinkPath + " : onInitCall (MOCK): " + responseEntity.getStatusCode());
       } else {
-        onInitRequest.setError(
-            ErrorResponse.builder()
-                .code(GatewayConstants.ERROR_CODE)
-                .message(
-                    Objects.nonNull(hipResponse.getBody().getError())
-                        ? hipResponse.getBody().getError().getMessage()
-                        : "Unable to send SMS")
-                .build());
-        ResponseEntity<GenericV3Response> responseEntity =
-            requestV3Manager.fetchResponseFromGateway(
-                onInitLinkPath,
-                onInitRequest,
-                Utils.getCustomHeaders(
-                    GatewayConstants.X_HIP_ID,
-                    headers.getFirst(GatewayConstants.X_HIP_ID),
-                    UUID.randomUUID().toString()));
-        log.info(onInitLinkPath + " : onInitCall: " + responseEntity.getStatusCode());
+          ResponseEntity<ResponseOtp> hipResponse = hipClient.requestOtp(this.requestOtp, requestOtp);
+          log.info(this.requestOtp + " : requestOtp: " + hipResponse.getStatusCode());
+
+          if (Objects.requireNonNull(hipResponse.getBody()).getStatus().equalsIgnoreCase("SUCCESS")
+              || Objects.isNull(hipResponse.getBody().getError())) {
+            onInitRequest.getLink().setReferenceNumber(hipResponse.getBody().getLinkRefNumber());
+            ResponseEntity<GenericV3Response> responseEntity =
+                requestV3Manager.fetchResponseFromGateway(
+                    onInitLinkPath,
+                    onInitRequest,
+                    Utils.getCustomHeaders(
+                        GatewayConstants.X_HIP_ID,
+                        headers.getFirst(GatewayConstants.X_HIP_ID),
+                        UUID.randomUUID().toString()));
+            log.info(onInitLinkPath + " : onInitCall: " + responseEntity.getStatusCode());
+
+          } else {
+            onInitRequest.setError(
+                ErrorResponse.builder()
+                    .code(GatewayConstants.ERROR_CODE)
+                    .message(
+                        Objects.nonNull(hipResponse.getBody().getError())
+                            ? hipResponse.getBody().getError().getMessage()
+                            : "Unable to send SMS")
+                    .build());
+            ResponseEntity<GenericV3Response> responseEntity =
+                requestV3Manager.fetchResponseFromGateway(
+                    onInitLinkPath,
+                    onInitRequest,
+                    Utils.getCustomHeaders(
+                        GatewayConstants.X_HIP_ID,
+                        headers.getFirst(GatewayConstants.X_HIP_ID),
+                        UUID.randomUUID().toString()));
+            log.info(onInitLinkPath + " : onInitCall: " + responseEntity.getStatusCode());
+          }
       }
     } catch (WebClientResponseException.BadRequest ex) {
       Object error = BadRequestHandler.getError(ex);
@@ -215,20 +234,32 @@ public class LinkV3Service implements LinkV3Interface {
               .response(RespRequest.builder().requestId(confirmResponse.getRequestId()).build())
               .build();
     } else {
-      try {
-        log.info("Requesting HIP for verify otp in discovery");
-        VerifyOTP verifyOTP =
-            VerifyOTP.builder()
-                .hipId(headers.getFirst(GatewayConstants.X_HIP_ID))
-                .authCode(confirmResponse.getConfirmation().getToken())
-                .loginHint("Discovery OTP request")
-                .linkRefNumber(confirmResponse.getConfirmation().getLinkRefNumber())
-                .build();
+      if (otpInternal) {
+          log.info("MOCK OTP: Bypassing sample-hip for OTP verification. Internal check.");
+          String token = confirmResponse.getConfirmation().getToken();
+          RequestStatusResponse mockResponse = new RequestStatusResponse();
+          if ("123456".equals(token)) {
+              mockResponse.setStatus("SUCCESS");
+          } else {
+              mockResponse.setError(ErrorResponse.builder().code(GatewayConstants.INVALID_OTP_CODE).message(GatewayConstants.INVALID_OTP).build());
+          }
+          hipResponse = ResponseEntity.ok(mockResponse);
+      } else {
+          try {
+            log.info("Requesting HIP for verify otp in discovery");
+            VerifyOTP verifyOTP =
+                VerifyOTP.builder()
+                    .hipId(headers.getFirst(GatewayConstants.X_HIP_ID))
+                    .authCode(confirmResponse.getConfirmation().getToken())
+                    .loginHint("Discovery OTP request")
+                    .linkRefNumber(confirmResponse.getConfirmation().getLinkRefNumber())
+                    .build();
 
-        hipResponse = hipClient.fetchResponseFromHIP(verifyOtpPath, verifyOTP);
-        log.info(verifyOtpPath + " : verifyOtp: " + hipResponse.getStatusCode());
-      } catch (Exception e) {
-        log.error(verifyOtpPath + " : verifyOtp -> Error :" + Exceptions.unwrap(e));
+            hipResponse = hipClient.fetchResponseFromHIP(verifyOtpPath, verifyOTP);
+            log.info(verifyOtpPath + " : verifyOtp: " + hipResponse.getStatusCode());
+          } catch (Exception e) {
+            log.error(verifyOtpPath + " : verifyOtp -> Error :" + Exceptions.unwrap(e));
+          }
       }
       String tokenNumber = confirmResponse.getConfirmation().getToken();
       RequestStatusResponse requestStatusResponse = Objects.requireNonNull(hipResponse.getBody());
