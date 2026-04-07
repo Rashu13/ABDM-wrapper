@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/v3/health-records")
+@RequestMapping({"/v3/health-records", "/v3/prescriptions"})
 public class HealthRecordV3Controller {
   private final MongoTemplate mongoTemplate;
   private final ActivityLogService logService;
