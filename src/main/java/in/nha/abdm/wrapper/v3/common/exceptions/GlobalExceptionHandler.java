@@ -245,19 +245,19 @@ public class GlobalExceptionHandler {
 
   /** Convert JsonProcessingException exceptions thrown by Facade controller to API error */
   @ExceptionHandler(JsonProcessingException.class)
-  @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-  private FacadeV3Response handleJsonProcessingException(JsonProcessingException ex) {
-    return FacadeV3Response.builder()
-        .errors(ErrorHandler.getErrors(ex.getMessage()))
-        .message("JSON Processing exception")
-        .httpStatusCode(HttpStatus.BAD_REQUEST)
-        .build();
+  public ResponseEntity<FacadeV3Response> handleJsonProcessingException(
+      JsonProcessingException ex) {
+    return new ResponseEntity<>(
+        FacadeV3Response.builder()
+            .errors(ErrorHandler.getErrors(ex.getMessage()))
+            .message("JSON Processing exception")
+            .httpStatusCode(HttpStatus.BAD_REQUEST)
+            .build(),
+        HttpStatus.BAD_REQUEST);
   }
 
   @ExceptionHandler(HandlerMethodValidationException.class)
-  @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-  @ResponseBody
-  private FacadeV3Response handleHandlerMethodValidationException(
+  public ResponseEntity<FacadeV3Response> handleHandlerMethodValidationException(
       HandlerMethodValidationException ex) {
     List<ErrorV3Response> errorResponses = new ArrayList<>();
 
@@ -285,10 +285,12 @@ public class GlobalExceptionHandler {
           new ErrorV3Response(new ErrorResponse("1000", "Unknown validation error")));
     }
 
-    return FacadeV3Response.builder()
-        .httpStatusCode(HttpStatus.BAD_REQUEST)
-        .errors(errorResponses)
-        .message("Validation errors")
-        .build();
+    return new ResponseEntity<>(
+        FacadeV3Response.builder()
+            .httpStatusCode(HttpStatus.BAD_REQUEST)
+            .errors(errorResponses)
+            .message("Validation errors")
+            .build(),
+        HttpStatus.BAD_REQUEST);
   }
 }
