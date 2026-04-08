@@ -10,7 +10,11 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -33,8 +37,7 @@ public class FHIRService {
      */
     public Mono<String> generateFHIRBundle(Prescription record, String hiType, String patientGender, String patientBirthDate) {
         Map<String, Object> request = new HashMap<>();
-        // ... (preserving logic) ...
-        String endpoint = "/v1/bundle/prescription"; 
+        String endpoint = "/v1/bundle/prescription"; // default
         String bundleType = "PrescriptionRecord";
 
         if ("DiagnosticReport".equalsIgnoreCase(hiType)) {
