@@ -46,14 +46,14 @@ namespace abdmWinforms
                     return;
                 }
 
-                // 2. Polling for Decrypted Records
-                int maxRetries = 15;
+                // 2. Polling for Decrypted Records (ABDM Data Flow can take time)
+                int maxRetries = 30; // Increased to 30 attempts (approx 90-100 seconds total)
                 int retryCount = 0;
                 HealthInformationV3Response statusResponse = null;
 
                 while (retryCount < maxRetries)
                 {
-                    lblStatus.Text = string.Format("Polling Gateway for data... (Attempt {0}/{maxRetries})", retryCount + 1);
+                    lblStatus.Text = string.Format("Fetching health records... (Attempt {0}/{1})", retryCount + 1, maxRetries);
                     statusResponse = await _abdmService.GetHealthInformationStatusAsync(requestId);
 
                     if (statusResponse?.decryptedHealthInformationEntries != null && statusResponse.decryptedHealthInformationEntries.Count > 0)
@@ -63,11 +63,10 @@ namespace abdmWinforms
 
                     if (statusResponse?.errors != null && statusResponse.errors.Count > 0)
                     {
-                        lblStatus.Text = "Polling Error: " + statusResponse.errors[0].error.message;
-                        break;
+                        Console.WriteLine("Poll Error: " + statusResponse.errors[0].error.message);
                     }
 
-                    await System.Threading.Tasks.Task.Delay(3000); // Wait 3 seconds before next poll
+                    await System.Threading.Tasks.Task.Delay(3000); 
                     retryCount++;
                 }
 

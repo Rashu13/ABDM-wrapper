@@ -82,19 +82,27 @@ namespace ABDM_WinForms_Frontend
 
     public class ConsentStatusV3Response
     {
+        public string status { get; set; } // Top level status like CONSENT_FETCH_ACCEPTED
         public string httpStatusCode { get; set; }
-        public List<ConsentArtifact> consentArtifacts { get; set; }
+        public FacadeConsentDetails consentDetails { get; set; }
         public List<ErrorV3Response> errors { get; set; }
     }
 
-    public class ConsentArtifact
+    public class FacadeConsentDetails
     {
-        public string status { get; set; } // GRANTED, EXPIRED, REVOKED
-        public string consentId { get; set; }
-        public string dateFrom { get; set; }
-        public string dateTo { get; set; }
-        public string expiry { get; set; }
-        public List<string> hiTypes { get; set; }
+        public List<ConsentStatusDetail> consent { get; set; }
+    }
+
+    public class ConsentStatusDetail
+    {
+        public string status { get; set; } // GRANTED, etc.
+        public List<ConsentArtefactV3> consentArtefacts { get; set; }
+    }
+
+    public class ConsentArtefactV3
+    {
+        public string id { get; set; } // This is the actual Consent ID
+        public string lastUpdated { get; set; }
     }
 
     public class PrescriptionModel
@@ -111,5 +119,18 @@ namespace ABDM_WinForms_Frontend
         public string name { get; set; }
         public string dosage { get; set; }
         public string duration { get; set; }
+    }
+
+    public class ConsentRequestTracker
+    {
+        public string RequestId { get; set; }
+        public string PatientName { get; set; }
+        public string Status { get; set; }
+        public string ConsentId { get; set; }
+    }
+
+    public static class GlobalState
+    {
+        public static List<ConsentRequestTracker> ActiveConsentRequests = new List<ConsentRequestTracker>();
     }
 }

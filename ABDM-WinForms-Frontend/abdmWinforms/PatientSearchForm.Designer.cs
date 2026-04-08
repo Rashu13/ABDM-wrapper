@@ -24,6 +24,7 @@ namespace abdmWinforms
             this.btnWritePrescription = new System.Windows.Forms.Button();
             this.btnRequestConsent = new System.Windows.Forms.Button();
             this.btnDirectConsent = new System.Windows.Forms.Button();
+            this.btnM3Dashboard = new System.Windows.Forms.Button();
             this.btnViewHistory = new System.Windows.Forms.Button();
             this.pnlDetails = new System.Windows.Forms.Panel();
             this.btnStartLinking = new System.Windows.Forms.Button();
@@ -182,6 +183,21 @@ namespace abdmWinforms
             this.btnDirectConsent.UseVisualStyleBackColor = false;
             this.btnDirectConsent.Click += new System.EventHandler(this.btnDirectConsent_Click);
             // 
+            // btnM3Dashboard
+            // 
+            this.btnM3Dashboard.BackColor = System.Drawing.Color.MidnightBlue;
+            this.btnM3Dashboard.FlatAppearance.BorderSize = 0;
+            this.btnM3Dashboard.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnM3Dashboard.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold);
+            this.btnM3Dashboard.ForeColor = System.Drawing.Color.White;
+            this.btnM3Dashboard.Location = new System.Drawing.Point(895, 50);
+            this.btnM3Dashboard.Name = "btnM3Dashboard";
+            this.btnM3Dashboard.Size = new System.Drawing.Size(200, 41);
+            this.btnM3Dashboard.TabIndex = 11;
+            this.btnM3Dashboard.Text = "M3 DASHBOARD";
+            this.btnM3Dashboard.UseVisualStyleBackColor = false;
+            this.btnM3Dashboard.Click += new System.EventHandler(this.btnM3Dashboard_Click);
+            // 
             // pnlDetails
             // 
             this.pnlDetails.BackColor = System.Drawing.Color.White;
@@ -325,6 +341,7 @@ namespace abdmWinforms
             this.Controls.Add(this.pnlDetails);
             this.Controls.Add(this.btnShowInvite);
             this.Controls.Add(this.btnDirectConsent);
+            this.Controls.Add(this.btnM3Dashboard);
             this.Controls.Add(this.btnSearch);
             this.Controls.Add(this.txtSearchAbha);
             this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);

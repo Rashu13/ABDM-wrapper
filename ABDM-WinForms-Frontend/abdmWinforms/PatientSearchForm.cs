@@ -106,7 +106,7 @@ namespace abdmWinforms
         {
             if (_currentPatient != null)
             {
-                using (var consentForm = new ConsentRequestForm(_currentPatient.abhaAddress))
+                using (var consentForm = new ConsentRequestForm(_currentPatient.abhaAddress, _currentPatient.name))
                 {
                     if (consentForm.ShowDialog(this) == DialogResult.OK)
                     {
@@ -131,19 +131,19 @@ namespace abdmWinforms
 
                 var statusResponse = await _abdmService.GetConsentStatusAsync(_lastConsentRequestId);
 
-                if (statusResponse?.consentArtifacts != null && statusResponse.consentArtifacts.Count > 0)
+                if (statusResponse != null && statusResponse.consentDetails != null && statusResponse.consentDetails.consent != null && statusResponse.consentDetails.consent.Count > 0)
                 {
-                    var grantedArtifact = statusResponse.consentArtifacts.FirstOrDefault(a => a.status == "GRANTED");
-                    if (grantedArtifact != null)
+                    var grantedArtifact = statusResponse.consentDetails.consent.FirstOrDefault(a => a.status == "GRANTED");
+                    if (grantedArtifact != null && grantedArtifact.consentArtefacts != null && grantedArtifact.consentArtefacts.Count > 0)
                     {
-                        using (var viewerForm = new HealthRecordViewerForm(grantedArtifact.consentId, _currentPatient.name))
+                        using (var viewerForm = new HealthRecordViewerForm(grantedArtifact.consentArtefacts[0].id, _currentPatient.name))
                         {
                             viewerForm.ShowDialog(this);
                         }
                     }
                     else
                     {
-                        string currentStatus = statusResponse.consentArtifacts[0].status;
+                        string currentStatus = statusResponse.consentDetails.consent[0].status;
                         MessageBox.Show(string.Format("Current Consent Status: {0}\n\nAsk the patient to GRANT the request in their ABHA app.", currentStatus), "Access Pending", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
@@ -224,7 +224,7 @@ namespace abdmWinforms
         private void btnDirectConsent_Click(object sender, EventArgs e)
         {
             // Open consent form directly without requiring a search
-            using (var consentForm = new ConsentRequestForm(""))
+            using (var consentForm = new ConsentRequestForm("", "Manual Entry"))
             {
                 if (consentForm.ShowDialog(this) == DialogResult.OK)
                 {
@@ -260,6 +260,11 @@ namespace abdmWinforms
                 // Silent error for background polling
                 Console.WriteLine("Activity Polling Error: " + ex.Message);
             }
+        }
+        private void btnM3Dashboard_Click(object sender, EventArgs e)
+        {
+            var dashboard = new abdmWinforms.M3DashboardForm();
+            dashboard.Show(this);
         }
     }
 }

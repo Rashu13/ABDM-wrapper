@@ -9,10 +9,17 @@ namespace ABDM_WinForms_Frontend
 {
     public class AbdmService
     {
-        private static readonly HttpClient client = new HttpClient();
-        // Domain and Base both point to GlobalConfig
+        private static readonly HttpClient client;
         private static readonly string DomainUrl = GlobalConfig.DomainUrl;
         private static readonly string BaseUrl = GlobalConfig.BaseUrl;
+
+        static AbdmService()
+        {
+            client = new HttpClient();
+            // Adding mandatory V3 headers globally
+            client.DefaultRequestHeaders.Add("X-HIU-ID", GlobalConfig.HipId);
+            client.DefaultRequestHeaders.Add("X-HIP-ID", GlobalConfig.HipId);
+        }
 
         // Step 1: Add Patient to Database
         public async Task<string> AddPatientAsync(PatientModel patient)
@@ -151,7 +158,7 @@ namespace ABDM_WinForms_Frontend
             try
             {
                 // Calling: GET /v3/patients?hipId=...
-                var response = await client.GetAsync(string.Format("{0}/patients?hipId={hipId}", BaseUrl));
+                var response = await client.GetAsync(string.Format("{0}/patients?hipId={1}", BaseUrl, hipId));
                 return await response.Content.ReadAsStringAsync();
             }
             catch (Exception)
@@ -194,17 +201,41 @@ namespace ABDM_WinForms_Frontend
         // Step 9: HIU - Request Consent from Patient
         public async Task<FacadeV3Response> RequestConsentAsync(object request)
         {
+            var requestId = Guid.NewGuid().ToString();
             try
             {
-                var content = new StringContent(JsonConvert.SerializeObject(new { consent = request }), System.Text.Encoding.UTF8, "application/json");
-                // Correct path from FacadeURL.java: /consent-init
-                var response = await client.PostAsync(string.Format("{0}/consent-init", BaseUrl), content);
+                var json = JsonConvert.SerializeObject(new { 
+                    requestId = requestId,
+                    timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+                    consent = request 
+                });
+                var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+                
+                // Using HttpRequestMessage for unique headers
+                var httpRequest = new HttpRequestMessage(HttpMethod.Post, string.Format("{0}/consent-init", BaseUrl))
+                {
+                    Content = content
+                };
+                httpRequest.Headers.Add("REQUEST-ID", requestId);
+
+                var response = await client.SendAsync(httpRequest);
                 var result = await response.Content.ReadAsStringAsync();
-                return JsonConvert.DeserializeObject<FacadeV3Response>(result);
+                var facadeResponse = JsonConvert.DeserializeObject<FacadeV3Response>(result);
+                
+                // Ensure clientRequestId is populated for frontend tracking
+                if (facadeResponse != null && string.IsNullOrEmpty(facadeResponse.clientRequestId))
+                {
+                    facadeResponse.clientRequestId = requestId;
+                }
+                
+                return facadeResponse;
             }
             catch (Exception ex) 
             { 
-                return new FacadeV3Response { errors = new List<ErrorV3Response> { new ErrorV3Response { error = new ErrorDetail { message = ex.Message } } } }; 
+                return new FacadeV3Response { 
+                    clientRequestId = requestId,
+                    errors = new List<ErrorV3Response> { new ErrorV3Response { error = new ErrorDetail { message = ex.Message } } } 
+                }; 
             }
         }
 
@@ -213,7 +244,7 @@ namespace ABDM_WinForms_Frontend
         {
             try
             {
-                var response = await client.GetAsync(string.Format("{0}/consent-status/{requestId}", BaseUrl));
+                var response = await client.GetAsync(string.Format("{0}/consent-status/{1}", BaseUrl, requestId));
                 var result = await response.Content.ReadAsStringAsync();
                 return JsonConvert.DeserializeObject<ConsentStatusV3Response>(result);
             }
@@ -226,22 +257,44 @@ namespace ABDM_WinForms_Frontend
         // Step 10: HIU - Fetch Health Records after consent grant
         public async Task<FacadeV3Response> FetchRecordsAsync(string consentId)
         {
+            var requestId = Guid.NewGuid().ToString();
             try
             {
                 var payload = new 
                 { 
-                    requestId = Guid.NewGuid().ToString(),
+                    requestId = requestId,
                     timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-                    hiuId = GlobalConfig.HipId, // Usually HIU ID
+                    hiuId = GlobalConfig.HipId,
                     consentId = consentId
                 };
                 var content = new StringContent(JsonConvert.SerializeObject(payload), System.Text.Encoding.UTF8, "application/json");
                 
-                var response = await client.PostAsync(string.Format("{0}/health-information/fetch-records", BaseUrl), content);
+                // V3 requires specific headers for health info request
+                var httpRequest = new HttpRequestMessage(HttpMethod.Post, string.Format("{0}/health-information/request", BaseUrl))
+                {
+                    Content = content
+                };
+                httpRequest.Headers.Add("X-HIU-ID", GlobalConfig.HipId);
+                httpRequest.Headers.Add("REQUEST-ID", requestId);
+
+                var response = await client.SendAsync(httpRequest);
                 var result = await response.Content.ReadAsStringAsync();
-                return JsonConvert.DeserializeObject<FacadeV3Response>(result);
+                var facadeResponse = JsonConvert.DeserializeObject<FacadeV3Response>(result);
+                
+                if (facadeResponse != null && string.IsNullOrEmpty(facadeResponse.clientRequestId))
+                {
+                    facadeResponse.clientRequestId = requestId;
+                }
+                
+                return facadeResponse;
             }
-            catch (Exception ex) { return new FacadeV3Response { errors = new List<ErrorV3Response> { new ErrorV3Response { error = new ErrorDetail { message = ex.Message } } } }; }
+            catch (Exception ex) 
+            { 
+                return new FacadeV3Response { 
+                    clientRequestId = requestId,
+                    errors = new List<ErrorV3Response> { new ErrorV3Response { error = new ErrorDetail { message = ex.Message } } } 
+                }; 
+            }
         }
 
         // Step 10.1: Check Health Information Status (and get decrypted bundles)
@@ -249,7 +302,7 @@ namespace ABDM_WinForms_Frontend
         {
             try
             {
-                var response = await client.GetAsync(string.Format("{0}/health-information/status/{requestId}", BaseUrl));
+                var response = await client.GetAsync(string.Format("{0}/health-information/status/{1}", BaseUrl, requestId));
                 var result = await response.Content.ReadAsStringAsync();
                 return JsonConvert.DeserializeObject<HealthInformationV3Response>(result);
             }

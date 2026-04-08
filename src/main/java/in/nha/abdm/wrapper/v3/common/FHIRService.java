@@ -128,11 +128,17 @@ public class FHIRService {
 
         // Common Document (PDF)
         List<Map<String, Object>> docs = new ArrayList<>();
-        Map<String, Object> dummyDoc = new HashMap<>();
-        dummyDoc.put("type", hiType != null ? hiType : "Prescription");
-        dummyDoc.put("contentType", "application/pdf");
-        dummyDoc.put("data", "JVBERi0xLjEKMSAwIG9iajw8L1R5cGUvQ2F0YWxvZy9QYWdlcyAyIDAgUj4+ZW5kb2JqIDIgMCBvYmo8PC9UeXBlL1BhZ2VzL0tpZHNbMyAwIFJdL0NvdW50IDE+PmVuZG9iagAzIDAgb2JqPDwvVHlwZS9QYWdlL01lZGlhQm94WzAgMCAzIDNdL1BhcmVudCAyIDAgUj4+ZW5kb2JqIHRyYWlsZXI8PC9Sb290IDEgMCBSPj4lJUVPRg==");
-        docs.add(dummyDoc);
+        Map<String, Object> doc = new HashMap<>();
+        doc.put("type", hiType != null ? hiType : "Prescription");
+        doc.put("contentType", "application/pdf");
+        
+        // Use provided PDF data if available, else fallback to dummy
+        String pdfContent = (record.getPdfData() != null && !record.getPdfData().isEmpty()) 
+                            ? record.getPdfData() 
+                            : "JVBERi0xLjEKMSAwIG9iajw8L1R5cGUvQ2F0YWxvZy9QYWdlcyAyIDAgUj4+ZW5kb2JqIDIgMCBvYmo8PC9UeXBlL1BhZ2VzL0tpZHNbMyAwIFJdL0NvdW50IDE+PmVuZG9iagAzIDAgb2JqPDwvVHlwZS9QYWdlL01lZGlhQm94WzAgMCAzIDNdL1BhcmVudCAyIDAgUj4+ZW5kb2JqIHRyYWlsZXI8PC9Sb290IDEgMCBSPj4lJUVPRg==";
+        
+        doc.put("data", pdfContent);
+        docs.add(doc);
         request.put("documents", docs);
 
         return this.webClient.post()

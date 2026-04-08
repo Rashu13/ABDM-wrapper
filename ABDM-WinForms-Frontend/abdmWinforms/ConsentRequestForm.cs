@@ -9,11 +9,14 @@ namespace abdmWinforms
     {
         private readonly AbdmService _abdmService;
         private readonly string _abhaAddress;
+        private readonly string _patientName;
 
-        public ConsentRequestForm(string abhaAddress)
+        public ConsentRequestForm(string abhaAddress, string patientName)
         {
             InitializeComponent();
             _abdmService = new AbdmService();
+            _abhaAddress = abhaAddress;
+            _patientName = patientName;
             txtPatientAbha.Text = abhaAddress;
 
             // Default ranges
@@ -38,32 +41,36 @@ namespace abdmWinforms
                 if (chkImmunization.Checked) hiTypes.Add("ImmunizationRecord");
                 if (chkHealthDoc.Checked) hiTypes.Add("HealthDocumentRecord");
                 if (chkWellness.Checked) hiTypes.Add("WellnessRecord");
-                if (chkClinicalDoc.Checked) hiTypes.Add("ClinicalDocument");
+                // ClinicalDocument is not supported by this Gateway version, so we skip it.
 
-                // Prepare HIU Consent Request Object with strict UTC ISO format
+                // Prepare HIU Consent Request Object with strict V3 compliance
                 var request = new
                 {
-                    purpose = new { text = "Care Management", code = "CAREMGT", refUri = "https://nha.gov.in/terminology/care-management" },
+                    purpose = new { 
+                        text = "Care Management", 
+                        code = "CAREMGT", 
+                        refUri = "https://nha.gov.in/terminology/care-management" 
+                    },
                     patient = new { id = txtPatientAbha.Text.Trim() },
-                    hiu = new { id = GlobalConfig.HipId }, // Using GlobalConfig for HIU ID
+                    hiu = new { id = GlobalConfig.HipId }, // HIU ID same as HIP for this wrapper
                     requester = new { 
                         name = GlobalConfig.HipName, 
                         identifier = new { 
-                            type = "REGISTRATION", 
+                            type = "REGNO", 
                             value = GlobalConfig.HipId, 
                             system = "https://www.mciindia.org" 
                         } 
-                    }, // identifier as Object
+                    }, 
                     hiTypes = hiTypes,
                     permission = new
                     {
                         accessMode = "VIEW",
                         dateRange = new
                         {
-                            from = dtFrom.Value.Date.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-                            to = dtTo.Value.Date.AddDays(1).AddTicks(-1).ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+                            from = dtFrom.Value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+                            to = dtTo.Value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
                         },
-                        dataEraseAt = DateTime.Now.AddYears(1).ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), // Default 1 year expiry
+                        dataEraseAt = DateTime.UtcNow.AddYears(2).ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), 
                         frequency = new { unit = "HOUR", value = 1, repeats = 0 }
                     }
                 };
@@ -77,6 +84,15 @@ namespace abdmWinforms
                 else
                 {
                     this.LastRequestId = response.clientRequestId;
+                    
+                    // Add to Dashboard Tracker
+                    GlobalState.ActiveConsentRequests.Add(new ConsentRequestTracker {
+                        RequestId = this.LastRequestId,
+                        PatientName = _patientName,
+                        Status = "INITIATED",
+                        ConsentId = null
+                    });
+
                     MessageBox.Show("Consent request sent successfully! \n\nRequest ID: " + this.LastRequestId + "\n\nPlease ask the patient to approve in their ABHA app.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     this.DialogResult = DialogResult.OK;
                     this.Close();
