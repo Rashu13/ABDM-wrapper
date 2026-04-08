@@ -512,7 +512,7 @@ public class RequestLogV3Service {
    * @param initResponse Response from ABDM gateway for linking particular careContexts.
    */
   public void setLinkResponse(
-      InitV3Response initResponse, String requestId, String referenceNumber, HttpHeaders headers) {
+      InitV3Response initResponse, String requestId, String referenceNumber, String otp, HttpHeaders headers) {
     if (Objects.isNull(initResponse)) {
       return;
     }
@@ -530,6 +530,7 @@ public class RequestLogV3Service {
               initResponse.getAbhaAddress(),
               initResponse.getTransactionId(),
               RequestStatus.USER_INIT_REQUEST_RECEIVED_BY_WRAPPER);
+      newRecord.setOtp(otp);
       mongoTemplate.insert(newRecord);
     } else {
       Map<String, Object> map = existingRecord.getRequestDetails();
@@ -540,10 +541,22 @@ public class RequestLogV3Service {
                   FieldIdentifiers.CLIENT_REQUEST_ID, headers.getFirst(GatewayConstants.REQUEST_ID))
               .set(FieldIdentifiers.GATEWAY_REQUEST_ID, requestId)
               .set(FieldIdentifiers.LINK_REFERENCE_NUMBER, referenceNumber)
+              .set("otp", otp)
               .set(FieldIdentifiers.REQUEST_DETAILS, map)
               .set(FieldIdentifiers.LAST_UPDATED, Utils.getCurrentDateTime());
       mongoTemplate.updateFirst(query, update, RequestLog.class);
     }
+  }
+
+  /**
+   * Fetch of otp from requestLogs.
+   *
+   * @param linkRefNumber identifier for list of careContexts for linking.
+   * @return otp
+   */
+  public String getOtp(String linkRefNumber) {
+    RequestLog existingRecord = logsRepo.findByLinkRefNumber(linkRefNumber);
+    return (existingRecord != null) ? existingRecord.getOtp() : null;
   }
 
   /**

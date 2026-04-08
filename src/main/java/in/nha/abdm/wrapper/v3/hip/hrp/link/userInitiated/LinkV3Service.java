@@ -42,6 +42,7 @@ public class LinkV3Service implements LinkV3Interface {
   @Autowired RequestLogV3Service requestLogV3Service;
   @Autowired PatientV3Service patientV3Service;
   private final HIPV3Client hipClient;
+  @Autowired SmsService smsService;
 
   @Value("${onInitLinkPath}")
   public String onInitLinkPath;
@@ -125,7 +126,11 @@ public class LinkV3Service implements LinkV3Interface {
           log.info("MOCK OTP: Bypassing sample-hip for OTP request. Using internal success.");
           String mockLinkRefNumber = "L-" + UUID.randomUUID().toString();
           onInitRequest.getLink().setReferenceNumber(mockLinkRefNumber);
-          
+
+          String otp = String.valueOf(100000 + new Random().nextInt(900000));
+          log.info("INTERNAL OTP GENERATED for testing: [{}]", otp);
+          smsService.sendOtp(patientMobile, otp);
+
           ResponseEntity<GenericV3Response> responseEntity =
               requestV3Manager.fetchResponseFromGateway(
                   onInitLinkPath,
@@ -135,6 +140,8 @@ public class LinkV3Service implements LinkV3Interface {
                       headers.getFirst(GatewayConstants.X_HIP_ID),
                       UUID.randomUUID().toString()));
           log.info(onInitLinkPath + " : onInitCall (MOCK): " + responseEntity.getStatusCode());
+          requestLogV3Service.setLinkResponse(
+              initResponse, requestId, onInitRequest.getLink().getReferenceNumber(), otp, headers);
       } else {
           ResponseEntity<ResponseOtp> hipResponse = hipClient.requestOtp(this.requestOtp, requestOtp);
           log.info(this.requestOtp + " : requestOtp: " + hipResponse.getStatusCode());
@@ -179,8 +186,10 @@ public class LinkV3Service implements LinkV3Interface {
       log.info(onInitLinkPath + " : OnInitCall -> Error : " + Arrays.toString(e.getStackTrace()));
     }
     try {
-      requestLogV3Service.setLinkResponse(
-          initResponse, requestId, onInitRequest.getLink().getReferenceNumber(), headers);
+      if (!otpInternal) {
+        requestLogV3Service.setLinkResponse(
+            initResponse, requestId, onInitRequest.getLink().getReferenceNumber(), null, headers);
+      }
     } catch (Exception e) {
       log.info("onInitCall -> Error: unable to set content : " + Exceptions.unwrap(e));
     }
@@ -238,7 +247,8 @@ public class LinkV3Service implements LinkV3Interface {
           log.info("MOCK OTP: Bypassing sample-hip for OTP verification. Internal check.");
           String token = confirmResponse.getConfirmation().getToken();
           RequestStatusResponse mockResponse = new RequestStatusResponse();
-          if ("123456".equals(token)) {
+          String storedOtp = requestLogV3Service.getOtp(linkRefNumber);
+          if (storedOtp != null && storedOtp.equals(token)) {
               mockResponse.setStatus("SUCCESS");
           } else {
               mockResponse.setError(ErrorResponse.builder().code(GatewayConstants.INVALID_OTP_CODE).message(GatewayConstants.INVALID_OTP).build());
