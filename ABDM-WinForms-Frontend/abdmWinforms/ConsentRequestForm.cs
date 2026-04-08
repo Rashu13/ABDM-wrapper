@@ -46,7 +46,7 @@ namespace abdmWinforms
                     purpose = new { text = "Care Management", code = "CAREMGT", refUri = "https://nha.gov.in/terminology/care-management" },
                     patient = new { id = txtPatientAbha.Text.Trim() },
                     hiu = new { id = GlobalConfig.HipId }, // Using GlobalConfig for HIU ID
-                    requester = new { name = GlobalConfig.HipName }, // Using GlobalConfig for Requester
+                    requester = new { name = GlobalConfig.HipName, identifier = GlobalConfig.HipId }, // Added identifier (Mandatory)
                     hiTypes = hiTypes,
                     permission = new
                     {
