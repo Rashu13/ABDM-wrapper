@@ -43,12 +43,21 @@ namespace abdmWinforms
                 // Prepare HIU Consent Request Object with strict UTC ISO format
                 var request = new
                 {
-                    abhaAddress = txtPatientAbha.Text.Trim(),
-                    purpose = "CAREMGT", // Care Management
-                    dateFrom = dtFrom.Value.Date.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-                    dateTo = dtTo.Value.Date.AddDays(1).AddTicks(-1).ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+                    purpose = new { text = "Care Management", code = "CAREMGT", refUri = "https://nha.gov.in/terminology/care-management" },
+                    patient = new { id = txtPatientAbha.Text.Trim() },
+                    hiu = new { id = GlobalConfig.HipId }, // Using GlobalConfig for HIU ID
+                    requester = new { name = GlobalConfig.HipName }, // Using GlobalConfig for Requester
                     hiTypes = hiTypes,
-                    requester = GlobalConfig.HipName
+                    permission = new
+                    {
+                        accessMode = "VIEW",
+                        dateRange = new
+                        {
+                            from = dtFrom.Value.Date.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+                            to = dtTo.Value.Date.AddDays(1).AddTicks(-1).ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+                        },
+                        dataEraseAt = DateTime.Now.AddYears(1).ToString("yyyy-MM-ddTHH:mm:ss.fffZ") // Default 1 year expiry
+                    }
                 };
 
                 var response = await _abdmService.RequestConsentAsync(request);
