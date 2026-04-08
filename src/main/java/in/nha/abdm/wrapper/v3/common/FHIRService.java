@@ -126,20 +126,27 @@ public class FHIRService {
             request.put("diagnostics", diagnostics);
         }
 
-        // Common Document (PDF)
+        // Common Document (Image or PDF)
         List<Map<String, Object>> docs = new ArrayList<>();
         Map<String, Object> doc = new HashMap<>();
         doc.put("type", hiType != null ? hiType : "Prescription");
-        doc.put("contentType", "application/pdf");
         
-        // Use provided PDF data if available, else fallback to dummy
+        // Use provided data if available, else fallback to dummy PDF
         String pdfContent = (record.getPdfData() != null && !record.getPdfData().isEmpty()) 
                             ? record.getPdfData() 
                             : "JVBERi0xLjEKMSAwIG9iajw8L1R5cGUvQ2F0YWxvZy9QYWdlcyAyIDAgUj4+ZW5kb2JqIDIgMCBvYmo8PC9UeXBlL1BhZ2VzL0tpZHNbMyAwIFJdL0NvdW50IDE+PmVuZG9iagAzIDAgb2JqPDwvVHlwZS9QYWdlL01lZGlhQm94WzAgMCAzIDNdL1BhcmVudCAyIDAgUj4+ZW5kb2JqIHRyYWlsZXI8PC9Sb290IDEgMCBSPj4lJUVPRg==";
+
+        // Detect if content is PNG (starts with iVBORw... in Base64)
+        if (pdfContent.startsWith("iVBORw")) {
+            doc.put("contentType", "image/png");
+        } else {
+            doc.put("contentType", "application/pdf");
+        }
         
         doc.put("data", pdfContent);
         docs.add(doc);
         request.put("documents", docs);
+
 
         return this.webClient.post()
                 .uri(endpoint)

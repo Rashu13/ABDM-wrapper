@@ -152,31 +152,29 @@ namespace abdmWinforms
         {
             try
             {
-                // Create a bitmap of the prescription area or render it directly
-                // For simplicity and since we don't have a storage-less PDF lib, 
-                // we render the prescription to a high-res Bitmap and wrap it.
-                using (Bitmap bmp = new Bitmap(800, 1000))
+                using (Bitmap bmp = new Bitmap(1200, 1600))
                 {
                     using (Graphics g = Graphics.FromImage(bmp))
                     {
                         g.Clear(Color.White);
-                        // Using a dummy PrintPageEventArgs to reuse the printing logic
-                        // In a real scenario, we'd refactor the PrintPrescriptionPage to take Graphics & Bounds
-                        PrintPrescriptionPage(this, new PrintPageEventArgs(g, new Rectangle(50, 50, 700, 900), new Rectangle(0, 0, 800, 1000), new PageSettings()));
+                        g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+                        g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
+
+                        var margin = new Rectangle(100, 100, 1000, 1400);
+                        var paper = new Rectangle(0, 0, 1200, 1600);
+                        PrintPrescriptionPage(this, new PrintPageEventArgs(g, margin, paper, new PageSettings()));
                     }
 
                     using (MemoryStream ms = new MemoryStream())
                     {
                         bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                        byte[] byteImage = ms.ToArray();
-                        // ABHA app likes PDFs, but we can't easily make a PDF in-memory without a lib.
-                        // We will send this as a data string that the wrapper can optionally wrap or just pass.
-                        return Convert.ToBase64String(byteImage);
+                        return Convert.ToBase64String(ms.ToArray());
                     }
                 }
             }
             catch { return ""; }
         }
+
 
         private void btnExportPdf_Click(object sender, EventArgs e)
         {
