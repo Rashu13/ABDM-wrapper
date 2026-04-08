@@ -16,7 +16,7 @@ namespace abdmWinforms
         private void InitializeComponent()
         {
             this.label1 = new System.Windows.Forms.Label();
-            this.lblPatientAbha = new System.Windows.Forms.Label();
+            this.txtPatientAbha = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.dtFrom = new System.Windows.Forms.DateTimePicker();
             this.label4 = new System.Windows.Forms.Label();
@@ -44,15 +44,14 @@ namespace abdmWinforms
             this.label1.TabIndex = 0;
             this.label1.Text = "Request Consent";
             // 
-            // lblPatientAbha
+            // txtPatientAbha
             // 
-            this.lblPatientAbha.AutoSize = true;
-            this.lblPatientAbha.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblPatientAbha.Location = new System.Drawing.Point(32, 60);
-            this.lblPatientAbha.Name = "lblPatientAbha";
-            this.lblPatientAbha.Size = new System.Drawing.Size(130, 20);
-            this.lblPatientAbha.TabIndex = 1;
-            this.lblPatientAbha.Text = "abhaaddress@abdm";
+            this.txtPatientAbha.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtPatientAbha.Location = new System.Drawing.Point(32, 60);
+            this.txtPatientAbha.Name = "txtPatientAbha";
+            this.txtPatientAbha.Size = new System.Drawing.Size(390, 27);
+            this.txtPatientAbha.TabIndex = 1;
+            this.txtPatientAbha.Text = "abhaaddress@abdm";
             // 
             // label3
             // 
@@ -215,7 +214,7 @@ namespace abdmWinforms
             this.Controls.Add(this.label4);
             this.Controls.Add(this.dtFrom);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.lblPatientAbha);
+            this.Controls.Add(this.txtPatientAbha);
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
@@ -228,7 +227,7 @@ namespace abdmWinforms
         }
 
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label lblPatientAbha;
+        private System.Windows.Forms.TextBox txtPatientAbha;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.DateTimePicker dtFrom;
         private System.Windows.Forms.Label label4;

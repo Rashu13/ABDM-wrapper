@@ -221,6 +221,18 @@ namespace abdmWinforms
             new PatientRegistrationForm(txtSearchAbha.Text.Trim()).ShowDialog();
         }
 
+        private void btnDirectConsent_Click(object sender, EventArgs e)
+        {
+            // Open consent form directly without requiring a search
+            using (var consentForm = new ConsentRequestForm(""))
+            {
+                if (consentForm.ShowDialog(this) == DialogResult.OK)
+                {
+                    _lastConsentRequestId = consentForm.LastRequestId;
+                }
+            }
+        }
+
         private async void tmrLiveFeed_Tick(object sender, EventArgs e)
         {
             try

@@ -14,8 +14,7 @@ namespace abdmWinforms
         {
             InitializeComponent();
             _abdmService = new AbdmService();
-            _abhaAddress = abhaAddress;
-            lblPatientAbha.Text = abhaAddress;
+            txtPatientAbha.Text = abhaAddress;
 
             // Default ranges
             dtFrom.Value = DateTime.Now.AddMonths(-6);
@@ -44,7 +43,7 @@ namespace abdmWinforms
                 // Prepare HIU Consent Request Object with strict UTC ISO format
                 var request = new
                 {
-                    abhaAddress = _abhaAddress,
+                    abhaAddress = txtPatientAbha.Text.Trim(),
                     purpose = "CAREMGT", // Care Management
                     dateFrom = dtFrom.Value.Date.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
                     dateTo = dtTo.Value.Date.AddDays(1).AddTicks(-1).ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),

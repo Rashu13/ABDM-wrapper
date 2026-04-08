@@ -23,6 +23,7 @@ namespace abdmWinforms
             this.btnShowRegistration = new System.Windows.Forms.Button();
             this.btnWritePrescription = new System.Windows.Forms.Button();
             this.btnRequestConsent = new System.Windows.Forms.Button();
+            this.btnDirectConsent = new System.Windows.Forms.Button();
             this.btnViewHistory = new System.Windows.Forms.Button();
             this.pnlDetails = new System.Windows.Forms.Panel();
             this.btnStartLinking = new System.Windows.Forms.Button();
@@ -166,6 +167,21 @@ namespace abdmWinforms
             this.btnViewHistory.Visible = false;
             this.btnViewHistory.Click += new System.EventHandler(this.btnViewHistory_Click);
             // 
+            // btnDirectConsent
+            // 
+            this.btnDirectConsent.BackColor = System.Drawing.Color.MidnightBlue;
+            this.btnDirectConsent.FlatAppearance.BorderSize = 0;
+            this.btnDirectConsent.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDirectConsent.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold);
+            this.btnDirectConsent.ForeColor = System.Drawing.Color.White;
+            this.btnDirectConsent.Location = new System.Drawing.Point(685, 50);
+            this.btnDirectConsent.Name = "btnDirectConsent";
+            this.btnDirectConsent.Size = new System.Drawing.Size(200, 41);
+            this.btnDirectConsent.TabIndex = 10;
+            this.btnDirectConsent.Text = "DIRECT CONSENT";
+            this.btnDirectConsent.UseVisualStyleBackColor = false;
+            this.btnDirectConsent.Click += new System.EventHandler(this.btnDirectConsent_Click);
+            // 
             // pnlDetails
             // 
             this.pnlDetails.BackColor = System.Drawing.Color.White;
@@ -308,6 +324,7 @@ namespace abdmWinforms
             this.Controls.Add(this.btnViewLogs);
             this.Controls.Add(this.pnlDetails);
             this.Controls.Add(this.btnShowInvite);
+            this.Controls.Add(this.btnDirectConsent);
             this.Controls.Add(this.btnSearch);
             this.Controls.Add(this.txtSearchAbha);
             this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
@@ -338,6 +355,7 @@ namespace abdmWinforms
         private System.Windows.Forms.Button btnWritePrescription;
         private System.Windows.Forms.Button btnShowRegistration;
         private System.Windows.Forms.Button btnRequestConsent;
+        private System.Windows.Forms.Button btnDirectConsent;
         private System.Windows.Forms.Button btnViewHistory;
         private System.Windows.Forms.Timer tmrLiveFeed;
         private System.Windows.Forms.ListBox lstLiveActivities;
