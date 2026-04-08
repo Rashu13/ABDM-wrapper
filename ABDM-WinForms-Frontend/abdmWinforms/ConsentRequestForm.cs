@@ -56,7 +56,8 @@ namespace abdmWinforms
                             from = dtFrom.Value.Date.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
                             to = dtTo.Value.Date.AddDays(1).AddTicks(-1).ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
                         },
-                        dataEraseAt = DateTime.Now.AddYears(1).ToString("yyyy-MM-ddTHH:mm:ss.fffZ") // Default 1 year expiry
+                        dataEraseAt = DateTime.Now.AddYears(1).ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), // Default 1 year expiry
+                        frequency = new { unit = "HOUR", value = 1, repeats = 0 }
                     }
                 };
 
