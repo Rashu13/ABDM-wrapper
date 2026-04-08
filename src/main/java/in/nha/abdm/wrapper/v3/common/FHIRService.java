@@ -10,10 +10,14 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Base64;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
 @Service
 public class FHIRService {
@@ -29,10 +33,10 @@ public class FHIRService {
      */
     public Mono<String> generateFHIRBundle(Prescription record, String hiType, String patientGender, String patientBirthDate) {
         Map<String, Object> request = new HashMap<>();
-        String endpoint = "/v1/bundle/prescription"; // default
+        // ... (preserving logic) ...
+        String endpoint = "/v1/bundle/prescription"; 
         String bundleType = "PrescriptionRecord";
 
-        // Mapping HI Types to fhir-mapper endpoints and bundle types
         if ("DiagnosticReport".equalsIgnoreCase(hiType)) {
             endpoint = "/v1/bundle/diagnostic-report";
             bundleType = "DiagnosticReportRecord";
@@ -57,14 +61,12 @@ public class FHIRService {
             endpoint = "/v1/bundle/health-document";
             bundleType = "HealthDocumentRecord";
         } else {
-            // Default to Prescription
             request.put("authoredOn", LocalDate.now().toString());
         }
 
         request.put("bundleType", bundleType);
         request.put("careContextReference", record.getCareContextReference() != null ? record.getCareContextReference() : "V-" + System.currentTimeMillis());
 
-        // Patient details
         Map<String, Object> patient = new HashMap<>();
         patient.put("name", record.getPatientName());
         patient.put("patientReference", record.getPatientReference() != null ? record.getPatientReference() : record.getAbhaAddress());
@@ -80,7 +82,6 @@ public class FHIRService {
         patient.put("birthDate", patientBirthDate != null ? patientBirthDate : "1994-03-27");
         request.put("patient", patient);
 
-        // Practitioner
         List<Map<String, Object>> practitioners = new ArrayList<>();
         Map<String, Object> doctor = new HashMap<>();
         doctor.put("name", "Dr. Midha");
@@ -88,13 +89,11 @@ public class FHIRService {
         practitioners.add(doctor);
         request.put("practitioners", practitioners);
 
-        // Organisation
         Map<String, Object> organisation = new HashMap<>();
         organisation.put("facilityName", "MIDHA HOSPITAL");
         organisation.put("facilityId", record.getHipId());
         request.put("organisation", organisation);
 
-        // Map medicines as medications/diagnostic observations
         List<Map<String, Object>> meds = new ArrayList<>();
         if (record.getMedicines() != null) {
             for (Prescription.Medicine med : record.getMedicines()) {
@@ -109,14 +108,12 @@ public class FHIRService {
             }
         }
         
-        // fhir-mapper expects different keys for medications depending on type
         if ("DischargeSummary".equalsIgnoreCase(hiType) || "OPConsultation".equalsIgnoreCase(hiType)) {
             request.put("medications", meds);
         } else {
             request.put("prescriptions", meds);
         }
 
-        // Add dummy diagnostic observations if type is DiagnosticReport
         if ("DiagnosticReport".equalsIgnoreCase(hiType)) {
             List<Map<String, Object>> diagnostics = new ArrayList<>();
             Map<String, Object> d = new HashMap<>();
@@ -130,23 +127,24 @@ public class FHIRService {
         List<Map<String, Object>> docs = new ArrayList<>();
         Map<String, Object> doc = new HashMap<>();
         doc.put("type", hiType != null ? hiType : "Prescription");
+        doc.put("contentType", "application/pdf"); // Strictly PDF for mobile apps
         
-        // Use provided data if available, else fallback to dummy PDF
-        String pdfContent = (record.getPdfData() != null && !record.getPdfData().isEmpty()) 
+        String inputData = (record.getPdfData() != null && !record.getPdfData().isEmpty()) 
                             ? record.getPdfData() 
                             : "JVBERi0xLjEKMSAwIG9iajw8L1R5cGUvQ2F0YWxvZy9QYWdlcyAyIDAgUj4+ZW5kb2JqIDIgMCBvYmo8PC9UeXBlL1BhZ2VzL0tpZHNbMyAwIFJdL0NvdW50IDE+PmVuZG9iagAzIDAgb2JqPDwvVHlwZS9QYWdlL01lZGlhQm94WzAgMCAzIDNdL1BhcmVudCAyIDAgUj4+ZW5kb2JqIHRyYWlsZXI8PC9Sb290IDEgMCBSPj4lJUVPRg==";
 
-        // Detect if content is PNG (starts with iVBORw... in Base64)
-        if (pdfContent.startsWith("iVBORw")) {
-            doc.put("contentType", "image/png");
-        } else {
-            doc.put("contentType", "application/pdf");
+        // If input is PNG, convert to real PDF using PDFBox
+        if (inputData.startsWith("iVBORw")) {
+            try {
+                inputData = convertImageToPdf(inputData);
+            } catch (IOException e) {
+                // Fallback to original if conversion fails
+            }
         }
         
-        doc.put("data", pdfContent);
+        doc.put("data", inputData);
         docs.add(doc);
         request.put("documents", docs);
-
 
         return this.webClient.post()
                 .uri(endpoint)
@@ -155,4 +153,24 @@ public class FHIRService {
                 .retrieve()
                 .bodyToMono(String.class);
     }
+
+    private String convertImageToPdf(String base64Image) throws IOException {
+        byte[] imageBytes = Base64.getDecoder().decode(base64Image);
+        try (PDDocument document = new PDDocument()) {
+            PDImageXObject pdImage = PDImageXObject.createFromByteArray(document, imageBytes, "prescription.png");
+            
+            // Standard A4-ish page or match image aspect
+            PDPage page = new PDPage(new PDRectangle(pdImage.getWidth(), pdImage.getHeight()));
+            document.addPage(page);
+            
+            try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
+                contentStream.drawImage(pdImage, 0, 0);
+            }
+            
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            document.save(baos);
+            return Base64.getEncoder().encodeToString(baos.toByteArray());
+        }
+    }
 }
+
