@@ -42,7 +42,7 @@ public class PatientV3Controller {
       @PathVariable("patientId") String patientId,
       @RequestParam(WrapperConstants.HIP_ID) @NotNull(message = "hipId is mandatory") String hipId) {
     activityService.logActivity("GATEWAY-HIT: Searching patient: " + patientId);
-    Patient patient = patientService.getPatientDetails(patientId, hipId);
+    Patient patient = patientService.getPatient(patientId, hipId);
     if (Objects.isNull(patient)) {
       FacadeV3Response facadeV3Response =
           FacadeV3Response.builder()
