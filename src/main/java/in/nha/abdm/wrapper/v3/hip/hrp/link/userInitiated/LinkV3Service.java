@@ -23,6 +23,7 @@ import in.nha.abdm.wrapper.v3.hip.hrp.link.userInitiated.requests.OnConfirmV3Req
 import in.nha.abdm.wrapper.v3.hip.hrp.link.userInitiated.requests.OnInitV3Request;
 import in.nha.abdm.wrapper.v3.hip.hrp.link.userInitiated.responses.InitV3Response;
 import java.util.*;
+import java.util.Random;
 import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

@@ -12,8 +12,8 @@ COPY . .
 RUN chmod +x ./gradlew
 
 # Build without spotless and tests to ensure a fast & successful deployment
-# Use --no-daemon and limit memory to avoid Error 255 in low-resource environments
-RUN ./gradlew build -x test -x spotlessCheck -x spotlessApply --no-daemon -Dorg.gradle.jvmargs="-Xmx480m"
+# Increase memory limits to avoid Error 255 (OOM) during Gradle build
+RUN ./gradlew build -x test -x spotlessCheck -x spotlessApply --no-daemon --info -Dorg.gradle.jvmargs="-Xmx1024m -XX:MaxMetaspaceSize=256m"
 
 EXPOSE 8082
 
