@@ -1,7 +1,11 @@
 /* (C) 2024 */
 package in.nha.abdm.wrapper.v3.hiu;
 
+import in.nha.abdm.wrapper.v1.common.exceptions.IllegalDataStateException;
+import in.nha.abdm.wrapper.v1.hiu.hrp.consent.requests.InitConsentRequest;
 import in.nha.abdm.wrapper.v3.common.logger.ActivityLogService;
+import in.nha.abdm.wrapper.v3.common.models.FacadeV3Response;
+import in.nha.abdm.wrapper.v3.hiu.hrp.consent.HIUConsentV3Service;
 import org.springframework.web.bind.annotation.*;
 import java.util.Collections;
 
@@ -9,16 +13,17 @@ import java.util.Collections;
 @RequestMapping("/v3/hiu")
 public class HiuV3Controller {
   private final ActivityLogService logService;
+  private final HIUConsentV3Service hiuConsentV3Service;
 
-  public HiuV3Controller(ActivityLogService logService) {
+  public HiuV3Controller(ActivityLogService logService, HIUConsentV3Service hiuConsentV3Service) {
     this.logService = logService;
+    this.hiuConsentV3Service = hiuConsentV3Service;
   }
 
   @PostMapping("/consent/request")
-  public String initiateConsentRequest(@RequestBody Object request) {
+  public FacadeV3Response initiateConsentRequest(@RequestBody InitConsentRequest request) throws IllegalDataStateException {
     logService.logActivity("HIU-INITIATED: New consent request posted to Gateway.");
-    // This will ideally call the Wrapper's internal /consent/init service
-    return "Consent Request Initialized Success! (RequestId: HIU-" + java.util.UUID.randomUUID() + ")";
+    return hiuConsentV3Service.initiateConsentRequest(request);
   }
 
   @GetMapping("/health-information/fetch/{consentId}")
