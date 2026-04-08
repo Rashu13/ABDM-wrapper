@@ -13,6 +13,7 @@ import in.nha.abdm.wrapper.v1.hip.hrp.database.mongo.tables.Patient;
 import in.nha.abdm.wrapper.v1.hip.hrp.link.userInitiated.requests.*;
 import in.nha.abdm.wrapper.v1.hip.hrp.link.userInitiated.responses.ConfirmResponse;
 import in.nha.abdm.wrapper.v3.common.RequestV3Manager;
+import in.nha.abdm.wrapper.v3.common.SmsService;
 import in.nha.abdm.wrapper.v3.common.exceptions.BadRequestHandler;
 import in.nha.abdm.wrapper.v3.common.models.GenericV3Response;
 import in.nha.abdm.wrapper.v3.database.mongo.services.PatientV3Service;
