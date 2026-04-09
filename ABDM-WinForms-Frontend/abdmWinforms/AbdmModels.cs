@@ -76,6 +76,7 @@ namespace ABDM_WinForms_Frontend
         public string Provider { get; set; }
         public string ContentHtml { get; set; }
         public string RawJson { get; set; }
+        public string PdfBase64 { get; set; }
     }
 
     // --- HIU CONSENT MODELS ---

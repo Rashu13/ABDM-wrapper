@@ -55,7 +55,7 @@ namespace abdmWinforms
                         var res = med["resource"];
                         string name = res["medicationCodeableConcept"]?["text"]?.ToString() ?? "Unknown Medicine";
                         string dosage = res["dosageInstruction"]?[0]?["text"]?.ToString() ?? "";
-                        details.AppendLine(string.Format("- {0} {dosage}", name));
+                        details.AppendLine("- " + name + " " + dosage);
                     }
                     details.AppendLine();
                 }
@@ -71,7 +71,7 @@ namespace abdmWinforms
                         string name = res["code"]?["text"]?.ToString() ?? "Observation";
                         string val = res["valueQuantity"]?["value"]?.ToString() ?? res["valueString"]?.ToString() ?? "";
                         string unit = res["valueQuantity"]?["unit"]?.ToString() ?? "";
-                        details.AppendLine(string.Format("- {0}: {val} {unit}", name));
+                        details.AppendLine("- " + name + ": " + val + " " + unit);
                     }
                     details.AppendLine();
                 }
@@ -85,7 +85,7 @@ namespace abdmWinforms
                     {
                         var res = cond["resource"];
                         string name = res["code"]?["text"]?.ToString() ?? "Condition";
-                        details.AppendLine(string.Format("- {0}", name));
+                        details.AppendLine("- " + name);
                     }
                     details.AppendLine();
                 }
@@ -100,7 +100,7 @@ namespace abdmWinforms
                         var res = rep["resource"];
                         string name = res["code"]?["text"]?.ToString() ?? "Lab Report";
                         string status = res["status"]?.ToString() ?? "";
-                        details.AppendLine(string.Format("- {0} ({status})", name));
+                        details.AppendLine("- " + name + " (" + status + ")");
                     }
                     details.AppendLine();
                 }
@@ -115,7 +115,7 @@ namespace abdmWinforms
                         var res = proc["resource"];
                         string name = res["code"]?["text"]?.ToString() ?? "Procedure";
                         string date = TryParseDate(res["performedDateTime"]?.ToString()) ?? "";
-                        details.AppendLine(string.Format("- {0} {date}", name));
+                        details.AppendLine("- " + name + " " + date);
                     }
                     details.AppendLine();
                 }
@@ -130,7 +130,7 @@ namespace abdmWinforms
                         var res = imm["resource"];
                         string name = res["vaccineCode"]?["text"]?.ToString() ?? "Vaccine";
                         string status = res["status"]?.ToString() ?? "";
-                        details.AppendLine(string.Format("- {0} ({status})", name));
+                        details.AppendLine("- " + name + " (" + status + ")");
                     }
                     details.AppendLine();
                 }
@@ -145,9 +145,67 @@ namespace abdmWinforms
                         var res = allergy["resource"];
                         string name = res["code"]?["text"]?.ToString() ?? "Allergy";
                         string criticality = res["criticality"]?.ToString() ?? "Unknown";
-                        details.AppendLine(string.Format("- {0} (Criticality: {criticality})", name));
+                        details.AppendLine("- " + name + " (Criticality: " + criticality + ")");
                     }
                     details.AppendLine();
+                }
+
+                // PDF / Binary Extraction
+                string pdfBase64 = null;
+                
+                // 1. Look for DocumentReference
+                var docRefs = entries.Where(e => e["resource"]?["resourceType"]?.ToString() == "DocumentReference");
+                foreach (var dr in docRefs)
+                {
+                    var attachments = dr["resource"]?["content"] as JArray;
+                    if (attachments != null)
+                    {
+                        foreach (var att in attachments)
+                        {
+                            var attachment = att["attachment"];
+                            if (attachment != null && attachment["contentType"]?.ToString() == "application/pdf")
+                            {
+                                pdfBase64 = attachment["data"]?.ToString();
+                                if (!string.IsNullOrEmpty(pdfBase64)) break;
+                            }
+                        }
+                    }
+                    if (!string.IsNullOrEmpty(pdfBase64)) break;
+                }
+
+                if (string.IsNullOrEmpty(pdfBase64))
+                {
+                    // 2. Look for DiagnosticReport.presentedForm
+                    var diagReports = entries.Where(e => e["resource"]?["resourceType"]?.ToString() == "DiagnosticReport");
+                    foreach (var dr in diagReports)
+                    {
+                        var forms = dr["resource"]?["presentedForm"] as JArray;
+                        if (forms != null)
+                        {
+                            foreach (var form in forms)
+                            {
+                                if (form != null && form["contentType"]?.ToString() == "application/pdf")
+                                {
+                                    pdfBase64 = form["data"]?.ToString();
+                                    if (!string.IsNullOrEmpty(pdfBase64)) break;
+                                }
+                            }
+                        }
+                        if (!string.IsNullOrEmpty(pdfBase64)) break;
+                    }
+                }
+
+                if (string.IsNullOrEmpty(pdfBase64))
+                {
+                    // 3. Look for Binary resources directly
+                    var binaryEntry = entries.FirstOrDefault(e => 
+                        e["resource"]?["resourceType"]?.ToString() == "Binary" && 
+                        e["resource"]?["contentType"]?.ToString() == "application/pdf");
+                    
+                    if (binaryEntry != null)
+                    {
+                        pdfBase64 = binaryEntry["resource"]?["data"]?.ToString();
+                    }
                 }
 
                 summaries.Add(new HealthRecordSummary
@@ -156,7 +214,8 @@ namespace abdmWinforms
                     Type = docType,
                     Provider = provider,
                     ContentHtml = details.ToString(),
-                    RawJson = bundleJson
+                    RawJson = bundleJson,
+                    PdfBase64 = pdfBase64
                 });
 
             }

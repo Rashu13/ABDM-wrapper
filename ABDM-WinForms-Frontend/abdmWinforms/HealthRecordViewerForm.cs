@@ -2,6 +2,8 @@ using ABDM_WinForms_Frontend;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using System.IO;
+using System.Diagnostics;
 
 namespace abdmWinforms
 {
@@ -118,6 +120,38 @@ namespace abdmWinforms
                 if (summary != null)
                 {
                     rtbContent.Text = summary.ContentHtml;
+                    
+                    bool hasPdf = !string.IsNullOrEmpty(summary.PdfBase64);
+                    btnViewPdf.Enabled = hasPdf;
+                    btnViewPdf.BackColor = hasPdf ? System.Drawing.Color.MediumSeaGreen : System.Drawing.Color.LightGray;
+                    btnViewPdf.Text = hasPdf ? "📄 View PDF Document" : "❌ No PDF Available";
+                }
+            }
+            else
+            {
+                btnViewPdf.Enabled = false;
+                btnViewPdf.BackColor = System.Drawing.Color.LightGray;
+            }
+        }
+
+        private void btnViewPdf_Click(object sender, EventArgs e)
+        {
+            if (dgvRecords.SelectedRows.Count > 0)
+            {
+                var summary = dgvRecords.SelectedRows[0].DataBoundItem as HealthRecordSummary;
+                if (summary != null && !string.IsNullOrEmpty(summary.PdfBase64))
+                {
+                    try
+                    {
+                        string tempFile = Path.Combine(Path.GetTempPath(), "ABDM_Record_" + Guid.NewGuid().ToString().Substring(0, 8) + ".pdf");
+                        byte[] pdfBytes = Convert.FromBase64String(summary.PdfBase64);
+                        File.WriteAllBytes(tempFile, pdfBytes);
+                        Process.Start(tempFile);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Could not open PDF: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
             }
         }

@@ -15,6 +15,7 @@ namespace abdmWinforms
 
         private void InitializeComponent()
         {
+            this.btnViewPdf = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.lblStatus = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -79,6 +80,7 @@ namespace abdmWinforms
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.btnViewPdf);
             this.splitContainer1.Panel2.Controls.Add(this.rtbContent);
             this.splitContainer1.Size = new System.Drawing.Size(1120, 517);
             this.splitContainer1.SplitterDistance = 440;
@@ -133,17 +135,31 @@ namespace abdmWinforms
             this.colProvider.Name = "colProvider";
             this.colProvider.ReadOnly = true;
             // 
+            // btnViewPdf
+            // 
+            this.btnViewPdf.BackColor = System.Drawing.Color.MediumSeaGreen;
+            this.btnViewPdf.Enabled = false;
+            this.btnViewPdf.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnViewPdf.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.btnViewPdf.ForeColor = System.Drawing.Color.White;
+            this.btnViewPdf.Location = new System.Drawing.Point(4, 4);
+            this.btnViewPdf.Name = "btnViewPdf";
+            this.btnViewPdf.Size = new System.Drawing.Size(180, 35);
+            this.btnViewPdf.TabIndex = 2;
+            this.btnViewPdf.Text = "📄 View PDF Document";
+            this.btnViewPdf.UseVisualStyleBackColor = false;
+            this.btnViewPdf.Click += new System.EventHandler(this.btnViewPdf_Click);
+            // 
             // rtbContent
             // 
             this.rtbContent.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
             this.rtbContent.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.rtbContent.Dock = System.Windows.Forms.DockStyle.Fill;
             this.rtbContent.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rtbContent.Location = new System.Drawing.Point(0, 0);
+            this.rtbContent.Location = new System.Drawing.Point(0, 45);
             this.rtbContent.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.rtbContent.Name = "rtbContent";
             this.rtbContent.ReadOnly = true;
-            this.rtbContent.Size = new System.Drawing.Size(675, 517);
+            this.rtbContent.Size = new System.Drawing.Size(675, 472);
             this.rtbContent.TabIndex = 1;
             this.rtbContent.Text = "Select a record to view details.";
             // 
@@ -182,5 +198,6 @@ namespace abdmWinforms
         private System.Windows.Forms.DataGridViewTextBoxColumn colDate;
         private System.Windows.Forms.DataGridViewTextBoxColumn colType;
         private System.Windows.Forms.DataGridViewTextBoxColumn colProvider;
+        private System.Windows.Forms.Button btnViewPdf;
     }
 }
