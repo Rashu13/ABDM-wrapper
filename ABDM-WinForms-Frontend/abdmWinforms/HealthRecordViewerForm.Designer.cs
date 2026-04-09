@@ -20,10 +20,10 @@ namespace abdmWinforms
             this.label2 = new System.Windows.Forms.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.dgvRecords = new System.Windows.Forms.DataGridView();
-            this.rtbContent = new System.Windows.Forms.RichTextBox();
             this.colDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colType = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colProvider = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.rtbContent = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -36,9 +36,10 @@ namespace abdmWinforms
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold);
             this.label1.ForeColor = System.Drawing.Color.MidnightBlue;
-            this.label1.Location = new System.Drawing.Point(30, 20);
+            this.label1.Location = new System.Drawing.Point(40, 25);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(268, 32);
+            this.label1.Size = new System.Drawing.Size(318, 41);
             this.label1.TabIndex = 0;
             this.label1.Text = "Patient Health Folder";
             // 
@@ -47,9 +48,10 @@ namespace abdmWinforms
             this.lblStatus.AutoSize = true;
             this.lblStatus.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Italic);
             this.lblStatus.ForeColor = System.Drawing.Color.SeaGreen;
-            this.lblStatus.Location = new System.Drawing.Point(33, 65);
+            this.lblStatus.Location = new System.Drawing.Point(44, 80);
+            this.lblStatus.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(188, 17);
+            this.lblStatus.Size = new System.Drawing.Size(249, 23);
             this.lblStatus.TabIndex = 2;
             this.lblStatus.Text = "Fetching records from Gateway...";
             // 
@@ -58,15 +60,17 @@ namespace abdmWinforms
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold);
             this.label2.ForeColor = System.Drawing.Color.DimGray;
-            this.label2.Location = new System.Drawing.Point(33, 84);
+            this.label2.Location = new System.Drawing.Point(44, 103);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(126, 13);
+            this.label2.Size = new System.Drawing.Size(164, 19);
             this.label2.TabIndex = 3;
             this.label2.Text = "HEALTH INFORMATION";
             // 
             // splitContainer1
             // 
-            this.splitContainer1.Location = new System.Drawing.Point(30, 100);
+            this.splitContainer1.Location = new System.Drawing.Point(40, 123);
+            this.splitContainer1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -76,8 +80,9 @@ namespace abdmWinforms
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.rtbContent);
-            this.splitContainer1.Size = new System.Drawing.Size(840, 420);
-            this.splitContainer1.SplitterDistance = 330;
+            this.splitContainer1.Size = new System.Drawing.Size(1120, 517);
+            this.splitContainer1.SplitterDistance = 440;
+            this.splitContainer1.SplitterWidth = 5;
             this.splitContainer1.TabIndex = 4;
             // 
             // dgvRecords
@@ -93,14 +98,40 @@ namespace abdmWinforms
             this.colProvider});
             this.dgvRecords.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvRecords.Location = new System.Drawing.Point(0, 0);
+            this.dgvRecords.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.dgvRecords.MultiSelect = false;
             this.dgvRecords.Name = "dgvRecords";
             this.dgvRecords.ReadOnly = true;
             this.dgvRecords.RowHeadersVisible = false;
+            this.dgvRecords.RowHeadersWidth = 51;
             this.dgvRecords.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvRecords.Size = new System.Drawing.Size(330, 420);
+            this.dgvRecords.Size = new System.Drawing.Size(440, 517);
             this.dgvRecords.TabIndex = 0;
             this.dgvRecords.SelectionChanged += new System.EventHandler(this.dgvRecords_SelectionChanged);
+            // 
+            // colDate
+            // 
+            this.colDate.DataPropertyName = "Date";
+            this.colDate.HeaderText = "Date";
+            this.colDate.MinimumWidth = 6;
+            this.colDate.Name = "colDate";
+            this.colDate.ReadOnly = true;
+            // 
+            // colType
+            // 
+            this.colType.DataPropertyName = "Type";
+            this.colType.HeaderText = "Record Type";
+            this.colType.MinimumWidth = 6;
+            this.colType.Name = "colType";
+            this.colType.ReadOnly = true;
+            // 
+            // colProvider
+            // 
+            this.colProvider.DataPropertyName = "Provider";
+            this.colProvider.HeaderText = "Facility";
+            this.colProvider.MinimumWidth = 6;
+            this.colProvider.Name = "colProvider";
+            this.colProvider.ReadOnly = true;
             // 
             // rtbContent
             // 
@@ -109,44 +140,25 @@ namespace abdmWinforms
             this.rtbContent.Dock = System.Windows.Forms.DockStyle.Fill;
             this.rtbContent.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rtbContent.Location = new System.Drawing.Point(0, 0);
+            this.rtbContent.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.rtbContent.Name = "rtbContent";
             this.rtbContent.ReadOnly = true;
-            this.rtbContent.Size = new System.Drawing.Size(506, 420);
+            this.rtbContent.Size = new System.Drawing.Size(675, 517);
             this.rtbContent.TabIndex = 1;
             this.rtbContent.Text = "Select a record to view details.";
             // 
-            // colDate
-            // 
-            this.colDate.DataPropertyName = "Date";
-            this.colDate.HeaderText = "Date";
-            this.colDate.Name = "colDate";
-            this.colDate.ReadOnly = true;
-            // 
-            // colType
-            // 
-            this.colType.DataPropertyName = "Type";
-            this.colType.HeaderText = "Record Type";
-            this.colType.Name = "colType";
-            this.colType.ReadOnly = true;
-            // 
-            // colProvider
-            // 
-            this.colProvider.DataPropertyName = "Provider";
-            this.colProvider.HeaderText = "Facility";
-            this.colProvider.Name = "colProvider";
-            this.colProvider.ReadOnly = true;
-            // 
             // HealthRecordViewerForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(900, 550);
+            this.ClientSize = new System.Drawing.Size(1227, 677);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.MaximizeBox = false;
             this.Name = "HealthRecordViewerForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

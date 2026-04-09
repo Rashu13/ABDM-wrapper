@@ -25,3 +25,4 @@ D:\abdm wrapper\ABDM-wrapper\ABDM-WinForms-Frontend\abdmWinforms\obj\Debug\abdmW
 D:\abdm wrapper\ABDM-wrapper\ABDM-WinForms-Frontend\abdmWinforms\obj\Debug\abdmWinforms.exe
 D:\abdm wrapper\ABDM-wrapper\ABDM-WinForms-Frontend\abdmWinforms\obj\Debug\abdmWinforms.pdb
 D:\abdm wrapper\ABDM-wrapper\ABDM-WinForms-Frontend\abdmWinforms\obj\Debug\abdmWinforms.PatientSearchForm.resources
+D:\abdm wrapper\ABDM-wrapper\ABDM-WinForms-Frontend\abdmWinforms\obj\Debug\abdmWinforms.HealthRecordViewerForm.resources

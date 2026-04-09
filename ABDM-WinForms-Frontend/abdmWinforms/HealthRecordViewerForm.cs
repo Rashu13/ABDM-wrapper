@@ -34,8 +34,10 @@ namespace abdmWinforms
                 
                 if (initResponse?.errors != null && initResponse.errors.Count > 0)
                 {
-                    lblStatus.Text = "Error: " + initResponse.errors[0].error.message;
+                    string fullError = initResponse.errors[0].error.message;
+                    lblStatus.Text = "Error! Dekhne ke liye popup check karein.";
                     lblStatus.ForeColor = System.Drawing.Color.Red;
+                    MessageBox.Show("Gateway Error:\n\n" + fullError, "Data Fetch Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 

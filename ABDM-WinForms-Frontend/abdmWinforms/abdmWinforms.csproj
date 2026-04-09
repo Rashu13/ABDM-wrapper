@@ -115,6 +115,9 @@
     <Compile Include="SmsInviteForm.Designer.cs">
       <DependentUpon>SmsInviteForm.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="HealthRecordViewerForm.resx">
+      <DependentUpon>HealthRecordViewerForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="PatientRegistrationForm.resx">
       <DependentUpon>PatientRegistrationForm.cs</DependentUpon>
     </EmbeddedResource>
