@@ -14,5 +14,9 @@ public interface LinkTokenRepo extends MongoRepository<LinkToken, String> {
    * @param hipId
    * @return
    */
-  LinkToken findByAbhaAddress(String abhaAddress, String hipId);
+  LinkToken findFirstByAbhaAddressAndHipId(String abhaAddress, String hipId);
+
+  default LinkToken findByAbhaAddress(String abhaAddress, String hipId) {
+    return findFirstByAbhaAddressAndHipId(abhaAddress, hipId);
+  }
 }

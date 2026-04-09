@@ -9,17 +9,31 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PatientRepo extends MongoRepository<Patient, String> {
-  Patient findByAbhaAddress(String abhaAddress);
+  Patient findFirstByAbhaAddress(String abhaAddress);
 
-  Patient findByPatientReference(String patientReference);
+  default Patient findByAbhaAddress(String abhaAddress) {
+    return findFirstByAbhaAddress(abhaAddress);
+  }
+
+  Patient findFirstByPatientReference(String patientReference);
+
+  default Patient findByPatientReference(String patientReference) {
+    return findFirstByPatientReference(patientReference);
+  }
 
   List<Patient> findByPatientMobile(String patientMobile);
 
-  @Query("{ 'abhaAddress': ?0, 'hipId': ?1 }")
-  Patient findByAbhaAddress(String abhaAddress, String hipId);
+  Patient findFirstByAbhaAddressAndHipId(String abhaAddress, String hipId);
 
-  @Query("{ 'patientReference': ?0, 'hipId': ?1 }")
-  Patient findByPatientReference(String patientReference, String hipId);
+  default Patient findByAbhaAddress(String abhaAddress, String hipId) {
+    return findFirstByAbhaAddressAndHipId(abhaAddress, hipId);
+  }
+
+  Patient findFirstByPatientReferenceAndHipId(String patientReference, String hipId);
+
+  default Patient findByPatientReference(String patientReference, String hipId) {
+    return findFirstByPatientReferenceAndHipId(patientReference, hipId);
+  }
 
   @Query("{ 'patientMobile': ?0, 'hipId': ?1 }")
   List<Patient> findByPatientMobile(String patientMobile, String hipId);
