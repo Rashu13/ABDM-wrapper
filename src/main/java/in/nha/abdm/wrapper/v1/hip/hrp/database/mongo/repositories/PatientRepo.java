@@ -39,32 +39,35 @@ public interface PatientRepo extends MongoRepository<Patient, String> {
     if (list == null || list.isEmpty()) return null;
     if (list.size() == 1) return list.get(0);
     Patient merged = list.get(0);
+    List<in.nha.abdm.wrapper.v1.common.models.Consent> allConsents = new java.util.ArrayList<>();
+    if (merged.getConsents() != null) allConsents.addAll(merged.getConsents());
+
+    List<in.nha.abdm.wrapper.v1.common.models.CareContext> allCareContexts = new java.util.ArrayList<>();
+    if (merged.getCareContexts() != null) allCareContexts.addAll(merged.getCareContexts());
+
     for (int i = 1; i < list.size(); i++) {
       Patient p = list.get(i);
       if (p.getConsents() != null && !p.getConsents().isEmpty()) {
-        if (merged.getConsents() == null) {
-          merged.setConsents(new java.util.ArrayList<>());
-        }
         for (in.nha.abdm.wrapper.v1.common.models.Consent c : p.getConsents()) {
-           boolean exists = merged.getConsents().stream()
+           boolean exists = allConsents.stream()
                .anyMatch(existing -> existing.getConsentDetail().getConsentId().equals(c.getConsentDetail().getConsentId()));
-           if (!exists) merged.getConsents().add(c);
+           if (!exists) allConsents.add(c);
         }
       }
       if (p.getCareContexts() != null && !p.getCareContexts().isEmpty()) {
-        if (merged.getCareContexts() == null) {
-          merged.setCareContexts(new java.util.ArrayList<>());
-        }
         for (in.nha.abdm.wrapper.v1.common.models.CareContext cc : p.getCareContexts()) {
-           boolean exists = merged.getCareContexts().stream()
+           boolean exists = allCareContexts.stream()
                .anyMatch(existing -> existing.getReferenceNumber().equals(cc.getReferenceNumber()));
-           if (!exists) merged.getCareContexts().add(cc);
+           if (!exists) allCareContexts.add(cc);
         }
       }
       if (p.getPatientReference() != null && merged.getPatientReference() == null) {
         merged.setPatientReference(p.getPatientReference());
       }
     }
+    
+    merged.setConsents(allConsents);
+    merged.setCareContexts(allCareContexts);
     return merged;
   }
 

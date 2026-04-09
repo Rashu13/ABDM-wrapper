@@ -113,6 +113,7 @@ public class HIUV3FacadeHealthInformationService implements HIUV3FacadeHealthInf
           consentPatientService.findMappingByConsentId(
               consentId, GatewayConstants.HIU, hiuClientHealthInformationRequest.getRequesterId());
       if (Objects.isNull(consentPatient)) {
+        log.error("ConsentPatient mapping not found for consentId: " + consentId + ". This can happen if the /on-fetch callback hasn't arrived from Gateway yet.");
         return FacadeV3Response.builder()
             .clientRequestId(hiuClientHealthInformationRequest.getRequestId())
             .httpStatusCode(HttpStatus.BAD_REQUEST)
@@ -133,6 +134,7 @@ public class HIUV3FacadeHealthInformationService implements HIUV3FacadeHealthInf
               consentId,
               hiuClientHealthInformationRequest.getRequesterId());
       if (Objects.isNull(consentDetails)) {
+        log.error("ConsentDetails not found in the database for consentId: " + consentId);
         return FacadeV3Response.builder()
             .clientRequestId(hiuClientHealthInformationRequest.getRequestId())
             .httpStatusCode(HttpStatus.BAD_REQUEST)
@@ -246,7 +248,7 @@ public class HIUV3FacadeHealthInformationService implements HIUV3FacadeHealthInf
               + ex.getMessage()
               + " unwrapped exception: "
               + Exceptions.unwrap(ex);
-      log.debug(error);
+      log.error(error, ex);
       return FacadeV3Response.builder()
           .errors(
               Collections.singletonList(
