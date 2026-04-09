@@ -264,13 +264,13 @@ namespace ABDM_WinForms_Frontend
                 { 
                     requestId = requestId,
                     timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-                    hiuId = GlobalConfig.HipId,
+                    requesterId = GlobalConfig.HipId, // Java requires requesterId instead of hiuId!
                     consentId = consentId
                 };
                 var content = new StringContent(JsonConvert.SerializeObject(payload), System.Text.Encoding.UTF8, "application/json");
                 
                 // V3 requires specific headers for health info request
-                var httpRequest = new HttpRequestMessage(HttpMethod.Post, string.Format("{0}/health-information/request", BaseUrl))
+                var httpRequest = new HttpRequestMessage(HttpMethod.Post, string.Format("{0}/health-information/fetch-records", BaseUrl))
                 {
                     Content = content
                 };
