@@ -243,9 +243,14 @@ public class HIUV3FacadeHealthInformationService implements HIUV3FacadeHealthInf
           .httpStatusCode(HttpStatus.BAD_REQUEST)
           .build();
     } catch (Exception ex) {
+      String gatewayResponseBody = "";
+      if (ex instanceof org.springframework.web.reactive.function.client.WebClientResponseException) {
+          gatewayResponseBody = " GW_RESPONSE: " + ((org.springframework.web.reactive.function.client.WebClientResponseException) ex).getResponseBodyAsString();
+      }
       String error =
           "Exception while fetching consent: "
               + ex.getMessage()
+              + gatewayResponseBody
               + " unwrapped exception: "
               + Exceptions.unwrap(ex);
       log.error(error, ex);
